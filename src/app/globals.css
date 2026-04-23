@@ -1,10 +1,20 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-manrope);
+  --font-heading: var(--font-space-grotesk);
 
   --color-background: #ffffff;
   --color-foreground: #0a0a0a;
+
+  /* NamibraPay brand colors */
+  --color-brand-teal: #64C6C3;
+  --color-brand-navy: #263B8E;
+  --color-brand-pink: #FFB4B0;
+  --color-brand-peach: #FEDFB8;
+  --color-brand-lavender: #BCBBEE;
+  --color-brand-mint: #A3FFE2;
+  --color-brand-white: #ffffff;
 }
 
 *,
