@@ -8,10 +8,10 @@ export default function Logo({ className }: { className?: string }) {
       <Image
         src="/logo.png"
         alt="NamibraPay"
-        width={125}
+        width={150}
         height={36}
         priority
-        className="h-8 w-auto"
+        className="h-8 w-35 sm:w-37.5"
       />
     </Link>
   );

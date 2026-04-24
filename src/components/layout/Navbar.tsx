@@ -31,8 +31,8 @@ export default function Navbar() {
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-white/95 backdrop-blur-md shadow-[0_1px_16px_rgba(0,0,0,0.06)]"
-          : "bg-white"
+          ? "bg-white/80 backdrop-blur-md shadow-[0_1px_10px_rgba(0,0,0,0.06)]"
+          : "bg-white",
       )}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -74,7 +74,11 @@ export default function Navbar() {
           onClick={() => setMobileOpen((v) => !v)}
           className="md:hidden p-2 rounded-lg text-gray-600 hover:text-brand-navy transition-colors"
         >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {mobileOpen ? (
+            <X className="w-5 h-5" />
+          ) : (
+            <Menu className="w-5 h-5" />
+          )}
         </button>
       </div>
 
