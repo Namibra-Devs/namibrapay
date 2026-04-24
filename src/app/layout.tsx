@@ -5,6 +5,11 @@ export const metadata: Metadata = {
   title: "NamibraPay | Fast, Reliable & Affordable Payments",
   description:
     "NamibraPay provides fast, reliable, and affordable payment solutions for businesses and individuals.",
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
+  },
   openGraph: {
     title: "NamibraPay | Fast, Reliable & Affordable Payments",
     description:
