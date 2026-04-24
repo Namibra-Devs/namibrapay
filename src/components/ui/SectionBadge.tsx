@@ -14,7 +14,7 @@ export default function SectionBadge({
         className
       )}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-brand-teal flex-shrink-0" />
+      <span className="w-1.5 h-1.5 rounded-full bg-brand-teal shrink-0" />
       {children}
     </div>
   );

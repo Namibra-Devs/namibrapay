@@ -96,7 +96,7 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <div className="flex flex-col gap-3 pt-2 border-t border-gray-100">
+          <div className="flex flex-col gap-6 pt-2 border-t border-gray-100">
             <Link href="#login" className="text-sm font-medium text-gray-600">
               Log in
             </Link>

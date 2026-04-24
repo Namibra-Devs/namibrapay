@@ -16,7 +16,7 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-white to-[#edfaf9] pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-white via-white to-[#edfaf9] pointer-events-none" />
       {/* Radial glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-teal/8 rounded-full blur-3xl pointer-events-none" />
 
@@ -65,7 +65,7 @@ export default function Hero() {
             whileTap={{ scale: 0.96 }}
             className="inline-flex items-center gap-3 px-2 py-2 pr-6 rounded-full text-brand-navy font-semibold text-sm hover:bg-gray-100 transition-colors cursor-pointer"
           >
-            <span className="w-9 h-9 rounded-full bg-brand-navy/8 flex items-center justify-center flex-shrink-0">
+            <span className="w-9 h-9 rounded-full bg-brand-navy/8 flex items-center justify-center shrink-0">
               <Play className="w-3.5 h-3.5 fill-brand-navy text-brand-navy ml-0.5" />
             </span>
             Watch Demo
@@ -95,7 +95,7 @@ export default function Hero() {
               +GHS 450.00
             </p>
             <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-gray-100">
-              <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-green-500 shrink-0" />
               <span className="text-[9px] text-gray-500 font-medium">
                 Payment Verified Instantly
               </span>
@@ -103,7 +103,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Main dashboard card */}
-          <div className="relative bg-gradient-to-br from-brand-navy via-[#1e307a] to-[#162060] rounded-3xl p-7 shadow-2xl text-white overflow-hidden">
+          <div className="relative bg-linear-to-br from-brand-navy via-[#1e307a] to-[#162060] rounded-3xl p-7 shadow-2xl text-white overflow-hidden">
             <div className="absolute top-0 right-0 w-56 h-56 bg-brand-teal/10 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-8 -left-8 w-40 h-40 bg-brand-lavender/10 rounded-full blur-2xl pointer-events-none" />
 
@@ -129,7 +129,7 @@ export default function Hero() {
                 ].map((tx, i) => (
                   <div key={i} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                      <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold shrink-0">
                         {tx.name.split(" ").map((n) => n[0]).join("")}
                       </div>
                       <div>

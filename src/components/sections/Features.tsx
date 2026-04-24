@@ -15,8 +15,12 @@ const card: Variants = {
 
 export default function Features() {
   return (
-    <section id="solutions" className="py-24 bg-white">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <section id="solutions" className="py-24 bg-white relative overflow-hidden">
+      {/* Large glow gradient on the left */}
+      <div className="absolute -left-22 top-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-brand-teal/5 rounded-full blur-3xl pointer-events-none z-5" />
+      <div className="absolute -left-10 top-1/3 w-[200px] h-80 bg-brand-mint/10 rounded-full blur-2xl pointer-events-none z-5" />
+      
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-20">
         {/* Header */}
         <div className="text-center mb-14 max-w-2xl mx-auto">
           <motion.h2
@@ -52,32 +56,34 @@ export default function Features() {
           <motion.div
             variants={card}
             whileHover={{ y: -4, transition: { duration: 0.25 } }}
-            className="md:col-span-2 bg-brand-lavender/20 rounded-3xl p-8 overflow-hidden relative"
+            className="md:col-span-2 bg-brand-lavender/20 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8 p-8 overflow-hidden relative"
           >
-            <div className="w-11 h-11 rounded-xl bg-brand-lavender/50 flex items-center justify-center mb-5">
-              <Code2 className="w-5 h-5 text-brand-navy" />
-            </div>
-            <h3 className="font-heading font-semibold text-xl text-brand-navy">
-              Developer-First APIs
-            </h3>
-            <p className="mt-2 text-sm text-gray-600 max-w-sm leading-relaxed">
-              Our robust API suite handles complexity so you don&apos;t have to.
-              Real-time webhooks, atomic transactions, and comprehensive
-              documentation for every use case.
-            </p>
-            <div className="flex flex-wrap gap-2 mt-5">
-              {["RESTful", "GraphQL", "gRPC"].map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 rounded-full bg-brand-navy/8 text-brand-navy text-xs font-semibold"
-                >
-                  {tag}
-                </span>
-              ))}
+            <div>
+              <div className="w-11 h-11 rounded-xl bg-brand-lavender/50 flex items-center justify-center mb-5">
+                <Code2 className="w-5 h-5 text-brand-navy" />
+              </div>
+              <h3 className="font-heading font-semibold text-xl text-brand-navy">
+                Developer-First APIs
+              </h3>
+              <p className="mt-2 text-sm text-gray-600 max-w-sm leading-relaxed">
+                Our robust API suite handles complexity so you don&apos;t have to.
+                Real-time webhooks, atomic transactions, and comprehensive
+                documentation for every use case.
+              </p>
+              <div className="flex flex-wrap gap-2 mt-5">
+                {["RESTful", "GraphQL", "gRPC"].map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 rounded-full bg-brand-navy/8 text-brand-navy text-xs font-semibold"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
 
             {/* Code window */}
-            <div className="mt-6 bg-brand-navy rounded-2xl p-4 font-mono overflow-hidden">
+            <div className="w-full md:w-sm md:-mr-20 mt-6 bg-brand-navy rounded-2xl p-4 font-mono overflow-hidden">
               <div className="flex gap-1.5 mb-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                 <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
