@@ -1,59 +1,52 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Logo from "@/components/ui/Logo";
+import { FieldError } from "@/components/ui/FieldError";
 import { toast } from "@/components/ui/Toast";
 import { signIn, getErrorMessage } from "@/lib/auth-api";
 import { TOKEN_KEY } from "@/lib/api";
+import { signInSchema, type SignInValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
 
-interface SignInForm {
-  email: string;
-  password: string;
-}
-
 const inputBase =
-  "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 bg-white transition focus:outline-none focus:ring-2 focus:ring-brand-teal/30 focus:border-brand-teal disabled:opacity-50 disabled:cursor-not-allowed";
+  "w-full border rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 bg-white transition focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
 export default function SignInPage() {
   const router = useRouter();
-  const [form, setForm] = useState<SignInForm>({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const update =
-    (field: keyof SignInForm) => (e: ChangeEvent<HTMLInputElement>) =>
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignInValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!form.email.trim() || !form.password) {
-      toast.error("Missing fields", { description: "Please enter your email and password." });
-      return;
-    }
-
-    setIsSubmitting(true);
-    const id = toast.loading("Signing in…", { description: "Verifying your credentials." });
-
+  const onSubmit = async (data: SignInValues) => {
+    const id = toast.loading("Signing in…", {
+      description: "Verifying your credentials.",
+    });
     try {
-      const data = await signIn({ email: form.email.trim(), password: form.password });
-      localStorage.setItem(TOKEN_KEY, data.token);
-
+      const res = await signIn(data);
+      localStorage.setItem(TOKEN_KEY, res.token);
       toast.success("Welcome back!", {
-        description: `Good to see you, ${data.user.firstName}.`,
+        description: `Good to see you, ${res.user.firstName}.`,
         id,
       });
-
-      // Brief pause so the success toast is visible before navigation
-      setTimeout(() => router.push("/dashboard"), 1400);
+      // Keep isSubmitting true (button stays disabled) through the navigation delay
+      await new Promise((r) => setTimeout(r, 1400));
+      router.push("/dashboard");
     } catch (err) {
       toast.error("Sign in failed", { description: getErrorMessage(err), id });
-      setIsSubmitting(false);
     }
   };
 
@@ -76,40 +69,53 @@ export default function SignInPage() {
           Sign in to your account
         </h1>
 
-        <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
           {/* Email */}
           <div>
             <input
               type="email"
               placeholder="Email address"
               autoComplete="email"
-              value={form.email}
-              onChange={update("email")}
               disabled={isSubmitting}
-              className={inputBase}
+              {...register("email")}
+              className={cn(
+                inputBase,
+                errors.email
+                  ? "border-red-400 focus:ring-red-200 focus:border-red-400"
+                  : "border-gray-200 focus:ring-brand-teal/30 focus:border-brand-teal"
+              )}
             />
+            <FieldError message={errors.email?.message} />
           </div>
 
           {/* Password */}
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              autoComplete="current-password"
-              value={form.password}
-              onChange={update("password")}
-              disabled={isSubmitting}
-              className={cn(inputBase, "pr-12")}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              tabIndex={-1}
-              disabled={isSubmitting}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors disabled:pointer-events-none"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+          <div>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                autoComplete="current-password"
+                disabled={isSubmitting}
+                {...register("password")}
+                className={cn(
+                  inputBase,
+                  "pr-12",
+                  errors.password
+                    ? "border-red-400 focus:ring-red-200 focus:border-red-400"
+                    : "border-gray-200 focus:ring-brand-teal/30 focus:border-brand-teal"
+                )}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                tabIndex={-1}
+                disabled={isSubmitting}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors disabled:pointer-events-none"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            <FieldError message={errors.password?.message} />
           </div>
 
           {/* Submit */}
@@ -133,7 +139,7 @@ export default function SignInPage() {
         </form>
 
         {/* Forgot password */}
-        <p className="mt-5 text-center text-sm text-gray-500">
+        <p className="mt-5 text-center text-sm">
           <Link
             href="/forgot-password"
             className="text-brand-navy hover:text-brand-teal transition-colors font-medium"

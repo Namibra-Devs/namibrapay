@@ -22,7 +22,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 pb-12 border-b border-gray-200">
           <div>
             <Logo />
-            <p className="mt-4 text-sm text-gray-500 leading-relaxed max-w-[220px]">
+            <p className="mt-4 text-sm text-gray-500 leading-relaxed max-w-55">
               Switching how businesses across Africa transact with money through
               technology that enables solutions.
             </p>

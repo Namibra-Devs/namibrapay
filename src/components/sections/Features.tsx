@@ -17,8 +17,8 @@ export default function Features() {
   return (
     <section id="solutions" className="py-24 bg-white relative overflow-hidden">
       {/* Large glow gradient on the left */}
-      <div className="absolute -left-22 top-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-brand-teal/5 rounded-full blur-3xl pointer-events-none z-5" />
-      <div className="absolute -left-10 top-1/3 w-[200px] h-80 bg-brand-mint/10 rounded-full blur-2xl pointer-events-none z-5" />
+      <div className="absolute -left-22 top-1/2 -translate-y-1/2 w-50 h-50 bg-brand-teal/5 rounded-full blur-3xl pointer-events-none z-5" />
+      <div className="absolute -left-10 top-1/3 w-50 h-80 bg-brand-mint/10 rounded-full blur-2xl pointer-events-none z-5" />
       
       <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-20">
         {/* Header */}

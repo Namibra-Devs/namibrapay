@@ -130,7 +130,7 @@ function ToastCard({ item }: { item: ToastItem }) {
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: 72, scale: 0.94 }}
       transition={{ type: "spring", stiffness: 380, damping: 28 }}
-      className="relative w-[340px] bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden"
+      className="relative w-85 bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden"
     >
       <div className="flex items-start gap-3.5 px-4 py-4">
         {/* Icon */}
@@ -189,7 +189,7 @@ export function Toaster() {
     <div
       aria-live="polite"
       aria-atomic="false"
-      className="fixed top-5 right-5 z-[9999] flex flex-col gap-2.5 pointer-events-none"
+      className="fixed top-5 right-5 z-9999 flex flex-col gap-2.5 pointer-events-none"
     >
       <AnimatePresence initial={false}>
         {toasts.map((t) => (

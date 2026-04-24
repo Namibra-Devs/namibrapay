@@ -1,17 +1,20 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useForm, type Path, type PathValue } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Logo from "@/components/ui/Logo";
 import Select, { type SelectOption } from "@/components/ui/Select";
+import { FieldError } from "@/components/ui/FieldError";
 import { toast } from "@/components/ui/Toast";
 import { signUp, getErrorMessage } from "@/lib/auth-api";
 import { TOKEN_KEY } from "@/lib/api";
+import { signUpSchema, type SignUpValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
-import type { BusinessType } from "@/types/auth";
 
 // ── Static data ──────────────────────────────────────────────────
 
@@ -50,107 +53,76 @@ const PHONE_CODE_OPTIONS: SelectOption[] = [
   { value: "+1", label: "+1" },
 ];
 
-// ── Form types ───────────────────────────────────────────────────
-
-interface SignUpForm {
-  country: string;
-  businessName: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneCode: string;
-  phone: string;
-  password: string;
-}
-
-type DeveloperType = "yes" | "no" | null;
-
 // ── Shared styles ────────────────────────────────────────────────
 
 const inputBase =
-  "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 bg-white transition focus:outline-none focus:ring-2 focus:ring-brand-teal/30 focus:border-brand-teal disabled:opacity-50 disabled:cursor-not-allowed";
+  "w-full border rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 bg-white transition focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
 const labelBase = "block text-sm font-medium text-gray-700 mb-1.5";
+
+function fieldCls(hasError: boolean) {
+  return hasError
+    ? "border-red-400 focus:ring-red-200 focus:border-red-400"
+    : "border-gray-200 focus:ring-brand-teal/30 focus:border-brand-teal";
+}
 
 // ── Component ────────────────────────────────────────────────────
 
 export default function SignUpPage() {
   const router = useRouter();
-
-  const [form, setForm] = useState<SignUpForm>({
-    country: "GH",
-    businessName: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneCode: "+233",
-    phone: "",
-    password: "",
-  });
-  const [businessType, setBusinessType] = useState<BusinessType>("starter");
-  const [isDeveloper, setIsDeveloper] = useState<DeveloperType>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const updateField =
-    (field: keyof SignUpForm) => (e: ChangeEvent<HTMLInputElement>) =>
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpValues>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      country: "GH",
+      phoneCode: "+233",
+      businessType: "starter",
+    },
+  });
 
-  const updateSelect = (field: keyof SignUpForm) => (value: string) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  // Watch custom-controlled fields so the UI reflects their value
+  const country = watch("country");
+  const phoneCode = watch("phoneCode");
+  const businessType = watch("businessType");
+  const isDeveloper = watch("isDeveloper");
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  function set<F extends Path<SignUpValues>>(field: F, value: PathValue<SignUpValues, F>) {
+    setValue(field, value, { shouldValidate: true });
+  }
 
-    // Basic required-field check
-    const required: Array<[keyof SignUpForm, string]> = [
-      ["businessName", "Business name"],
-      ["firstName", "First name"],
-      ["lastName", "Last name"],
-      ["email", "Email address"],
-      ["phone", "Phone number"],
-      ["password", "Password"],
-    ];
-    for (const [field, label] of required) {
-      if (!form[field].trim()) {
-        toast.error("Missing field", { description: `${label} is required.` });
-        return;
-      }
-    }
-    if (isDeveloper === null) {
-      toast.error("Missing field", { description: "Please answer the developer question." });
-      return;
-    }
-
-    setIsSubmitting(true);
+  const onSubmit = async (data: SignUpValues) => {
     const id = toast.loading("Creating your account…", {
       description: "This only takes a moment.",
     });
-
     try {
-      const data = await signUp({
-        country: form.country,
-        businessName: form.businessName.trim(),
-        firstName: form.firstName.trim(),
-        lastName: form.lastName.trim(),
-        email: form.email.trim(),
-        phone: `${form.phoneCode}${form.phone.trim().replace(/\s/g, "")}`,
-        password: form.password,
-        businessType,
-        isDeveloper: isDeveloper === "yes",
+      const res = await signUp({
+        country: data.country,
+        businessName: data.businessName,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: `${data.phoneCode}${data.phone.replace(/\s/g, "")}`,
+        password: data.password,
+        businessType: data.businessType,
+        isDeveloper: data.isDeveloper === "yes",
       });
 
-      localStorage.setItem(TOKEN_KEY, data.token);
-
+      localStorage.setItem(TOKEN_KEY, res.token);
       toast.success("Account created!", {
-        description: `Welcome to NamibraPay, ${data.user.firstName}!`,
+        description: `Welcome to NamibraPay, ${res.user.firstName}!`,
         id,
       });
-
-      setTimeout(() => router.push("/dashboard"), 1400);
+      await new Promise((r) => setTimeout(r, 1400));
+      router.push("/dashboard");
     } catch (err) {
       toast.error("Sign up failed", { description: getErrorMessage(err), id });
-      setIsSubmitting(false);
     }
   };
 
@@ -173,15 +145,16 @@ export default function SignUpPage() {
           Create your account
         </h1>
 
-        <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+        <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} noValidate>
           {/* Country */}
           <div>
             <label className={labelBase}>Country</label>
             <Select
               options={COUNTRY_OPTIONS}
-              value={form.country}
-              onChange={updateSelect("country")}
+              value={country}
+              onChange={(val) => set("country", val)}
             />
+            <FieldError message={errors.country?.message} />
           </div>
 
           {/* Business name */}
@@ -191,11 +164,11 @@ export default function SignUpPage() {
               type="text"
               placeholder="Acme Payments Ltd."
               autoComplete="organization"
-              value={form.businessName}
-              onChange={updateField("businessName")}
               disabled={isSubmitting}
-              className={inputBase}
+              {...register("businessName")}
+              className={cn(inputBase, fieldCls(!!errors.businessName))}
             />
+            <FieldError message={errors.businessName?.message} />
           </div>
 
           {/* First / Last name */}
@@ -206,11 +179,11 @@ export default function SignUpPage() {
                 type="text"
                 placeholder="Jane"
                 autoComplete="given-name"
-                value={form.firstName}
-                onChange={updateField("firstName")}
                 disabled={isSubmitting}
-                className={inputBase}
+                {...register("firstName")}
+                className={cn(inputBase, fieldCls(!!errors.firstName))}
               />
+              <FieldError message={errors.firstName?.message} />
             </div>
             <div>
               <label className={labelBase}>Last name</label>
@@ -218,11 +191,11 @@ export default function SignUpPage() {
                 type="text"
                 placeholder="Doe"
                 autoComplete="family-name"
-                value={form.lastName}
-                onChange={updateField("lastName")}
                 disabled={isSubmitting}
-                className={inputBase}
+                {...register("lastName")}
+                className={cn(inputBase, fieldCls(!!errors.lastName))}
               />
+              <FieldError message={errors.lastName?.message} />
             </div>
           </div>
 
@@ -233,22 +206,29 @@ export default function SignUpPage() {
               type="email"
               placeholder="jane@acme.com"
               autoComplete="email"
-              value={form.email}
-              onChange={updateField("email")}
               disabled={isSubmitting}
-              className={inputBase}
+              {...register("email")}
+              className={cn(inputBase, fieldCls(!!errors.email))}
             />
+            <FieldError message={errors.email?.message} />
           </div>
 
           {/* Phone */}
           <div>
             <label className={labelBase}>Phone number</label>
-            <div className="flex rounded-xl border border-gray-200 transition focus-within:ring-2 focus-within:ring-brand-teal/30 focus-within:border-brand-teal">
+            <div
+              className={cn(
+                "flex rounded-xl border transition focus-within:ring-2",
+                errors.phone
+                  ? "border-red-400 focus-within:ring-red-200 focus-within:border-red-400"
+                  : "border-gray-200 focus-within:ring-brand-teal/30 focus-within:border-brand-teal"
+              )}
+            >
               <Select
                 compact
                 options={PHONE_CODE_OPTIONS}
-                value={form.phoneCode}
-                onChange={updateSelect("phoneCode")}
+                value={phoneCode}
+                onChange={(val) => set("phoneCode", val)}
                 className="shrink-0"
                 triggerClassName="rounded-l-xl"
               />
@@ -256,12 +236,12 @@ export default function SignUpPage() {
                 type="tel"
                 placeholder="81 234 5678"
                 autoComplete="tel-national"
-                value={form.phone}
-                onChange={updateField("phone")}
                 disabled={isSubmitting}
+                {...register("phone")}
                 className="flex-1 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 bg-white rounded-r-xl focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
+            <FieldError message={errors.phone?.message} />
           </div>
 
           {/* Password */}
@@ -272,10 +252,9 @@ export default function SignUpPage() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Create a strong password"
                 autoComplete="new-password"
-                value={form.password}
-                onChange={updateField("password")}
                 disabled={isSubmitting}
-                className={cn(inputBase, "pr-12")}
+                {...register("password")}
+                className={cn(inputBase, "pr-12", fieldCls(!!errors.password))}
               />
               <button
                 type="button"
@@ -287,6 +266,7 @@ export default function SignUpPage() {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+            <FieldError message={errors.password?.message} />
           </div>
 
           {/* Business type */}
@@ -296,18 +276,18 @@ export default function SignUpPage() {
               {(
                 [
                   {
-                    value: "starter" as BusinessType,
+                    value: "starter",
                     title: "Starter Business",
                     description:
                       "I'm testing my ideas with real customers, and preparing to register my company.",
                   },
                   {
-                    value: "registered" as BusinessType,
+                    value: "registered",
                     title: "Registered Business",
                     description:
                       "My business has the approval, documentation, and licences required to operate legally.",
                   },
-                ]
+                ] as const
               ).map((option) => {
                 const selected = businessType === option.value;
                 return (
@@ -315,7 +295,7 @@ export default function SignUpPage() {
                     key={option.value}
                     type="button"
                     disabled={isSubmitting}
-                    onClick={() => setBusinessType(option.value)}
+                    onClick={() => set("businessType", option.value)}
                     className={cn(
                       "w-full text-left flex items-start gap-3 rounded-xl border px-4 py-3.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
                       selected
@@ -343,20 +323,21 @@ export default function SignUpPage() {
                 );
               })}
             </div>
+            <FieldError message={errors.businessType?.message} />
           </div>
 
           {/* Developer */}
           <div>
             <label className={labelBase}>Are you a software developer?</label>
             <div className="flex gap-3">
-              {(["yes", "no"] as DeveloperType[]).map((val) => {
+              {(["yes", "no"] as const).map((val) => {
                 const selected = isDeveloper === val;
                 return (
                   <button
                     key={val}
                     type="button"
                     disabled={isSubmitting}
-                    onClick={() => setIsDeveloper(val)}
+                    onClick={() => set("isDeveloper", val)}
                     className={cn(
                       "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
                       selected
@@ -377,6 +358,7 @@ export default function SignUpPage() {
                 );
               })}
             </div>
+            <FieldError message={errors.isDeveloper?.message} />
           </div>
 
           {/* Submit */}

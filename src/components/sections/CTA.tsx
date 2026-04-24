@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default function CTA() {
   return (
-    <section className="py-24 px-6 lg:px-8 bg-[#f9fafb]">
+    <section className="pb-24 pt-10 px-6 lg:px-8 bg-[#f9fafb]">
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 32 }}
