@@ -39,6 +39,13 @@ const partners = [
     width: 120,
     height: 40,
   },
+  {
+    name: "eTranzact",
+    type: "image" as const,
+    src: "/etranzact.png",
+    width: 120,
+    height: 40,
+  },
 ];
 
 export default function Partners() {

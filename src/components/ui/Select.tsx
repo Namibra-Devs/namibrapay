@@ -111,7 +111,7 @@ export default function Select({
               "absolute z-50 mt-1.5 max-h-60 overflow-y-auto",
               "bg-white border border-gray-200 rounded-xl shadow-xl py-1",
               // Compact: auto-width so it isn't constrained to the narrow trigger
-              compact ? "w-auto min-w-[7rem]" : "w-full"
+              compact ? "w-auto min-w-20" : "w-full"
             )}
           >
             {options.map((option) => {
