@@ -117,34 +117,31 @@ export default function Select({
             {options.map((option) => {
               const isSelected = option.value === value;
               return (
-                <li
+                <button
                   key={option.value}
+                  type="button"
                   role="option"
                   aria-selected={isSelected}
+                  onClick={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "w-full flex items-center justify-between px-4 py-2.5 text-sm cursor-pointer transition-colors",
+                    isSelected
+                      ? "bg-brand-teal/5 text-brand-navy font-semibold"
+                      : "text-gray-700 hover:bg-gray-50"
+                  )}
                 >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onChange(option.value);
-                      setOpen(false);
-                    }}
-                    className={cn(
-                      "w-full flex items-center justify-between px-4 py-2.5 text-sm cursor-pointer transition-colors",
-                      isSelected
-                        ? "bg-brand-teal/5 text-brand-navy font-semibold"
-                        : "text-gray-700 hover:bg-gray-50"
-                    )}
-                  >
-                    <span>{option.label}</span>
-                    {isSelected && (
-                      <Check
-                        size={14}
-                        strokeWidth={2.5}
-                        className="text-brand-teal shrink-0 ml-3"
-                      />
-                    )}
-                  </button>
-                </li>
+                  <span>{option.label}</span>
+                  {isSelected && (
+                    <Check
+                      size={14}
+                      strokeWidth={2.5}
+                      className="text-brand-teal shrink-0 ml-3"
+                    />
+                  )}
+                </button>
               );
             })}
           </motion.ul>

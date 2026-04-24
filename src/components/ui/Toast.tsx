@@ -152,6 +152,7 @@ function ToastCard({ item }: { item: ToastItem }) {
         {/* Close — hidden while loading */}
         {!isLoading && (
           <button
+            title="close"
             onClick={() => _remove(item.id)}
             className="shrink-0 -mt-0.5 -mr-0.5 p-0.5 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
           >
