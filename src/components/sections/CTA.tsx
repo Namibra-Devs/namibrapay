@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function CTA() {
   return (
@@ -56,13 +57,13 @@ export default function CTA() {
                   whileTap={{ scale: 0.96 }}
                   className="w-full md:w-auto"
                 >
-                  <a
+                  <Link
                     href="/signup"
                     className="inline-flex w-full md:w-auto items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-brand-teal text-white font-semibold text-sm shadow-lg hover:bg-brand-teal/90 transition-colors"
                   >
                     Create Free Account
                     <ArrowUpRight className="w-4 h-4" />
-                  </a>
+                  </Link>
                 </motion.div>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -82,13 +83,13 @@ export default function CTA() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative w-96 shrink-0 overflow-hidden"
             >
-               <Image 
+              <Image
                 src="/man.png"
                 alt="Man"
                 width={500}
                 height={1000}
                 className=""
-               />       
+              />
               {/* Subtle glow behind */}
               <div className="absolute inset-0 bg-brand-teal/10 rounded-2xl blur-xl -z-10 scale-110" />
             </motion.div>
