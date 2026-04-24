@@ -51,14 +51,19 @@ export default function CTA() {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="mt-8 flex flex-wrap justify-center md:justify-start gap-4"
               >
-                <motion.button
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.96 }}
-                  className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-brand-teal text-white font-semibold text-sm shadow-lg hover:bg-brand-teal/90 transition-colors cursor-pointer"
+                  className="w-full md:w-auto"
                 >
-                  Create Free Account
-                  <ArrowUpRight className="w-4 h-4" />
-                </motion.button>
+                  <a
+                    href="/signup"
+                    className="inline-flex w-full md:w-auto items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-brand-teal text-white font-semibold text-sm shadow-lg hover:bg-brand-teal/90 transition-colors"
+                  >
+                    Create Free Account
+                    <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                </motion.div>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.96 }}
