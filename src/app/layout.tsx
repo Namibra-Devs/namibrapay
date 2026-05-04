@@ -41,6 +41,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${manrope.className} ${spaceGrotesk.className} h-full scroll-smooth antialiased`}
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col">
         <ClientProviders>{children}</ClientProviders>

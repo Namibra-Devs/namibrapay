@@ -12,7 +12,6 @@ import Select, { type SelectOption } from "@/components/ui/Select";
 import { FieldError } from "@/components/ui/FieldError";
 import { toast } from "@/components/ui/Toast";
 import { signUp, getErrorMessage } from "@/lib/auth-api";
-import { TOKEN_KEY } from "@/lib/api";
 import { signUpSchema, type SignUpValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
 
@@ -102,7 +101,7 @@ export default function SignUpPage() {
       description: "This only takes a moment.",
     });
     try {
-      const res = await signUp({
+      await signUp({
         country: data.country,
         businessName: data.businessName,
         firstName: data.firstName,
@@ -114,13 +113,12 @@ export default function SignUpPage() {
         isDeveloper: data.isDeveloper === "yes",
       });
 
-      localStorage.setItem(TOKEN_KEY, res.token);
       toast.success("Account created!", {
-        description: `Welcome to NamibraPay, ${res.user.firstName}!`,
+        description: "A verification email is on its way — check your inbox.",
         id,
       });
       await new Promise((r) => setTimeout(r, 1400));
-      router.push("/dashboard");
+      router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
     } catch (err) {
       toast.error("Sign up failed", { description: getErrorMessage(err), id });
     }

@@ -12,6 +12,15 @@ export async function signUp(payload: SignUpPayload): Promise<AuthResponse> {
   return data;
 }
 
+export async function resendVerificationEmail(email: string): Promise<void> {
+  await api.post("/auth/resend-verification", { email });
+}
+
+export async function confirmEmail(token: string): Promise<AuthResponse> {
+  const { data } = await api.post<AuthResponse>("/auth/confirm-email", { token });
+  return data;
+}
+
 /** Extract a human-readable message from any thrown error. */
 export function getErrorMessage(err: unknown): string {
   if (axios.isAxiosError<ApiErrorBody>(err)) {

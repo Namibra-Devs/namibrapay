@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "NamibraPay — Account",
+  title: "NamibraPay - Account",
   description: "Sign in or create your NamibraPay account",
 };
 
