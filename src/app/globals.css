@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/space-grotesk";
 
 @theme inline {
   --font-sans: "Manrope", system-ui, sans-serif;
