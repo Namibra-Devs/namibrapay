@@ -58,3 +58,32 @@ export const signUpSchema = z.object({
 });
 
 export type SignUpValues = z.infer<typeof signUpSchema>;
+
+// ── Forgot Password ──────────────────────────────────────────────
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, "Email is required.")
+    .check(z.email({ error: "Enter a valid email address." })),
+});
+
+export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+
+// ── Reset Password ───────────────────────────────────────────────
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters.")
+      .regex(/[A-Z]/, "Include at least one uppercase letter.")
+      .regex(/[0-9]/, "Include at least one number."),
+    passwordConfirm: z.string().min(1, "Please confirm your password."),
+  })
+  .refine((d) => d.password === d.passwordConfirm, {
+    message: "Passwords do not match.",
+    path: ["passwordConfirm"],
+  });
+
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;

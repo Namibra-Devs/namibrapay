@@ -37,6 +37,16 @@ export interface AuthResponse {
   message?: string;
 }
 
+export interface MfaRequiredResponse {
+  requiresMFA: true;
+  session: string;
+  /** Masked email hint from the backend e.g. "us**@ex**.com" */
+  hint?: string;
+  message?: string;
+}
+
+export type SignInResponse = AuthResponse | MfaRequiredResponse;
+
 // ── API error body ───────────────────────────────────────────────
 
 export interface ApiErrorBody {

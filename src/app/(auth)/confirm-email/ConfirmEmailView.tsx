@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, XCircle } from "lucide-react";
 import Logo from "@/components/ui/Logo";
@@ -11,8 +11,9 @@ import { confirmEmail, getErrorMessage } from "@/lib/auth-api";
 
 type Status = "verifying" | "success" | "error";
 
-export default function ConfirmEmailView({ token }: { token: string }) {
+export default function ConfirmEmailView() {
   const router = useRouter();
+  const token = useSearchParams().get("token") ?? "";
   const [status, setStatus] = useState<Status>("verifying");
   const [errorMsg, setErrorMsg] = useState("");
   const attempted = useRef(false);

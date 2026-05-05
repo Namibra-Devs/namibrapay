@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { MailOpen, CheckCircle2, Loader2 } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import { toast } from "@/components/ui/Toast";
 import { resendVerificationEmail, getErrorMessage } from "@/lib/auth-api";
 
-export default function VerifyEmailView({ email }: { email: string }) {
+export default function VerifyEmailView() {
+  const email = useSearchParams().get("email") ?? "";
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
 

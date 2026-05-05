@@ -15,6 +15,11 @@ import { TOKEN_KEY } from "@/lib/api";
 import { signInSchema, type SignInValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
 
+function maskEmail(email: string): string {
+  const [user, domain] = email.split("@");
+  return `${user.slice(0, 2)}**@${domain}`;
+}
+
 const inputBase =
   "w-full border rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 bg-white transition focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
@@ -37,6 +42,20 @@ export default function SignInPage() {
     });
     try {
       const res = await signIn(data);
+
+      if ("requiresMFA" in res) {
+        toast.info("Verification code sent", {
+          description: "Check your email for the 6-digit code.",
+          id,
+        });
+        const hint = res.hint ?? maskEmail(data.email);
+        await new Promise((r) => setTimeout(r, 800));
+        router.push(
+          `/verify-mfa?session=${encodeURIComponent(res.session)}&hint=${encodeURIComponent(hint)}`
+        );
+        return;
+      }
+
       localStorage.setItem(TOKEN_KEY, res.token);
       toast.success("Welcome back!", {
         description: `Good to see you, ${res.user.firstName}.`,
