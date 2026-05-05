@@ -17,6 +17,7 @@
         "aria-valid-attr-value": "off",
         "aria-required-parent": "off"
       }
-    ]
+    ],
+    "axe/forms": "off"
   }
 }

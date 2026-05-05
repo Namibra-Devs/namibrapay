@@ -15,7 +15,9 @@ const OTP_LENGTH = 6;
 const EXPIRY_SECONDS = 30 * 60;
 
 function formatTime(s: number) {
-  const m = Math.floor(s / 60).toString().padStart(2, "0");
+  const m = Math.floor(s / 60)
+    .toString()
+    .padStart(2, "0");
   const sec = (s % 60).toString().padStart(2, "0");
   return `${m}:${sec}`;
 }
@@ -65,16 +67,27 @@ export default function VerifyMFAView() {
       }
       return;
     }
-    if (e.key === "ArrowLeft") { e.preventDefault(); focusAt(i - 1); }
-    if (e.key === "ArrowRight") { e.preventDefault(); focusAt(i + 1); }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      focusAt(i - 1);
+    }
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      focusAt(i + 1);
+    }
   }
 
   function handlePaste(e: React.ClipboardEvent) {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH);
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, OTP_LENGTH);
     if (!pasted) return;
     const next = Array(OTP_LENGTH).fill("");
-    pasted.split("").forEach((d, i) => { next[i] = d; });
+    pasted.split("").forEach((d, i) => {
+      next[i] = d;
+    });
     setDigits(next);
     focusAt(Math.min(pasted.length, OTP_LENGTH - 1));
   }
@@ -82,7 +95,9 @@ export default function VerifyMFAView() {
   const handleVerify = useCallback(async () => {
     if (!isComplete || submitting || isExpired) return;
     setSubmitting(true);
-    const id = toast.loading("Verifying code…", { description: "Just a moment." });
+    const id = toast.loading("Verifying code…", {
+      description: "Just a moment.",
+    });
     try {
       const res = await verifyOtp(session, otp);
       localStorage.setItem(TOKEN_KEY, res.token);
@@ -115,7 +130,10 @@ export default function VerifyMFAView() {
       });
       focusAt(0);
     } catch (err) {
-      toast.error("Failed to resend", { description: getErrorMessage(err), id });
+      toast.error("Failed to resend", {
+        description: getErrorMessage(err),
+        id,
+      });
     } finally {
       setResending(false);
     }
@@ -130,7 +148,9 @@ export default function VerifyMFAView() {
         className="w-full max-w-md"
       >
         <div className="bg-white rounded-3xl shadow-2xl shadow-black/40 px-8 py-10 text-center">
-          <div className="flex justify-center mb-7"><Logo /></div>
+          <div className="flex justify-center mb-7">
+            <Logo />
+          </div>
           <div className="border-t border-gray-100 mb-7" />
           <p className="text-sm text-gray-500 mb-6">
             Invalid or expired session. Please sign in again.
@@ -174,7 +194,9 @@ export default function VerifyMFAView() {
           {digits.map((digit, i) => (
             <input
               key={i}
-              ref={(el) => { inputRefs.current[i] = el; }}
+              ref={(el: HTMLInputElement | null) => {
+                inputRefs.current[i] = el;
+              }}
               type="text"
               inputMode="numeric"
               maxLength={1}
@@ -188,17 +210,19 @@ export default function VerifyMFAView() {
                 "w-12 h-14 text-center text-xl font-semibold text-gray-900 rounded-xl border-2 bg-white transition focus:outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed",
                 digit
                   ? "border-brand-teal"
-                  : "border-gray-200 focus:border-brand-teal"
+                  : "border-gray-200 focus:border-brand-teal",
               )}
             />
           ))}
         </div>
 
         {/* Expiry */}
-        <p className={cn(
-          "text-center text-xs mb-6 transition-colors",
-          isExpired ? "text-red-500 font-medium" : "text-gray-400"
-        )}>
+        <p
+          className={cn(
+            "text-center text-xs mb-6 transition-colors",
+            isExpired ? "text-red-500 font-medium" : "text-gray-400",
+          )}
+        >
           {isExpired
             ? "Code expired — please request a new one below."
             : `Code expires in ${formatTime(secondsLeft)}`}
@@ -209,7 +233,9 @@ export default function VerifyMFAView() {
           type="button"
           onClick={handleVerify}
           disabled={!isComplete || submitting || isExpired}
-          whileTap={!isComplete || submitting || isExpired ? {} : { scale: 0.98 }}
+          whileTap={
+            !isComplete || submitting || isExpired ? {} : { scale: 0.98 }
+          }
           className="w-full flex items-center justify-center gap-2 bg-brand-teal text-white py-3.5 rounded-xl font-semibold text-sm hover:bg-brand-teal/90 transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-brand-teal"
         >
           {submitting ? (
