@@ -41,7 +41,7 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [ready, setReady] = useState(() => process.env.NODE_ENV === "development");
+  // const [ready, setReady] = useState(() => process.env.NODE_ENV === "development");
   const [showComplianceModal, setShowComplianceModal] = useState(false);
 
   useEffect(() => {
@@ -49,38 +49,27 @@ export default function DashboardLayout({
     document.title = PAGE_TITLES[key] ?? "NamibraPay";
   }, [pathname]);
 
-  useEffect(() => {
-    if (ready) {
-      return;
-    }
-    const token = localStorage.getItem("np_access_token");
-    if (!token) {
-      router.replace("/signin");
-      return;
-    }
-    setReady(true);
-  }, [ready, router]);
+  // useEffect(() => {
+  //   if (ready) return;
+  //   const token = localStorage.getItem("np_access_token");
+  //   if (!token) {
+  //     router.replace("/signin");
+  //     return;
+  //   }
+  //   setReady(true);
+  // }, [ready, router]);
 
   useEffect(() => {
-    if (!ready) return;
     const seen = localStorage.getItem("np_compliance_seen");
     if (!seen) {
       setShowComplianceModal(true);
       router.replace("/compliance");
     }
-  }, [ready, router]);
+  }, [router]);
 
   function handleComplianceModalClose() {
     localStorage.setItem("np_compliance_seen", "true");
     setShowComplianceModal(false);
-  }
-
-  if (!ready) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
-        <div className="w-8 h-8 border-2 border-brand-teal border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
   }
 
   return (
