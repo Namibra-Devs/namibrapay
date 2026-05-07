@@ -18,7 +18,7 @@ export default function Hero() {
       {/* Background gradient */}
       <div className="absolute inset-0 bg-linear-to-b from-white via-white to-[#edfaf9] pointer-events-none" />
       {/* Radial glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-teal/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-200 h-100 bg-brand-teal/8 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8 flex flex-col items-center text-center">
         {/* Badge */}

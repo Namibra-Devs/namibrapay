@@ -6,16 +6,17 @@
   --font-sans: "Manrope", system-ui, sans-serif;
   --font-heading: "Space Grotesk", system-ui, sans-serif;
 
+  --background: 255 255 255;
   --color-background: #ffffff;
   --color-foreground: #0a0a0a;
 
   /* NamibraPay brand colors */
-  --color-brand-teal: #64C6C3;
-  --color-brand-navy: #263B8E;
-  --color-brand-pink: #FFB4B0;
-  --color-brand-peach: #FEDFB8;
-  --color-brand-lavender: #BCBBEE;
-  --color-brand-mint: #A3FFE2;
+  --color-brand-teal: #64c6c3;
+  --color-brand-navy: #263b8e;
+  --color-brand-pink: #ffb4b0;
+  --color-brand-peach: #fedfb8;
+  --color-brand-lavender: #bcbbee;
+  --color-brand-mint: #a3ffe2;
   --color-brand-white: #ffffff;
 }
 
@@ -41,4 +42,67 @@ img,
 video {
   max-width: 100%;
   height: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.22s ease-out;
+}
+
+.card {
+  background: rgb(255 255 255 / 0.88);
+  border: 1px solid rgb(229 231 235 / 0.7);
+  border-radius: 1rem;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 30px 70px -50px rgb(15 23 42 / 0.45);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 198, 195, 0.9) rgba(247, 250, 252, 0.8);
+}
+
+body,
+aside nav {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 198, 195, 0.9) rgba(247, 250, 252, 0.8);
+}
+
+body::-webkit-scrollbar,
+aside nav::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+body::-webkit-scrollbar-track,
+aside nav::-webkit-scrollbar-track {
+  background: rgba(247, 250, 252, 0.75);
+}
+
+body::-webkit-scrollbar-thumb,
+aside nav::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 198, 195, 0.9);
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+body::-webkit-scrollbar-thumb:hover,
+aside nav::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 198, 195, 1);
+}
+
+.blur-header {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
