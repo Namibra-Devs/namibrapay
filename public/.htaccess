@@ -1,0 +1,10 @@
+Options -Indexes
+RewriteEngine On
+RewriteBase /
+
+# Serve existing files and directories as-is
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Append trailing slash to paths without an extension (so /dashboard → /dashboard/)
+RewriteRule ^(.+[^/])$ /$1/ [R=301,L]

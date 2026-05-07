@@ -45,7 +45,8 @@ export default function DashboardLayout({
   const [showComplianceModal, setShowComplianceModal] = useState(false);
 
   useEffect(() => {
-    document.title = PAGE_TITLES[pathname] ?? "NamibraPay";
+    const key = pathname.replace(/\/$/, "");
+    document.title = PAGE_TITLES[key] ?? "NamibraPay";
   }, [pathname]);
 
   useEffect(() => {

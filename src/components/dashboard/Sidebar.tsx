@@ -101,7 +101,7 @@ const bottomNav: NavItem[] = [
 
 function NavLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
   const pathname = usePathname();
-  const isActive = pathname === item.href;
+  const isActive = pathname.replace(/\/$/, "") === item.href.replace(/\/$/, "");
   const Icon = item.icon;
 
   return (
