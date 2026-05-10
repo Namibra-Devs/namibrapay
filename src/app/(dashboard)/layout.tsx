@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Sidebar from "@/components/dashboard/Sidebar";
 import TopBar from "@/components/dashboard/TopBar";
-import ComplianceModal from "@/components/dashboard/ComplianceModal";
+import ComplianceModal from "@/components/compliance/ComplianceModal";
 
 const PAGE_TITLES: Record<string, string> = {
   "/dashboard":         "NamibraPay - Dashboard",

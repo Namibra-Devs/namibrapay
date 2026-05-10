@@ -10,7 +10,7 @@ interface ComplianceModalProps {
 
 export default function ComplianceModal({ onClose }: ComplianceModalProps) {
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm fade-in"
@@ -29,13 +29,14 @@ export default function ComplianceModal({ onClose }: ComplianceModalProps) {
 
         <div className="flex flex-col items-center text-center">
           {/* Logo */}
-          <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-brand-teal/20 to-brand-navy/20 flex items-center justify-center mb-4 shadow-[0_8px_24px_-8px_rgba(15,23,42,0.2)]">
+          <div className="mb-4">
             <Image
               src="/logo.png"
               alt="NamibraPay"
-              width={56}
-              height={56}
-              className="object-contain"
+              width={130}
+              height={36}
+              className="w-35 sm:w-37.5"
+              style={{ height: "auto" }}
             />
           </div>
 

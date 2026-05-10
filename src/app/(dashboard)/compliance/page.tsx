@@ -1,5 +1,4 @@
-import { ShieldCheck } from "lucide-react";
-import EmptyState from "@/components/dashboard/EmptyState";
+import ComplianceFlow from "@/components/compliance/ComplianceFlow";
 
 export default function CompliancePage() {
   return (
@@ -12,19 +11,8 @@ export default function CompliancePage() {
           Complete your compliance profile to activate live payments.
         </p>
       </div>
-      <div className="bg-white/88 backdrop-blur-lg rounded-2xl border border-gray-200/70 shadow-[0_30px_70px_-50px_rgba(15,23,42,0.45)]">
-        <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-100">
-          <ShieldCheck className="w-4 h-4 text-gray-400" />
-          <h2 className="text-sm font-semibold text-gray-900">
-            Verification Status
-          </h2>
-        </div>
-        <EmptyState
-          icon={<ShieldCheck className="w-8 h-8" />}
-          title="Compliance not started"
-          description="Submit your business documents to verify your account and go live."
-          action={{ label: "Start verification", href: "#" }}
-        />
+      <div className="bg-white/88 backdrop-blur-lg rounded-2xl border border-gray-200/70 shadow-[0_30px_70px_-50px_rgba(15,23,42,0.45)] p-6">
+        <ComplianceFlow />
       </div>
     </div>
   );
