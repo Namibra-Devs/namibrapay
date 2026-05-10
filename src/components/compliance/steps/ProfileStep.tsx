@@ -215,7 +215,7 @@ export default function ProfileStep({
               min="0"
               value={form.annualVolume}
               onChange={(e) => set("annualVolume", e.target.value)}
-              className="flex-1 px-3 py-3 text-sm focus:outline-none bg-white"
+              className="flex-1 px-3 py-3 text-sm focus:outline-none bg-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
           </div>

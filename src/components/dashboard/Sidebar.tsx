@@ -148,18 +148,18 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Sidebar panel */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-white/92 backdrop-blur-xl border-r border-gray-200/70 shadow-[0_0_40px_-10px_rgba(15,23,42,0.12)] transition-transform duration-300 ease-in-out",
+          "fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-white/92 backdrop-blur-xl border-r border-gray-100/50 shadow-[0_0_40px_-10px_rgba(15,23,42,0.12)] transition-transform duration-300 ease-in-out",
           "lg:relative lg:z-auto lg:translate-x-0 lg:shrink-0",
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         {/* Logo + brand */}
-        <div className="flex items-center justify-between px-5 h-16 border-b border-gray-100 shrink-0">
+        <div className="flex items-center justify-between px-5 h-16 border-b border-gray-100/50 shrink-0">
           <Link href="/dashboard" className="flex items-center gap-2.5">
             <Image
               src="/logo.png"
               alt="NamibraPay"
-              width={130}
+              width={110}
               height={30}
               className="rounded-lg"
             />
@@ -203,7 +203,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <div className="pt-2 space-y-4">
             {navGroups.map((group) => (
               <div key={group.section}>
-                <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[3.35] text-gray-400">
                   {group.section}
                 </p>
                 <div className="space-y-0.5">

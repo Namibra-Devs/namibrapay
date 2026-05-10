@@ -45,7 +45,7 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
   }
 
   return (
-    <header className="flex items-center justify-between h-16 px-5 bg-background/90 border-b border-gray-200/70 sticky top-0 z-30 shrink-0 blur-header">
+    <header className="flex items-center justify-between h-16 px-5 bg-white/92 md:bg-white/92 backdrop-blur-xl border-b border-gray-200/40 sticky top-0 z-30 shrink-0">
       {/* Left */}
       <button
         onClick={onMenuToggle}
@@ -81,7 +81,7 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
           </button>
 
           {notifOpen && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-white/92 backdrop-blur-xl rounded-2xl border border-gray-200/70 shadow-[0_30px_70px_-50px_rgba(15,23,42,0.45)] z-50 fade-in">
+            <div className="absolute -right-10 top-full mt-2 w-80 bg-white/92 backdrop-blur-xl rounded-2xl border border-gray-200/70 shadow-[0_30px_70px_-50px_rgba(15,23,42,0.45)] z-50 fade-in">
               <div className="flex items-center justify-between px-4 py-3.5 border-b border-gray-100">
                 <div className="flex items-center gap-2">
                   <Bell className="w-4 h-4 text-gray-500" />

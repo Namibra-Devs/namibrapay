@@ -31,7 +31,7 @@ export default function Navbar() {
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-white/95 md:bg-white/80 backdrop-blur-md shadow-[0_1px_10px_rgba(0,0,0,0.06)]"
+          ? "bg-white/95 md:bg-white/80 backdrop-blur-md shadow-[0_1px_10px_rgba(0,0,0,0.04)]"
           : "bg-white",
       )}
     >
