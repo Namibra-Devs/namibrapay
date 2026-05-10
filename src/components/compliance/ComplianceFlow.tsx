@@ -130,9 +130,9 @@ export default function ComplianceFlow() {
   }
 
   return (
-    <div className="flex gap-6 min-h-[600px]">
+    <div className="flex flex-col gap-4 lg:flex-row lg:gap-6 min-h-150">
       {/* Step navigation */}
-      <div className="w-44 shrink-0 hidden lg:block">
+      <div className="shrink-0 lg:w-44">
         <StepNav
           currentStep={currentStep}
           completedSteps={completedSteps}
@@ -141,7 +141,7 @@ export default function ComplianceFlow() {
       </div>
 
       {/* Mobile step indicator */}
-      <div className="lg:hidden flex items-center gap-2 mb-4 shrink-0 self-start pt-1">
+      {/* <div className="lg:hidden flex items-center gap-2 mb-4 shrink-0 self-start pt-1">
         {[0, 1, 2, 3, 4].map((i) => (
           <div
             key={i}
@@ -154,7 +154,7 @@ export default function ComplianceFlow() {
             }`}
           />
         ))}
-      </div>
+      </div> */}
 
       {/* Form content */}
       <div className="flex-1 min-w-0">

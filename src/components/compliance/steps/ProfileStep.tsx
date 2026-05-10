@@ -109,12 +109,12 @@ export default function ProfileStep({
 
     return (
       <div>
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Profile</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile</h2>
         <div className="space-y-3">
           {rows.map(([label, val]) => (
             <div key={label}>
               <p className="text-xs text-gray-400 mb-0.5">{label}</p>
-              <p className="text-sm text-gray-900 break-words">{val}</p>
+              <p className="text-sm text-gray-900 wrap-break-word">{val}</p>
             </div>
           ))}
         </div>
