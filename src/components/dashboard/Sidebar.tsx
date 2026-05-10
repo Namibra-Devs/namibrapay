@@ -162,6 +162,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               width={110}
               height={30}
               className="rounded-lg"
+              style={{ height: "auto" }}
             />
           </Link>
           <button
