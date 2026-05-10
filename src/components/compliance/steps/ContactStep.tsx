@@ -1,24 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import { GH_REGIONS } from "../constants";
 import type { ContactData, Address } from "@/types/compliance";
 import Select from "@/components/ui/Select";
 import PhoneCodePicker from "@/components/ui/PhoneCodePicker";
+import { toast } from "@/components/ui/Toast";
 
 const INPUT =
   "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors bg-white";
 const LABEL = "block text-sm font-medium text-gray-700 mb-1.5";
 const REQ = <span className="text-red-500 ml-0.5">*</span>;
-
-const EMPTY_ADDRESS: Address = {
-  country: "Ghana",
-  state: "",
-  city: "",
-  street: "",
-  complex: "",
-  gpsAddress: "",
-};
 
 interface AddressFormProps {
   title: string;
@@ -104,6 +97,7 @@ export default function ContactStep({
 }: ContactStepProps) {
   const [editing, setEditing] = useState(!isComplete);
   const [form, setForm] = useState<ContactData>(data);
+  const [saving, setSaving] = useState(false);
   const [showWebsite, setShowWebsite] = useState(!!data.website);
   const [showTwitter, setShowTwitter] = useState(!!data.twitter);
   const [showFacebook, setShowFacebook] = useState(!!data.facebook);
@@ -129,12 +123,17 @@ export default function ContactStep({
     return e;
   }
 
-  function handleSave() {
+  async function handleSave() {
     const e = validate();
     if (Object.keys(e).length) {
       setErrors(e);
       return;
     }
+    setSaving(true);
+    const id = toast.loading("Saving contact details...", {
+      description: "Saving your emails, phone number and addresses",
+    });
+    await new Promise((r) => setTimeout(r, 800));
     const saved = { ...form };
     if (saved.useSupportAsGeneral) saved.supportEmail = saved.generalEmail;
     if (saved.useDisputeAsGeneral) saved.disputesEmail = saved.generalEmail;
@@ -142,6 +141,11 @@ export default function ContactStep({
       saved.officeAddress = { ...saved.registeredAddress };
     onSave(saved);
     setEditing(false);
+    setSaving(false);
+    toast.success("Contact details saved", {
+      id,
+      description: "Your contact information has been saved successfully",
+    });
   }
 
   if (!editing && isComplete) {
@@ -405,9 +409,10 @@ export default function ContactStep({
 
       <button
         onClick={handleSave}
-        className="mt-6 w-full py-3 bg-brand-teal text-white rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors"
+        disabled={saving}
+        className="mt-6 w-full py-3 bg-brand-teal text-white rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
-        Save
+        {saving ? <><Loader2 className="w-4 h-4 animate-spin" />Saving...</> : "Save"}
       </button>
     </div>
   );

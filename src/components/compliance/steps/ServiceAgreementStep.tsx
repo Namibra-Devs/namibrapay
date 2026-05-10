@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, Pencil } from "lucide-react";
+import { AlertTriangle, Pencil, Loader2 } from "lucide-react";
 import PhoneCodePicker from "@/components/ui/PhoneCodePicker";
+import { toast } from "@/components/ui/Toast";
 import type {
   ServiceAgreementData,
   ProfileData,
@@ -19,6 +20,7 @@ interface ServiceAgreementStepProps {
   profile: ProfileData;
   contact: ContactData;
   onSubmit: (data: ServiceAgreementData) => void;
+  onGoToStep: (step: number) => void;
 }
 
 export default function ServiceAgreementStep({
@@ -26,9 +28,11 @@ export default function ServiceAgreementStep({
   profile,
   contact,
   onSubmit,
+  onGoToStep,
 }: ServiceAgreementStepProps) {
   const [form, setForm] = useState<ServiceAgreementData>(data);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   function set<K extends keyof ServiceAgreementData>(
     key: K,
@@ -49,13 +53,23 @@ export default function ServiceAgreementStep({
     return e;
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const e = validate();
     if (Object.keys(e).length) {
       setErrors(e);
       return;
     }
+    setSubmitting(true);
+    const id = toast.loading("Submitting agreement...", {
+      description: "Submitting your merchant service agreement for review",
+    });
+    await new Promise((r) => setTimeout(r, 1000));
     onSubmit(form);
+    setSubmitting(false);
+    toast.success("Agreement submitted", {
+      id,
+      description: "Your compliance information has been submitted for review",
+    });
   }
 
   const entityName = profile.legalName || profile.tradingName;
@@ -127,12 +141,12 @@ export default function ServiceAgreementStep({
         {/* Pre-filled summary rows */}
         <div className="space-y-1 mt-4">
           {[
-            { label: "Contracting entity", value: entityName },
-            { label: "Company address", value: addrStr || "—" },
+            { label: "Contracting entity", value: entityName, step: 0 },
+            { label: "Company address", value: addrStr || "—", step: 1 },
             ...(contact.website
-              ? [{ label: "Website", value: contact.website }]
+              ? [{ label: "Website", value: contact.website, step: 1 }]
               : []),
-          ].map(({ label, value }) => (
+          ].map(({ label, value, step }) => (
             <div
               key={label}
               className="flex items-center justify-between py-3 border-b border-gray-100"
@@ -142,7 +156,8 @@ export default function ServiceAgreementStep({
                 <p className="text-sm text-gray-900">{value}</p>
               </div>
               <button
-                title="edut"
+                title={`Edit ${label}`}
+                onClick={() => onGoToStep(step)}
                 className="p-1.5 rounded-lg text-brand-teal hover:bg-brand-teal/10 transition-colors"
               >
                 <Pencil className="w-3.5 h-3.5" />
@@ -228,9 +243,10 @@ export default function ServiceAgreementStep({
 
         <button
           onClick={handleSubmit}
-          className="w-full py-3 bg-brand-teal text-white rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors"
+          disabled={submitting}
+          className="w-full py-3 bg-brand-teal text-white rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          Accept
+          {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Submitting...</> : "Accept"}
         </button>
       </div>
     </div>

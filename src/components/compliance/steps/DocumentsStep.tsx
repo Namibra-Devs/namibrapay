@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Upload, Trash2, UserPlus, ChevronUp } from "lucide-react";
+import { Upload, Trash2, UserPlus, ChevronUp, Loader2 } from "lucide-react";
 import type { DocumentsData, Person } from "@/types/compliance";
 import PersonPanel from "../panels/PersonPanel";
+import { toast } from "@/components/ui/Toast";
 
 const INPUT =
   "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors bg-white";
@@ -77,18 +78,17 @@ function FileUploadCard({
 
 interface DocumentsStepProps {
   data: DocumentsData;
-  isComplete: boolean;
   onSave: (data: DocumentsData) => void;
 }
 
 export default function DocumentsStep({
   data,
-  isComplete,
   onSave,
 }: DocumentsStepProps) {
   const [form, setForm] = useState<DocumentsData>(data);
   const [panelType, setPanelType] = useState<"director" | "owner" | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
 
   function validate() {
     const e: Record<string, string> = {};
@@ -98,13 +98,23 @@ export default function DocumentsStep({
     return e;
   }
 
-  function handleSave() {
+  async function handleSave() {
     const e = validate();
     if (Object.keys(e).length) {
       setErrors(e);
       return;
     }
+    setSaving(true);
+    const id = toast.loading("Saving documents...", {
+      description: "Saving your uploaded documents and director information",
+    });
+    await new Promise((r) => setTimeout(r, 800));
     onSave(form);
+    setSaving(false);
+    toast.success("Documents saved", {
+      id,
+      description: "Your documents and directors have been saved successfully",
+    });
   }
 
   function addPerson(person: Person) {
@@ -323,9 +333,10 @@ export default function DocumentsStep({
 
         <button
           onClick={handleSave}
-          className="mt-6 w-full py-3 bg-brand-teal text-white rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors"
+          disabled={saving}
+          className="mt-6 w-full py-3 bg-brand-teal text-white rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          Save
+          {saving ? <><Loader2 className="w-4 h-4 animate-spin" />Saving...</> : "Save"}
         </button>
       </div>
 

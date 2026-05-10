@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import {
   STAFF_SIZE_OPTIONS,
   INDUSTRY_OPTIONS,
@@ -10,6 +11,7 @@ import {
 } from "../constants";
 import type { ProfileData } from "@/types/compliance";
 import Select from "@/components/ui/Select";
+import { toast } from "@/components/ui/Toast";
 
 const INPUT =
   "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors bg-white";
@@ -32,6 +34,7 @@ export default function ProfileStep({
   const [editing, setEditing] = useState(!isComplete);
   const [form, setForm] = useState<ProfileData>(data);
   const [errors, setErrors] = useState<Partial<Record<keyof ProfileData, string>>>({});
+  const [saving, setSaving] = useState(false);
 
   function set<K extends keyof ProfileData>(key: K, value: ProfileData[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -55,14 +58,24 @@ export default function ProfileStep({
     return e;
   }
 
-  function handleSave() {
+  async function handleSave() {
     const e = validate();
     if (Object.keys(e).length) {
       setErrors(e);
       return;
     }
+    setSaving(true);
+    const id = toast.loading("Saving profile...", {
+      description: "Saving your business profile information",
+    });
+    await new Promise((r) => setTimeout(r, 800));
     onSave(form);
     setEditing(false);
+    setSaving(false);
+    toast.success("Profile saved", {
+      id,
+      description: "Your business profile has been saved successfully",
+    });
   }
 
   const categories = form.industry ? (CATEGORY_MAP[form.industry] ?? []) : [];
@@ -303,9 +316,10 @@ export default function ProfileStep({
 
       <button
         onClick={handleSave}
-        className="mt-6 w-full py-3 bg-brand-teal text-white rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors"
+        disabled={saving}
+        className="mt-6 w-full py-3 bg-brand-teal text-white rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
-        Save
+        {saving ? <><Loader2 className="w-4 h-4 animate-spin" />Saving...</> : "Save"}
       </button>
     </div>
   );

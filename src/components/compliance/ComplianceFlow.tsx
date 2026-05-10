@@ -195,7 +195,6 @@ export default function ComplianceFlow() {
           {currentStep === 3 && (
             <DocumentsStep
               data={documents}
-              isComplete={completedSteps.includes(3)}
               onSave={(d) => {
                 setDocuments(d);
                 markComplete(3, 4);
@@ -207,6 +206,7 @@ export default function ComplianceFlow() {
               data={agreement}
               profile={profile}
               contact={contact}
+              onGoToStep={setCurrentStep}
               onSubmit={(d) => {
                 setAgreement(d);
                 setSubmitted(true);
