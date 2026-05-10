@@ -15,7 +15,7 @@ import type {
   DocumentsData,
   ServiceAgreementData,
   Address,
-} from "./types";
+} from "@/types/compliance";
 
 const EMPTY_ADDRESS: Address = {
   country: "Ghana",
@@ -56,7 +56,7 @@ const DEFAULT_CONTACT: ContactData = {
 };
 
 const DEFAULT_ACCOUNT: AccountData = {
-  accountType: "mobile_money",
+  accountType: "",
   bankName: "",
   accountNumber: "",
   provider: "",
@@ -67,6 +67,8 @@ const DEFAULT_ACCOUNT: AccountData = {
 const DEFAULT_DOCS: DocumentsData = {
   form3Name: "",
   certificateName: "",
+  ghanaCardFrontName: "",
+  ghanaCardBackName: "",
   tin: "",
   directors: [],
   beneficialOwners: [],

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Upload, Trash2, UserPlus, ChevronUp } from "lucide-react";
-import type { DocumentsData, Person } from "../types";
+import type { DocumentsData, Person } from "@/types/compliance";
 import PersonPanel from "../panels/PersonPanel";
 
 const INPUT =
@@ -156,6 +156,53 @@ export default function DocumentsStep({
           {errors.certificate && (
             <p className="text-xs text-red-500 -mt-2">{errors.certificate}</p>
           )}
+
+          {/* Ghana Card (NIA) */}
+          <div className="border border-gray-200 rounded-2xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-100">
+              <span className="text-sm font-semibold text-gray-900">
+                Ghana Card (NIA) <span className="text-red-500">*</span>
+              </span>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Upload a clear photo of the front and back of your Ghana National Identification Card
+              </p>
+            </div>
+            <div className="p-4 grid grid-cols-2 gap-3">
+              {(["ghanaCardFrontName", "ghanaCardBackName"] as const).map((field) => {
+                const isFront = field === "ghanaCardFrontName";
+                const fileName = form[field];
+                return (
+                  <div key={field} className="space-y-2">
+                    <p className="text-xs font-medium text-gray-500">{isFront ? "Front" : "Back"}</p>
+                    {fileName && (
+                      <div className="flex items-center gap-2 text-xs bg-amber-50 rounded-xl px-3 py-2">
+                        <span className="text-amber-500">↑</span>
+                        <span className="flex-1 text-gray-700 truncate">{fileName}</span>
+                        <button
+                          onClick={() => setForm((f) => ({ ...f, [field]: "" }))}
+                          className="text-red-500 hover:underline font-medium shrink-0"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                    <label className="flex flex-col items-center justify-center gap-1.5 w-full border border-dashed border-gray-200 rounded-xl py-4 px-3 cursor-pointer hover:border-brand-teal hover:bg-brand-teal/5 transition-colors">
+                      <Upload className="w-4 h-4 text-gray-400" />
+                      <span className="text-xs text-gray-400 text-center">+ Choose file</span>
+                      <input
+                        type="file"
+                        className="hidden"
+                        onChange={(e) =>
+                          setForm((f) => ({ ...f, [field]: e.target.files?.[0]?.name ?? "" }))
+                        }
+                        accept=".jpg,.jpeg,.png,.pdf"
+                      />
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
           {/* TIN */}
           <div className="border border-gray-200 rounded-2xl overflow-hidden">

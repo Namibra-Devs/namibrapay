@@ -4,12 +4,14 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { X, Upload } from "lucide-react";
-import { PHONE_CODES, MONTHS, GH_REGIONS, NATIONALITIES, ID_DOCUMENTS } from "../constants";
-import type { Person } from "../types";
+import { cn } from "@/lib/utils";
+import { MONTHS, GH_REGIONS, NATIONALITIES, ID_DOCUMENTS } from "../constants";
+import type { Person } from "@/types/compliance";
+import Select from "@/components/ui/Select";
+import PhoneCodePicker from "@/components/ui/PhoneCodePicker";
 
 const INPUT =
   "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors bg-white";
-const SELECT = `${INPUT} appearance-none`;
 const LABEL = "block text-sm font-medium text-gray-700 mb-1.5";
 const REQ = <span className="text-red-500 ml-0.5">*</span>;
 
@@ -26,12 +28,15 @@ function emptyForm(): Omit<Person, "id"> {
     dobYear: "",
     nationality: "",
     idDocument: "",
+    idNumber: "",
+    idFileName: "",
     country: "Ghana",
     state: "",
     city: "",
     street: "",
     complex: "",
     proofFileName: "",
+    gpsAddress: "",
   };
 }
 
@@ -41,9 +46,16 @@ interface PersonPanelProps {
   onClose: () => void;
 }
 
-export default function PersonPanel({ type, onSave, onClose }: PersonPanelProps) {
+export default function PersonPanel({
+  type,
+  onSave,
+  onClose,
+}: PersonPanelProps) {
   const [form, setForm] = useState<Omit<Person, "id">>(emptyForm());
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [proofMethod, setProofMethod] = useState<"document" | "gps">(
+    "document",
+  );
 
   function set(key: keyof Omit<Person, "id">, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -56,13 +68,17 @@ export default function PersonPanel({ type, onSave, onClose }: PersonPanelProps)
     if (!form.firstName.trim()) e.firstName = "Required";
     if (!form.lastName.trim()) e.lastName = "Required";
     if (!form.phone.trim()) e.phone = "Required";
-    if (type === "owner" && !form.percentageOwned) e.percentageOwned = "Required";
+    if (type === "owner" && !form.percentageOwned)
+      e.percentageOwned = "Required";
     if (!form.dobMonth || !form.dobDay || !form.dobYear) e.dob = "Required";
     if (!form.nationality) e.nationality = "Required";
     if (!form.idDocument) e.idDocument = "Required";
+    if (form.idDocument && !form.idNumber.trim()) e.idNumber = "Required";
     if (!form.state) e.state = "Required";
     if (!form.city.trim()) e.city = "Required";
     if (!form.street.trim()) e.street = "Required";
+    if (proofMethod === "document" && !form.proofFileName) e.proof = "Required";
+    if (proofMethod === "gps" && !form.gpsAddress.trim()) e.proof = "Required";
     return e;
   }
 
@@ -75,14 +91,17 @@ export default function PersonPanel({ type, onSave, onClose }: PersonPanelProps)
     onSave({ ...form, id: Math.random().toString(36).substring(2) });
   }
 
-  const years = Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - 18 - i);
+  const years = Array.from(
+    { length: 80 },
+    (_, i) => new Date().getFullYear() - 18 - i,
+  );
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
   return createPortal(
     <>
       {/* Full-screen backdrop — portalled to body, so backdrop-filter ancestors can't trap it */}
       <motion.div
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-200"
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm z-200"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -158,19 +177,15 @@ export default function PersonPanel({ type, onSave, onClose }: PersonPanelProps)
           <div>
             <label className={LABEL}>Phone number{REQ}</label>
             <div className="flex gap-2">
-              <select
+              <PhoneCodePicker
                 value={form.phoneCode}
-                onChange={(e) => set("phoneCode", e.target.value)}
-                className="border border-gray-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors appearance-none bg-white w-24 shrink-0"
-              >
-                {PHONE_CODES.map((c) => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </select>
+                onChange={(v) => set("phoneCode", v)}
+                className="w-28 shrink-0"
+              />
               <input
                 value={form.phone}
                 onChange={(e) => set("phone", e.target.value)}
-                className={INPUT}
+                className={`${INPUT} flex-1`}
                 placeholder="0000000000"
               />
             </div>
@@ -192,48 +207,46 @@ export default function PersonPanel({ type, onSave, onClose }: PersonPanelProps)
                 className={INPUT}
               />
               {errors.percentageOwned && (
-                <p className="mt-1 text-xs text-red-500">{errors.percentageOwned}</p>
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.percentageOwned}
+                </p>
               )}
             </div>
           )}
 
           {/* Identification */}
           <div className="border-t border-gray-100 pt-4 space-y-4">
-            <h3 className="text-sm font-semibold text-gray-800">Identification</h3>
+            <h3 className="text-sm font-semibold text-gray-800">
+              Identification
+            </h3>
 
             <div>
               <label className={LABEL}>Date of birth{REQ}</label>
               <div className="grid grid-cols-3 gap-2">
-                <select
+                <Select
+                  options={MONTHS.map((m) => ({ value: m, label: m }))}
                   value={form.dobMonth}
-                  onChange={(e) => set("dobMonth", e.target.value)}
-                  className={SELECT}
-                >
-                  <option value="">Month</option>
-                  {MONTHS.map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-                <select
+                  onChange={(v) => set("dobMonth", v)}
+                  placeholder="Month"
+                />
+                <Select
+                  options={days.map((d) => ({
+                    value: String(d),
+                    label: String(d),
+                  }))}
                   value={form.dobDay}
-                  onChange={(e) => set("dobDay", e.target.value)}
-                  className={SELECT}
-                >
-                  <option value="">Day</option>
-                  {days.map((d) => (
-                    <option key={d} value={String(d)}>{d}</option>
-                  ))}
-                </select>
-                <select
+                  onChange={(v) => set("dobDay", v)}
+                  placeholder="Day"
+                />
+                <Select
+                  options={years.map((y) => ({
+                    value: String(y),
+                    label: String(y),
+                  }))}
                   value={form.dobYear}
-                  onChange={(e) => set("dobYear", e.target.value)}
-                  className={SELECT}
-                >
-                  <option value="">Year</option>
-                  {years.map((y) => (
-                    <option key={y} value={String(y)}>{y}</option>
-                  ))}
-                </select>
+                  onChange={(v) => set("dobYear", v)}
+                  placeholder="Year"
+                />
               </div>
               {errors.dob && (
                 <p className="mt-1 text-xs text-red-500">{errors.dob}</p>
@@ -242,37 +255,94 @@ export default function PersonPanel({ type, onSave, onClose }: PersonPanelProps)
 
             <div>
               <label className={LABEL}>Nationality{REQ}</label>
-              <select
+              <Select
+                options={NATIONALITIES.map((n) => ({ value: n, label: n }))}
                 value={form.nationality}
-                onChange={(e) => set("nationality", e.target.value)}
-                className={SELECT}
-              >
-                <option value="">Choose an option</option>
-                {NATIONALITIES.map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
+                onChange={(v) => set("nationality", v)}
+                placeholder="Choose an option"
+              />
               {errors.nationality && (
-                <p className="mt-1 text-xs text-red-500">{errors.nationality}</p>
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.nationality}
+                </p>
               )}
             </div>
 
             <div>
               <label className={LABEL}>Identification document{REQ}</label>
-              <select
+              <Select
+                options={ID_DOCUMENTS}
                 value={form.idDocument}
-                onChange={(e) => set("idDocument", e.target.value)}
-                className={SELECT}
-              >
-                <option value="">Choose document type</option>
-                {ID_DOCUMENTS.map((d) => (
-                  <option key={d.value} value={d.value}>{d.label}</option>
-                ))}
-              </select>
+                onChange={(v) => {
+                  set("idDocument", v);
+                  set("idNumber", "");
+                  set("idFileName", "");
+                }}
+                placeholder="Choose document type"
+              />
               {errors.idDocument && (
                 <p className="mt-1 text-xs text-red-500">{errors.idDocument}</p>
               )}
             </div>
+
+            {form.idDocument && (
+              <>
+                <div>
+                  <label className={LABEL}>
+                    {form.idDocument === "ghana_card"
+                      ? "Personal ID Number (PIN)"
+                      : "Passport number"}
+                    {REQ}
+                  </label>
+                  <input
+                    value={form.idNumber}
+                    onChange={(e) => set("idNumber", e.target.value)}
+                    className={INPUT}
+                    placeholder={
+                      form.idDocument === "ghana_card"
+                        ? "e.g. GHA-012345678-9"
+                        : "Enter document number"
+                    }
+                  />
+                  {form.idDocument === "ghana_card" && (
+                    <p className="mt-1.5 text-xs text-gray-400">
+                      Please enter the Personal ID Number (PIN) on your Ghana
+                      Card. The PIN can be found on both the front and back of
+                      your Ghana Card and is usually in the form GHA-012345678-9
+                    </p>
+                  )}
+                  {errors.idNumber && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {errors.idNumber}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className={LABEL}>
+                    Upload{" "}
+                    {form.idDocument === "ghana_card"
+                      ? "Ghana Card"
+                      : "Passport"}
+                    {REQ}
+                  </label>
+                  <label className="flex items-center justify-center gap-2 w-full border border-dashed border-gray-300 rounded-xl py-3 px-4 cursor-pointer hover:border-brand-teal hover:bg-brand-teal/5 transition-colors">
+                    <Upload className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-500 truncate">
+                      {form.idFileName || "+ Choose file"}
+                    </span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      onChange={(e) =>
+                        set("idFileName", e.target.files?.[0]?.name ?? "")
+                      }
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+                  </label>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Address */}
@@ -286,16 +356,12 @@ export default function PersonPanel({ type, onSave, onClose }: PersonPanelProps)
 
             <div>
               <label className={LABEL}>State, region or county{REQ}</label>
-              <select
+              <Select
+                options={GH_REGIONS.map((r) => ({ value: r, label: r }))}
                 value={form.state}
-                onChange={(e) => set("state", e.target.value)}
-                className={SELECT}
-              >
-                <option value="">Choose an option</option>
-                {GH_REGIONS.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
+                onChange={(v) => set("state", v)}
+                placeholder="Choose an option"
+              />
               {errors.state && (
                 <p className="mt-1 text-xs text-red-500">{errors.state}</p>
               )}
@@ -336,29 +402,74 @@ export default function PersonPanel({ type, onSave, onClose }: PersonPanelProps)
             </div>
 
             <div>
-              <label className={LABEL}>Please upload a proof of address{REQ}</label>
-              <label className="flex items-center justify-center gap-2 w-full border border-dashed border-gray-300 rounded-xl py-4 px-4 cursor-pointer hover:border-brand-teal hover:bg-brand-teal/5 transition-colors">
-                <Upload className="w-4 h-4 text-gray-400" />
-                <span className="text-sm text-gray-500 truncate">
-                  {form.proofFileName || "Drag files here or click to upload"}
-                </span>
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={(e) =>
-                    set("proofFileName", e.target.files?.[0]?.name ?? "")
-                  }
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-              </label>
-              <div className="mt-2 space-y-0.5 text-xs text-gray-400">
-                <p>Proof of address can be any of these documents, not more than 6 months old:</p>
-                <p>i. Utility bill for services to the address.</p>
-                <p>ii. Bank statement showing current address.</p>
-                <p>iii. Tax assessment.</p>
-                <p>iv. Cable TV bill such as DSTV bill.</p>
-                <p>v. Letter from a public authority.</p>
+              <label className={LABEL}>Proof of address{REQ}</label>
+
+              {/* Toggle */}
+              <div className="flex rounded-xl border border-gray-200 overflow-hidden mb-3">
+                {(["document", "gps"] as const).map((method, i) => (
+                  <button
+                    key={method}
+                    type="button"
+                    onClick={() => setProofMethod(method)}
+                    className={cn(
+                      "flex-1 py-2.5 text-sm font-medium transition-colors",
+                      i > 0 && "border-l border-gray-200",
+                      proofMethod === method
+                        ? "bg-brand-teal text-white"
+                        : "text-gray-500 hover:bg-gray-50",
+                    )}
+                  >
+                    {method === "document" ? "Document" : "GPS Address"}
+                  </button>
+                ))}
               </div>
+
+              {proofMethod === "document" ? (
+                <>
+                  <label className="flex items-center justify-center gap-2 w-full border border-dashed border-gray-300 rounded-xl py-4 px-4 cursor-pointer hover:border-brand-teal hover:bg-brand-teal/5 transition-colors">
+                    <Upload className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-500 truncate">
+                      {form.proofFileName ||
+                        "Drag files here or click to upload"}
+                    </span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      onChange={(e) =>
+                        set("proofFileName", e.target.files?.[0]?.name ?? "")
+                      }
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+                  </label>
+                  <div className="mt-2 space-y-0.5 text-xs text-gray-400">
+                    <p>
+                      Proof of address can be any of these documents, not more
+                      than 6 months old:
+                    </p>
+                    <p>i. Utility bill for services to the address.</p>
+                    <p>ii. Bank statement showing current address.</p>
+                    <p>iii. Tax assessment.</p>
+                    <p>iv. Cable TV bill such as DSTV bill.</p>
+                    <p>v. Letter from a public authority.</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <input
+                    value={form.gpsAddress}
+                    onChange={(e) => set("gpsAddress", e.target.value)}
+                    className={INPUT}
+                    placeholder="e.g. AK-0000-0000"
+                  />
+                  <p className="mt-1.5 text-xs text-gray-400">
+                    Enter your Ghana Post GPS digital address
+                  </p>
+                </>
+              )}
+
+              {errors.proof && (
+                <p className="mt-1 text-xs text-red-500">{errors.proof}</p>
+              )}
             </div>
           </div>
         </div>

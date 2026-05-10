@@ -29,30 +29,30 @@ export default function ComplianceModal({ onClose }: ComplianceModalProps) {
 
         <div className="flex flex-col items-center text-center">
           {/* Logo */}
-          <div className="mb-4">
+          <div className="mb-5">
             <Image
               src="/logo.png"
               alt="NamibraPay"
               width={130}
               height={36}
-              className="w-35 sm:w-37.5"
-              style={{ height: "auto" }}
+              className="w-32 h-auto"
             />
           </div>
+          <div className="w-full border-t border-gray-200 mb-5" />
 
           <h2 className="text-base font-bold text-gray-900 font-heading">
             {mockUser.business}
           </h2>
-          <p className="text-sm text-gray-400 mt-0.5">
-            Welcome to NamibraPay
-          </p>
+          <p className="text-sm text-gray-400 mt-0.5">Welcome to NamibraPay</p>
 
-          <p className="mt-5 text-sm text-gray-600 leading-relaxed max-w-xs">
+          <p className="mt-5 text-xs text-gray-600 leading-relaxed max-w-xs">
             Your account is in{" "}
             <span className="font-semibold text-amber-600">test mode</span> so
             you can start exploring right away. To activate live payments,
             complete your compliance verification.
           </p>
+
+          <div className="w-full border-t border-gray-200 mt-5" />
 
           <button
             onClick={onClose}

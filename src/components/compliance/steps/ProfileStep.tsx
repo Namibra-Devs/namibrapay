@@ -8,11 +8,11 @@ import {
   BUSINESS_TYPE_OPTIONS,
   REGISTRATION_TYPE_OPTIONS,
 } from "../constants";
-import type { ProfileData } from "../types";
+import type { ProfileData } from "@/types/compliance";
+import Select from "@/components/ui/Select";
 
 const INPUT =
   "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors bg-white";
-const SELECT = `${INPUT} appearance-none`;
 const LABEL = "block text-sm font-medium text-gray-700 mb-1.5";
 const REQ = <span className="text-red-500 ml-0.5">*</span>;
 
@@ -178,18 +178,12 @@ export default function ProfileStep({
           <label className={LABEL}>
             Staff size{REQ}
           </label>
-          <select
+          <Select
+            options={STAFF_SIZE_OPTIONS}
             value={form.staffSize}
-            onChange={(e) => set("staffSize", e.target.value)}
-            className={SELECT}
-          >
-            <option value="">Choose one</option>
-            {STAFF_SIZE_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+            onChange={(v) => set("staffSize", v)}
+            placeholder="Choose one"
+          />
           {errors.staffSize && (
             <p className="mt-1 text-xs text-red-500">{errors.staffSize}</p>
           )}
@@ -224,21 +218,15 @@ export default function ProfileStep({
           <label className={LABEL}>
             Industry{REQ}
           </label>
-          <select
+          <Select
+            options={INDUSTRY_OPTIONS}
             value={form.industry}
-            onChange={(e) => {
-              set("industry", e.target.value);
+            onChange={(v) => {
+              set("industry", v);
               set("category", "");
             }}
-            className={SELECT}
-          >
-            <option value="">Choose industry</option>
-            {INDUSTRY_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+            placeholder="Choose industry"
+          />
           {errors.industry && (
             <p className="mt-1 text-xs text-red-500">{errors.industry}</p>
           )}
@@ -248,21 +236,14 @@ export default function ProfileStep({
           <label className={LABEL}>
             Category{REQ}
           </label>
-          <select
-            value={form.category}
-            onChange={(e) => set("category", e.target.value)}
-            className={SELECT}
-            disabled={!form.industry}
-          >
-            <option value="">
-              {form.industry ? "Choose category" : "First, select an industry"}
-            </option>
-            {categories.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+          <div className={!form.industry ? "opacity-50 pointer-events-none" : ""}>
+            <Select
+              options={categories}
+              value={form.category}
+              onChange={(v) => set("category", v)}
+              placeholder={form.industry ? "Choose category" : "First, select an industry"}
+            />
+          </div>
           {errors.category && (
             <p className="mt-1 text-xs text-red-500">{errors.category}</p>
           )}
@@ -272,18 +253,12 @@ export default function ProfileStep({
           <label className={LABEL}>
             Business type{REQ}
           </label>
-          <select
+          <Select
+            options={BUSINESS_TYPE_OPTIONS}
             value={form.businessType}
-            onChange={(e) => set("businessType", e.target.value)}
-            className={SELECT}
-          >
-            <option value="">Type of business</option>
-            {BUSINESS_TYPE_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+            onChange={(v) => set("businessType", v)}
+            placeholder="Type of business"
+          />
           {errors.businessType && (
             <p className="mt-1 text-xs text-red-500">{errors.businessType}</p>
           )}
@@ -310,18 +285,12 @@ export default function ProfileStep({
               <label className={LABEL}>
                 Registration type{REQ}
               </label>
-              <select
+              <Select
+                options={REGISTRATION_TYPE_OPTIONS}
                 value={form.registrationType}
-                onChange={(e) => set("registrationType", e.target.value)}
-                className={SELECT}
-              >
-                <option value="">Type of registration</option>
-                {REGISTRATION_TYPE_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(v) => set("registrationType", v)}
+                placeholder="Type of registration"
+              />
               {errors.registrationType && (
                 <p className="mt-1 text-xs text-red-500">
                   {errors.registrationType}

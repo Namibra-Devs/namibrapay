@@ -37,7 +37,7 @@ export interface ContactData {
 }
 
 export interface AccountData {
-  accountType: "bank" | "mobile_money";
+  accountType: "bank" | "mobile_money" | "";
   bankName: string;
   accountNumber: string;
   provider: string;
@@ -58,17 +58,22 @@ export interface Person {
   dobYear: string;
   nationality: string;
   idDocument: string;
+  idNumber: string;
+  idFileName: string;
   country: string;
   state: string;
   city: string;
   street: string;
   complex: string;
   proofFileName: string;
+  gpsAddress: string;
 }
 
 export interface DocumentsData {
   form3Name: string;
   certificateName: string;
+  ghanaCardFrontName: string;
+  ghanaCardBackName: string;
   tin: string;
   directors: Person[];
   beneficialOwners: Person[];

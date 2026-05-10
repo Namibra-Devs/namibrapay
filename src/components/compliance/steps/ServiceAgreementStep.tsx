@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 import { AlertTriangle, Pencil } from "lucide-react";
-import { PHONE_CODES } from "../constants";
-import type { ServiceAgreementData, ProfileData, ContactData } from "../types";
+import PhoneCodePicker from "@/components/ui/PhoneCodePicker";
+import type {
+  ServiceAgreementData,
+  ProfileData,
+  ContactData,
+} from "@/types/compliance";
 
 const INPUT =
   "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors bg-white";
@@ -40,7 +44,8 @@ export default function ServiceAgreementStep({
     if (!form.phone.trim()) e.phone = "Required";
     if (!form.email.trim()) e.email = "Required";
     if (!form.jobTitle.trim()) e.jobTitle = "Required";
-    if (!form.accepted) e.accepted = "You must accept the agreement to continue";
+    if (!form.accepted)
+      e.accepted = "You must accept the agreement to continue";
     return e;
   }
 
@@ -136,7 +141,10 @@ export default function ServiceAgreementStep({
                 <p className="text-xs text-gray-400 mb-0.5">{label}</p>
                 <p className="text-sm text-gray-900">{value}</p>
               </div>
-              <button className="p-1.5 rounded-lg text-brand-teal hover:bg-brand-teal/10 transition-colors">
+              <button
+                title="edut"
+                className="p-1.5 rounded-lg text-brand-teal hover:bg-brand-teal/10 transition-colors"
+              >
                 <Pencil className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -161,19 +169,15 @@ export default function ServiceAgreementStep({
         <div>
           <label className={LABEL}>Phone number{REQ}</label>
           <div className="flex gap-2">
-            <select
+            <PhoneCodePicker
               value={form.phoneCode}
-              onChange={(e) => set("phoneCode", e.target.value)}
-              className="border border-gray-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors appearance-none bg-white w-24 shrink-0"
-            >
-              {PHONE_CODES.map((c) => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
-            </select>
+              onChange={(v) => set("phoneCode", v)}
+              className="w-28 shrink-0"
+            />
             <input
               value={form.phone}
               onChange={(e) => set("phone", e.target.value)}
-              className={INPUT}
+              className={`${INPUT} flex-1`}
               placeholder="0000000000"
             />
           </div>

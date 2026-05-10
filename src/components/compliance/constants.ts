@@ -134,10 +134,8 @@ export const NATIONALITIES = [
 ];
 
 export const ID_DOCUMENTS = [
-  { value: "national_id", label: "National ID" },
   { value: "passport", label: "Passport" },
-  { value: "drivers_license", label: "Driver's License" },
-  { value: "voters_id", label: "Voter's ID" },
+  { value: "ghana_card", label: "Ghana Card" },
 ];
 
 export const MONTHS = [

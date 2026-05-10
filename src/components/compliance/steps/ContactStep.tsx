@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { GH_REGIONS, PHONE_CODES } from "../constants";
-import type { ContactData, Address } from "../types";
+import { GH_REGIONS } from "../constants";
+import type { ContactData, Address } from "@/types/compliance";
+import Select from "@/components/ui/Select";
+import PhoneCodePicker from "@/components/ui/PhoneCodePicker";
 
 const INPUT =
   "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors bg-white";
-const SELECT = `${INPUT} appearance-none`;
 const LABEL = "block text-sm font-medium text-gray-700 mb-1.5";
 const REQ = <span className="text-red-500 ml-0.5">*</span>;
 
@@ -41,16 +42,12 @@ function AddressForm({ title, data, onChange, showGPS = true }: AddressFormProps
       </div>
       <div>
         <label className={LABEL}>State or region{REQ}</label>
-        <select
+        <Select
+          options={GH_REGIONS.map((r) => ({ value: r, label: r }))}
           value={data.state}
-          onChange={(e) => set("state", e.target.value)}
-          className={SELECT}
-        >
-          <option value="">Choose state, region or county</option>
-          {GH_REGIONS.map((r) => (
-            <option key={r} value={r}>{r}</option>
-          ))}
-        </select>
+          onChange={(v) => set("state", v)}
+          placeholder="Choose state, region or county"
+        />
       </div>
       <div>
         <label className={LABEL}>City{REQ}</label>
@@ -266,19 +263,15 @@ export default function ContactStep({
           <div>
             <label className={LABEL}>Phone number{REQ}</label>
             <div className="flex gap-2">
-              <select
+              <PhoneCodePicker
                 value={form.phoneCode}
-                onChange={(e) => set("phoneCode", e.target.value)}
-                className="border border-gray-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors appearance-none bg-white w-24 shrink-0"
-              >
-                {PHONE_CODES.map((c) => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </select>
+                onChange={(v) => set("phoneCode", v)}
+                className="w-28 shrink-0"
+              />
               <input
                 value={form.phone}
                 onChange={(e) => set("phone", e.target.value)}
-                className={INPUT}
+                className={`${INPUT} flex-1`}
                 placeholder="0000000000"
               />
             </div>

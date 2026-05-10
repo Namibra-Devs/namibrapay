@@ -2,12 +2,17 @@
 
 import { useState } from "react";
 import { Info } from "lucide-react";
-import { MOBILE_MONEY_PROVIDERS, GH_BANKS, PHONE_CODES } from "../constants";
-import type { AccountData } from "../types";
+import { MOBILE_MONEY_PROVIDERS, GH_BANKS } from "../constants";
+import type { AccountData } from "@/types/compliance";
+import Select from "@/components/ui/Select";
 
 const INPUT =
   "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition-colors bg-white";
-const SELECT = `${INPUT} appearance-none`;
+
+const ACCOUNT_TYPE_OPTIONS = [
+  { value: "mobile_money", label: "Mobile money" },
+  { value: "bank", label: "Bank account" },
+];
 const LABEL = "block text-sm font-medium text-gray-700 mb-1.5";
 const REQ = <span className="text-red-500 ml-0.5">*</span>;
 
@@ -35,11 +40,12 @@ export default function AccountStep({
 
   function validate() {
     const e: Record<string, string> = {};
+    if (!form.accountType) e.accountType = "Required";
     if (!form.nameOnAccount.trim()) e.nameOnAccount = "Required";
     if (form.accountType === "bank") {
       if (!form.bankName) e.bankName = "Required";
       if (!form.accountNumber.trim()) e.accountNumber = "Account number is required";
-    } else {
+    } else if (form.accountType === "mobile_money") {
       if (!form.provider) e.provider = "Required";
       if (!form.mobilePhone.trim()) e.mobilePhone = "Required";
     }
@@ -121,16 +127,12 @@ export default function AccountStep({
       <div className="space-y-4">
         <div>
           <label className={LABEL}>Account type{REQ}</label>
-          <select
+          <Select
+            options={ACCOUNT_TYPE_OPTIONS}
             value={form.accountType}
-            onChange={(e) =>
-              set("accountType", e.target.value as AccountData["accountType"])
-            }
-            className={SELECT}
-          >
-            <option value="mobile_money">Mobile money</option>
-            <option value="bank">Bank account</option>
-          </select>
+            onChange={(v) => set("accountType", v as AccountData["accountType"])}
+            placeholder="Select account type"
+          />
         </div>
 
         {form.accountType === "bank" && (
@@ -143,20 +145,16 @@ export default function AccountStep({
           </div>
         )}
 
-        {form.accountType === "bank" ? (
+        {form.accountType === "bank" && (
           <>
             <div>
               <label className={LABEL}>Bank name{REQ}</label>
-              <select
+              <Select
+                options={GH_BANKS.map((b) => ({ value: b, label: b }))}
                 value={form.bankName}
-                onChange={(e) => set("bankName", e.target.value)}
-                className={SELECT}
-              >
-                <option value="">Select bank</option>
-                {GH_BANKS.map((b) => (
-                  <option key={b} value={b}>{b}</option>
-                ))}
-              </select>
+                onChange={(v) => set("bankName", v)}
+                placeholder="Select bank"
+              />
               {errors.bankName && (
                 <p className="mt-1 text-xs text-red-500">{errors.bankName}</p>
               )}
@@ -178,31 +176,18 @@ export default function AccountStep({
               )}
             </div>
           </>
-        ) : (
+        )}
+
+        {form.accountType === "mobile_money" && (
           <>
             <div>
               <label className={LABEL}>Provider{REQ}</label>
-              <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:border-brand-teal focus-within:ring-2 focus-within:ring-brand-teal/20 transition-colors">
-                <select
-                  value={form.provider}
-                  onChange={(e) => set("provider", e.target.value)}
-                  className="flex-1 px-4 py-3 text-sm focus:outline-none bg-white appearance-none"
-                >
-                  <option value="">Select provider</option>
-                  {MOBILE_MONEY_PROVIDERS.map((p) => (
-                    <option key={p.value} value={p.value}>{p.label}</option>
-                  ))}
-                </select>
-                {form.provider && (
-                  <button
-                    type="button"
-                    onClick={() => set("provider", "")}
-                    className="px-3 text-gray-400 hover:text-gray-600 text-xs"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
+              <Select
+                options={MOBILE_MONEY_PROVIDERS}
+                value={form.provider}
+                onChange={(v) => set("provider", v)}
+                placeholder="Select provider"
+              />
               {errors.provider && (
                 <p className="mt-1 text-xs text-red-500">{errors.provider}</p>
               )}
