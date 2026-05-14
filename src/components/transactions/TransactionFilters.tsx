@@ -1,13 +1,19 @@
 import FilterSelect from "./FilterSelect";
+import DateRangeSelect from "./DateRangeSelect";
 import StatusSelect from "./StatusSelect";
 import SearchInput from "./SearchInput";
-import { mockAccounts, dateRangeOptions } from "@/lib/mock-data/transactions";
-import type { TransactionStatus } from "@/lib/mock-data/transactions";
+import { mockAccounts } from "@/lib/mock-data/transactions";
+import type { StatusFilterState } from "./StatusSelect";
+import { DEFAULT_STATUS_FILTER } from "./StatusSelect";
+import type { DateRangeValue } from "./DateRangeSelect";
+
+export type { StatusFilterState };
+export { DEFAULT_STATUS_FILTER };
 
 export interface TransactionFilterState {
   account: string;
-  dateRange: string;
-  statuses: TransactionStatus[];
+  dateRange: DateRangeValue;
+  statusFilter: StatusFilterState;
   search: string;
 }
 
@@ -26,15 +32,15 @@ export default function TransactionFilters({ filters, onChange }: TransactionFil
         options={mockAccounts}
         value={filters.account}
         onChange={(v) => onChange("account", v)}
+        searchable
       />
-      <FilterSelect
-        options={dateRangeOptions}
+      <DateRangeSelect
         value={filters.dateRange}
         onChange={(v) => onChange("dateRange", v)}
       />
       <StatusSelect
-        values={filters.statuses}
-        onChange={(v) => onChange("statuses", v)}
+        value={filters.statusFilter}
+        onChange={(v) => onChange("statusFilter", v)}
       />
       <SearchInput
         value={filters.search}

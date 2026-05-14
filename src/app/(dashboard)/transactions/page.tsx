@@ -4,27 +4,44 @@ import { useState, useMemo } from "react";
 import { Download } from "lucide-react";
 import TransactionFilters from "@/components/transactions/TransactionFilters";
 import TransactionTable from "@/components/transactions/TransactionTable";
-import { mockTransactions, dateRangeOptions } from "@/lib/mock-data/transactions";
+import { mockTransactions } from "@/lib/mock-data/transactions";
 import type { TransactionFilterState } from "@/components/transactions/TransactionFilters";
+import { DEFAULT_STATUS_FILTER } from "@/components/transactions/TransactionFilters";
 
 const INITIAL_FILTERS: TransactionFilterState = {
   account: "all",
   dateRange: "this_month",
-  statuses: [],
+  statusFilter: DEFAULT_STATUS_FILTER,
   search: "",
 };
 
-function isThisMonth(dateStr: string) {
-  const d = new Date(dateStr);
-  const now = new Date();
-  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+function startOfDay(d: Date) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
-function isWithinDays(dateStr: string, days: number) {
-  const d = new Date(dateStr);
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - days);
-  return d >= cutoff;
+function matchesDateRange(dateStr: string, range: TransactionFilterState["dateRange"]): boolean {
+  const txDate = new Date(dateStr);
+  const now = new Date();
+
+  switch (range) {
+    case "today":
+      return startOfDay(txDate).getTime() === startOfDay(now).getTime();
+    case "last_7": {
+      const cutoff = new Date(now);
+      cutoff.setDate(now.getDate() - 6);
+      return txDate >= startOfDay(cutoff);
+    }
+    case "this_month":
+      return txDate.getFullYear() === now.getFullYear() && txDate.getMonth() === now.getMonth();
+    case "last_month": {
+      const y = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+      const m = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+      return txDate.getFullYear() === y && txDate.getMonth() === m;
+    }
+    case "all_time":
+    case "custom":
+      return true;
+  }
 }
 
 export default function TransactionsPage() {
@@ -39,23 +56,33 @@ export default function TransactionsPage() {
 
   const filtered = useMemo(() => {
     return mockTransactions.filter((tx) => {
-      // Account — sub-accounts have no mock transactions, so any non-"all"/non-"main" yields empty
+      // Account
       if (filters.account !== "all" && filters.account !== "main") return false;
 
       // Date range
-      const range = dateRangeOptions.find((r) => r.value === filters.dateRange);
-      if (range && filters.dateRange !== "all_time") {
-        if (filters.dateRange === "this_month") {
-          if (!isThisMonth(tx.date)) return false;
-        } else if (range.days !== null) {
-          if (!isWithinDays(tx.date, range.days)) return false;
-        }
+      if (!matchesDateRange(tx.date, filters.dateRange)) return false;
+
+      // Status filter panel
+      const sf = filters.statusFilter;
+      if (sf.status !== "all" && tx.status !== sf.status) return false;
+      if (sf.channel !== "all" && tx.channel !== sf.channel) return false;
+      if (sf.amount.trim()) {
+        const num = parseFloat(sf.amount.replace(/,/g, ""));
+        if (!isNaN(num) && tx.amount !== num) return false;
+      }
+      if (sf.receiptNumber.trim()) {
+        if (!tx.reference.toLowerCase().includes(sf.receiptNumber.trim().toLowerCase())) return false;
+      }
+      if (sf.customerEmail.trim()) {
+        const q = sf.customerEmail.trim().toLowerCase();
+        if (
+          !tx.email.toLowerCase().includes(q) &&
+          !tx.customer.toLowerCase().includes(q)
+        )
+          return false;
       }
 
-      // Status
-      if (filters.statuses.length > 0 && !filters.statuses.includes(tx.status)) return false;
-
-      // Search — reference, customer, or email
+      // Search
       if (filters.search.trim()) {
         const q = filters.search.trim().toLowerCase();
         const hit =
@@ -69,10 +96,17 @@ export default function TransactionsPage() {
     });
   }, [filters]);
 
+  const sf = filters.statusFilter;
   const hasFilters =
     filters.account !== "all" ||
     filters.dateRange !== "this_month" ||
-    filters.statuses.length > 0 ||
+    sf.status !== "all" ||
+    sf.channel !== "all" ||
+    sf.amount.trim() !== "" ||
+    sf.receiptNumber.trim() !== "" ||
+    sf.customerEmail.trim() !== "" ||
+    sf.paymentPage.trim() !== "" ||
+    sf.terminalId.trim() !== "" ||
     filters.search.trim() !== "";
 
   return (

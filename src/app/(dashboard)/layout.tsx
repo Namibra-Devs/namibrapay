@@ -7,6 +7,48 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import TopBar from "@/components/dashboard/TopBar";
 import ComplianceModal from "@/components/compliance/ComplianceModal";
 import FeatureAnnouncementModal from "@/components/dashboard/FeatureAnnouncementModal";
+import type { FeatureAnnouncementModalProps } from "@/components/dashboard/FeatureAnnouncementModal";
+
+type FeatureConfig = Omit<FeatureAnnouncementModalProps, "onClose"> & { featureKey: string };
+
+const FEATURE_QUEUE: FeatureConfig[] = [
+  {
+    featureKey: "np_feature_bank_transfer_v1",
+    title: "Introducing Pay with Bank Transfer! 🎉",
+    illustrationType: "bank_transfer",
+    features: [
+      {
+        title: "Accept payments of any size",
+        description: "Securely receive large payments that exceed mobile money wallet limits.",
+      },
+      {
+        title: "Offer bank-grade security",
+        description: "Give customers peace of mind by leveraging Ghana's national banking infrastructure.",
+      },
+      {
+        title: "Reconcile payments in one place",
+        description: "See all your payments, from cards, MoMo, and bank transfers, in one unified Dashboard.",
+      },
+      {
+        title: "Give customers more choice",
+        description: "Offer an easy, trusted way to pay for those who prefer using their banking app.",
+      },
+    ],
+    ctaLabel: "Enable in your preferences",
+    ctaHref: "/settings",
+    secondaryCtaLabel: "Learn more",
+    secondaryCtaHref: "#",
+  },
+  {
+    featureKey: "np_feature_mobile_money_v1",
+    title: "Introducing Mobile Money Transfers",
+    illustrationType: "rocket",
+    description:
+      "Send money directly to any mobile wallet across Ghana and Namibia. Fast, secure, and available 24/7 for all registered businesses.",
+    ctaLabel: "Get started",
+    ctaHref: "/transfers",
+  },
+];
 
 const PAGE_TITLES: Record<string, string> = {
   "/dashboard":         "NamibraPay - Dashboard",
@@ -44,10 +86,7 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   // const [ready, setReady] = useState(() => process.env.NODE_ENV === "development");
   const [showComplianceModal, setShowComplianceModal] = useState(false);
-  const [showFeatureModal, setShowFeatureModal] = useState(false);
-
-  // Feature key — bump this string when a new feature launches to re-show the modal
-  const FEATURE_KEY = "np_feature_mobile_money_v1";
+  const [currentFeature, setCurrentFeature] = useState<FeatureConfig | null>(null);
 
   useEffect(() => {
     const key = pathname.replace(/\/$/, "");
@@ -73,11 +112,9 @@ export default function DashboardLayout({
   }, [router]);
 
   useEffect(() => {
-    const seen = localStorage.getItem(FEATURE_KEY);
-    if (!seen) {
-      setShowFeatureModal(true);
-    }
-  }, [FEATURE_KEY]);
+    const next = FEATURE_QUEUE.find((f) => !localStorage.getItem(f.featureKey));
+    if (next) setCurrentFeature(next);
+  }, []);
 
   function handleComplianceModalClose() {
     localStorage.setItem("np_compliance_seen", "true");
@@ -85,8 +122,10 @@ export default function DashboardLayout({
   }
 
   function handleFeatureModalClose() {
-    localStorage.setItem(FEATURE_KEY, "true");
-    setShowFeatureModal(false);
+    if (!currentFeature) return;
+    localStorage.setItem(currentFeature.featureKey, "true");
+    const next = FEATURE_QUEUE.find((f) => !localStorage.getItem(f.featureKey));
+    setCurrentFeature(next ?? null);
   }
 
   return (
@@ -106,13 +145,11 @@ export default function DashboardLayout({
         <ComplianceModal onClose={handleComplianceModalClose} />
       )}
 
-      {showFeatureModal && !showComplianceModal && (
+      {currentFeature && !showComplianceModal && (
         <FeatureAnnouncementModal
+          key={currentFeature.featureKey}
+          {...currentFeature}
           onClose={handleFeatureModalClose}
-          title="Introducing Mobile Money Transfers"
-          description="Send money directly to any mobile wallet across Ghana and Namibia. Fast, secure, and available 24/7 for all registered businesses."
-          ctaLabel="Get started"
-          ctaHref="/transfers"
         />
       )}
     </div>
