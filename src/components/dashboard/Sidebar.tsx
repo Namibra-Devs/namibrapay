@@ -154,17 +154,27 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         )}
       >
         {/* Logo + brand */}
-        <div className="flex items-center justify-between px-5 h-16 border-b border-gray-100/50 shrink-0">
+        <div className="flex items-center justify-between px-5 h-14 border-b border-gray-100/50 shrink-0">
           <Link href="/dashboard" className="flex items-center gap-2.5">
             <Image
-              src="/logo.png"
+              src="/favicon.png"
               alt="NamibraPay"
-              width={110}
+              width={40}
               height={30}
               className="rounded-lg"
               style={{ height: "auto" }}
             />
           </Link>
+          {/* <Link href="/dashboard" className="hidden md:flex items-center gap-2.5">
+            <Image
+              src="/logo.png"
+              alt="NamibraPay"
+              width={130}
+              height={30}
+              className="rounded-lg"
+              style={{ height: "auto" }}
+            />
+          </Link> */}
           <button
             title="close"
             type="button"

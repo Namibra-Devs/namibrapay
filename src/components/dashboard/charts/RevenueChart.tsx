@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, TrendingUp } from "lucide-react";
 import {
   AreaChart,
@@ -9,7 +9,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
 } from "recharts";
 import { mockRevenueData } from "@/lib/mock-data/dashboard";
 
@@ -41,10 +40,23 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 export default function RevenueChart() {
   const [currency, setCurrency] = useState("GHS");
   const [currencyOpen, setCurrencyOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [chartWidth, setChartWidth] = useState(0);
+  const CHART_HEIGHT = 144;
+
+  // Measure the container with ResizeObserver — only fires on the client
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setChartWidth(Math.floor(entry.contentRect.width));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const total = mockRevenueData.reduce((sum, d) => sum + d.revenue, 0);
   const hasData = total > 0;
-
   const transactionCount = mockRevenueData.filter((d) => d.revenue > 0).length;
 
   return (
@@ -79,55 +91,58 @@ export default function RevenueChart() {
       {/* Revenue total */}
       <div className="mb-4">
         <p className="text-3xl font-bold font-heading tracking-tight text-gray-900">
-          {hasData
-            ? total.toLocaleString("en-GH", { minimumFractionDigits: 2 })
-            : "0"}
+          {hasData ? total.toLocaleString("en-GH", { minimumFractionDigits: 2 }) : "0"}
         </p>
       </div>
 
-      {/* Chart area */}
-      {hasData ? (
-        <div className="h-36">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={mockRevenueData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#64c6c3" stopOpacity={0.18} />
-                  <stop offset="95%" stopColor="#64c6c3" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-              <XAxis
-                dataKey="date"
-                tick={{ fontSize: 10, fill: "#94a3b8" }}
-                tickLine={false}
-                axisLine={false}
-                interval={5}
-              />
-              <YAxis
-                tickFormatter={formatRevenue}
-                tick={{ fontSize: 10, fill: "#94a3b8" }}
-                tickLine={false}
-                axisLine={false}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="revenue"
-                stroke="#64c6c3"
-                strokeWidth={2}
-                fill="url(#revenueGrad)"
-                dot={false}
-                activeDot={{ r: 4, fill: "#64c6c3", stroke: "#fff", strokeWidth: 2 }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      ) : (
-        <div className="h-36 flex items-center justify-center">
-          <p className="text-sm text-gray-400">No activity for this period</p>
-        </div>
-      )}
+      {/* Chart area — ref container gives us real pixel width; render only once measured */}
+      <div ref={containerRef} style={{ height: CHART_HEIGHT }}>
+        {hasData && chartWidth > 0 && (
+          <AreaChart
+            width={chartWidth}
+            height={CHART_HEIGHT}
+            data={mockRevenueData}
+            margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
+          >
+            <defs>
+              <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%"  stopColor="#64c6c3" stopOpacity={0.18} />
+                <stop offset="95%" stopColor="#64c6c3" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 10, fill: "#94a3b8" }}
+              tickLine={false}
+              axisLine={false}
+              interval={5}
+            />
+            <YAxis
+              tickFormatter={formatRevenue}
+              tick={{ fontSize: 10, fill: "#94a3b8" }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Area
+              type="monotone"
+              dataKey="revenue"
+              stroke="#64c6c3"
+              strokeWidth={2}
+              fill="url(#revenueGrad)"
+              dot={false}
+              activeDot={{ r: 4, fill: "#64c6c3", stroke: "#fff", strokeWidth: 2 }}
+            />
+          </AreaChart>
+        )}
+        {hasData && chartWidth === 0 && null}
+        {!hasData && (
+          <div className="h-full flex items-center justify-center">
+            <p className="text-sm text-gray-400">No activity for this period</p>
+          </div>
+        )}
+      </div>
 
       {/* Footer */}
       <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-1.5 text-xs text-gray-500">
