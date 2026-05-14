@@ -202,7 +202,7 @@ export default function StatusSelect({ value, onChange }: StatusSelectProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.97 }}
             transition={{ duration: 0.13, ease: "easeOut" }}
-            className="absolute left-0 top-full mt-1.5 z-30 w-80 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden"
+            className="absolute left-0 top-full mt-1.5 z-30 w-80 bg-white border border-gray-200 rounded-xl shadow-xl"
           >
             <div className="p-4 space-y-3">
               {/* Status */}
@@ -310,7 +310,7 @@ export default function StatusSelect({ value, onChange }: StatusSelectProps) {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/80">
+            <div className="flex items-center gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/80 rounded-b-xl">
               <button
                 type="button"
                 onClick={handleReset}
