@@ -145,11 +145,12 @@ export default function DateRangePicker({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.97 }}
             transition={{ duration: 0.13, ease: "easeOut" }}
-            className="absolute left-0 top-full mt-2 z-50 w-[260px] bg-white border border-gray-200 rounded-xl shadow-xl p-3"
+            className="absolute left-0 top-full mt-2 z-50 w-65 bg-white border border-gray-200 rounded-xl shadow-xl p-3"
           >
             {/* Month nav */}
             <div className="flex items-center justify-between mb-2">
               <button
+                title="previous"
                 type="button"
                 onClick={prevMonth}
                 className="p-1 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
@@ -160,6 +161,7 @@ export default function DateRangePicker({
                 {MONTH_NAMES[viewMonth]} {viewYear}
               </span>
               <button
+                title="next"
                 type="button"
                 onClick={nextMonth}
                 className="p-1 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"

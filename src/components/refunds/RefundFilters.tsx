@@ -85,7 +85,7 @@ function InlineSelect<T extends string>({
         <ChevronDown
           className={cn(
             "w-3.5 h-3.5 text-gray-400 transition-transform duration-150",
-            open && "rotate-180"
+            open && "rotate-180",
           )}
         />
       </button>
@@ -110,7 +110,7 @@ function InlineSelect<T extends string>({
                   "w-full text-left px-3 py-2 text-sm transition-colors",
                   opt.value === value
                     ? "bg-brand-teal/5 text-brand-teal font-medium"
-                    : "text-gray-700 hover:bg-gray-50"
+                    : "text-gray-700 hover:bg-gray-50",
                 )}
               >
                 {opt.label}
@@ -128,7 +128,10 @@ interface RefundFiltersProps {
   onChange: (filters: RefundFilterState) => void;
 }
 
-export default function RefundFilters({ filters, onChange }: RefundFiltersProps) {
+export default function RefundFilters({
+  filters,
+  onChange,
+}: RefundFiltersProps) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<RefundFilterState>(filters);
   const ref = useRef<HTMLDivElement>(null);
@@ -156,7 +159,10 @@ export default function RefundFilters({ filters, onChange }: RefundFiltersProps)
     };
   }, [open]);
 
-  function update<K extends keyof RefundFilterState>(key: K, val: RefundFilterState[K]) {
+  function update<K extends keyof RefundFilterState>(
+    key: K,
+    val: RefundFilterState[K],
+  ) {
     setDraft((prev) => ({ ...prev, [key]: val }));
   }
 
@@ -183,14 +189,14 @@ export default function RefundFilters({ filters, onChange }: RefundFiltersProps)
             "flex items-center gap-1.5 h-9 px-3 rounded-xl border text-sm font-medium transition-colors select-none whitespace-nowrap",
             active
               ? "bg-brand-teal text-white border-brand-teal hover:bg-brand-teal/90"
-              : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+              : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300",
           )}
         >
           <span>Filters</span>
           <ChevronDown
             className={cn(
               "w-3.5 h-3.5 transition-transform duration-200 opacity-70",
-              open && "rotate-180"
+              open && "rotate-180",
             )}
           />
         </button>
@@ -233,7 +239,9 @@ export default function RefundFilters({ filters, onChange }: RefundFiltersProps)
                       type="text"
                       inputMode="numeric"
                       value={draft.amount}
-                      onChange={(e) => update("amount", e.target.value.replace(/[^0-9.]/g, ""))}
+                      onChange={(e) =>
+                        update("amount", e.target.value.replace(/[^0-9.]/g, ""))
+                      }
                       placeholder="Amount"
                       className="min-w-0 flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 placeholder:text-gray-300"
                     />
