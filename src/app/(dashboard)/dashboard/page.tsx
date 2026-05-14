@@ -83,7 +83,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Recent Transactions */}
         <div className="lg:col-span-2">
-          <RecentTransactions transactions={mockTransactions} />
+          <RecentTransactions transactions={mockTransactions.slice(0, 4)} />
         </div>
 
         {/* Quick Actions */}
