@@ -4,6 +4,10 @@ import { TrendingUp, ArrowLeftRight, Users, Banknote } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import RecentTransactions from "@/components/dashboard/RecentTransactions";
 import QuickActions from "@/components/dashboard/QuickActions";
+import BalancePanel from "@/components/dashboard/BalancePanel";
+import RevenueChart from "@/components/dashboard/charts/RevenueChart";
+import SuccessRateChart from "@/components/dashboard/charts/SuccessRateChart";
+import PaymentIssuesChart from "@/components/dashboard/charts/PaymentIssuesChart";
 import { mockDashboardStats } from "@/lib/mock-data/dashboard";
 import { mockTransactions } from "@/lib/mock-data/transactions";
 import { mockUser } from "@/lib/mock-data/dashboard";
@@ -57,6 +61,22 @@ export default function DashboardPage() {
             icon={statIcons[stat.colorKey]}
           />
         ))}
+      </div>
+
+      {/* Revenue chart + Balance panel */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
+          <RevenueChart />
+        </div>
+        <div>
+          <BalancePanel />
+        </div>
+      </div>
+
+      {/* Success Rate + Payment Issues charts */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <SuccessRateChart />
+        <PaymentIssuesChart />
       </div>
 
       {/* Content grid */}

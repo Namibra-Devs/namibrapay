@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Sidebar from "@/components/dashboard/Sidebar";
 import TopBar from "@/components/dashboard/TopBar";
 import ComplianceModal from "@/components/compliance/ComplianceModal";
+import FeatureAnnouncementModal from "@/components/dashboard/FeatureAnnouncementModal";
 
 const PAGE_TITLES: Record<string, string> = {
   "/dashboard":         "NamibraPay - Dashboard",
@@ -43,6 +44,10 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   // const [ready, setReady] = useState(() => process.env.NODE_ENV === "development");
   const [showComplianceModal, setShowComplianceModal] = useState(false);
+  const [showFeatureModal, setShowFeatureModal] = useState(false);
+
+  // Feature key — bump this string when a new feature launches to re-show the modal
+  const FEATURE_KEY = "np_feature_mobile_money_v1";
 
   useEffect(() => {
     const key = pathname.replace(/\/$/, "");
@@ -67,9 +72,21 @@ export default function DashboardLayout({
     }
   }, [router]);
 
+  useEffect(() => {
+    const seen = localStorage.getItem(FEATURE_KEY);
+    if (!seen) {
+      setShowFeatureModal(true);
+    }
+  }, [FEATURE_KEY]);
+
   function handleComplianceModalClose() {
     localStorage.setItem("np_compliance_seen", "true");
     setShowComplianceModal(false);
+  }
+
+  function handleFeatureModalClose() {
+    localStorage.setItem(FEATURE_KEY, "true");
+    setShowFeatureModal(false);
   }
 
   return (
@@ -87,6 +104,16 @@ export default function DashboardLayout({
 
       {showComplianceModal && (
         <ComplianceModal onClose={handleComplianceModalClose} />
+      )}
+
+      {showFeatureModal && !showComplianceModal && (
+        <FeatureAnnouncementModal
+          onClose={handleFeatureModalClose}
+          title="Introducing Mobile Money Transfers"
+          description="Send money directly to any mobile wallet across Ghana and Namibia. Fast, secure, and available 24/7 for all registered businesses."
+          ctaLabel="Get started"
+          ctaHref="/transfers"
+        />
       )}
     </div>
   );
