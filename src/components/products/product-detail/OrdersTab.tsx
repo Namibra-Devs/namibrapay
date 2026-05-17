@@ -94,7 +94,7 @@ export default function OrdersTab({ product }: { product: Product }) {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[500px]">
+              <table className="w-full min-w-125">
                 <thead>
                   <tr className="border-b border-gray-100">
                     <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
