@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import type React from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -158,52 +159,64 @@ export function CustomSelect({
   placeholder?: string;
   className?: string;
 }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [dropPos, setDropPos] = useState<{ top: number; left: number; width: number } | null>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    function handler(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+  function openDrop() {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setDropPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
     }
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  }
+
+  function closeDrop() {
+    setDropPos(null);
+  }
 
   const selected = options.find((o) => o.value === value);
 
   return (
-    <div ref={ref} className={`relative ${className ?? ""}`}>
+    <div className={className ?? ""}>
       <button
+        ref={btnRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => (dropPos ? closeDrop() : openDrop())}
         className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal"
       >
         <span className={selected ? "text-gray-700" : "text-gray-400"}>
           {selected?.label ?? placeholder}
         </span>
         <ChevronDown
-          className={`w-4 h-4 text-gray-400 shrink-0 transition-transform duration-150 ${open ? "rotate-180" : ""}`}
+          className={`w-4 h-4 text-gray-400 shrink-0 transition-transform duration-150 ${dropPos ? "rotate-180" : ""}`}
         />
       </button>
 
-      {open && (
-        <div className="absolute z-20 mt-1.5 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden py-1 max-h-56 overflow-y-auto">
-          {options.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => { onChange(opt.value); setOpen(false); }}
-              className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                value === opt.value
-                  ? "text-brand-teal bg-brand-teal/5 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
+      {dropPos &&
+        createPortal(
+          <>
+            <div className="fixed inset-0 z-40" onClick={closeDrop} />
+            <div
+              className="fixed z-50 bg-white border border-gray-200 rounded-xl shadow-lg py-1 max-h-56 overflow-y-auto"
+              style={{ top: dropPos.top, left: dropPos.left, width: dropPos.width }}
             >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      )}
+              {options.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => { onChange(opt.value); closeDrop(); }}
+                  className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                    value === opt.value
+                      ? "text-brand-teal bg-brand-teal/5 font-medium"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </>,
+          document.body,
+        )}
     </div>
   );
 }
