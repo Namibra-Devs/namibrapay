@@ -8,6 +8,7 @@ import {
 import { cn } from "@/lib/utils";
 import { mockTeamMembers, DEFAULT_ROLES, ALL_PERMISSIONS } from "@/lib/mock-data/settings";
 import type { Role, TeamMember } from "@/lib/mock-data/settings";
+import { CustomSelect } from "@/components/settings/SettingSection";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Shared Modal wrapper
@@ -34,7 +35,7 @@ function Modal({
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
           <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors">
+          <button title="close" type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -68,14 +69,12 @@ function InviteModal({ onClose }: { onClose: () => void }) {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">Choose Role</label>
-          <select
+          <CustomSelect
             value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal bg-white"
-          >
-            <option value="">-- Select a role --</option>
-            {DEFAULT_ROLES.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-          </select>
+            onChange={setRole}
+            placeholder="Select a role"
+            options={DEFAULT_ROLES.map((r) => ({ value: r.id, label: r.name }))}
+          />
         </div>
         <label className="flex items-center gap-2.5 cursor-pointer">
           <div
@@ -151,7 +150,11 @@ function CreateRoleModal({ onClose, onCreate }: { onClose: () => void; onCreate:
   function toggle(key: string) {
     setChecked((prev) => {
       const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
       return next;
     });
   }
@@ -410,7 +413,7 @@ function RolesView({ onBack }: { onBack: () => void }) {
           </button>
         </div>
 
-        <div className="flex min-h-[500px]">
+        <div className="flex min-h-125">
           {/* Sidebar */}
           <div className="w-56 shrink-0 border-r border-gray-100 p-4">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Default Roles</p>

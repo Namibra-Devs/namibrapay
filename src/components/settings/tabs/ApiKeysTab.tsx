@@ -20,7 +20,7 @@ function Modal({
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-          <button type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors">
+          <button title="close" type="button" onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -171,7 +171,7 @@ export default function ApiKeysTab() {
               {ips.map((ip) => (
                 <div key={ip} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-xl">
                   <span className="text-sm font-mono text-gray-700">{ip}</span>
-                  <button type="button" onClick={() => setIps((prev) => prev.filter((i) => i !== ip))} className="text-gray-400 hover:text-red-500 transition-colors">
+                  <button title="close" type="button" onClick={() => setIps((prev) => prev.filter((i) => i !== ip))} className="text-gray-400 hover:text-red-500 transition-colors">
                     <X className="w-4 h-4" />
                   </button>
                 </div>

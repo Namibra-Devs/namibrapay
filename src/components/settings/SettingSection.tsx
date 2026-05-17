@@ -1,4 +1,8 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
 import type React from "react";
+import { ChevronDown } from "lucide-react";
 
 interface SettingSectionProps {
   title?: string;
@@ -125,6 +129,7 @@ export function Toggle({
   return (
     <div className="flex items-center gap-3">
       <button
+        title="check"
         type="button"
         onClick={() => onChange(!checked)}
         className={`relative w-10 h-6 rounded-full transition-colors ${checked ? "bg-brand-teal" : "bg-gray-200"}`}
@@ -139,3 +144,67 @@ export function Toggle({
     </div>
   );
 }
+
+export function CustomSelect({
+  value,
+  onChange,
+  options,
+  placeholder = "Select...",
+  className,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+  placeholder?: string;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const selected = options.find((o) => o.value === value);
+
+  return (
+    <div ref={ref} className={`relative ${className ?? ""}`}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal"
+      >
+        <span className={selected ? "text-gray-700" : "text-gray-400"}>
+          {selected?.label ?? placeholder}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-gray-400 shrink-0 transition-transform duration-150 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute z-20 mt-1.5 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden py-1 max-h-56 overflow-y-auto">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+              className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                value === opt.value
+                  ? "text-brand-teal bg-brand-teal/5 font-medium"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+

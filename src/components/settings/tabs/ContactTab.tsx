@@ -33,7 +33,7 @@ function TagInput({
           className="flex items-center gap-1.5 px-2.5 py-1 bg-brand-teal/10 text-brand-teal text-xs font-medium rounded-lg"
         >
           {tag}
-          <button type="button" onClick={() => remove(tag)}>
+          <button title="close" type="button" onClick={() => remove(tag)}>
             <X className="w-3 h-3" />
           </button>
         </span>

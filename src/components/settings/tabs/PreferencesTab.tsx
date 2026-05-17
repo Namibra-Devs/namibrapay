@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Download, ImagePlus, AlertTriangle, Trash2 } from "lucide-react";
-import SettingSection, { Field, SaveButton, Checkbox, Input, Toggle } from "@/components/settings/SettingSection";
+import SettingSection, { Field, SaveButton, Checkbox, Input, CustomSelect } from "@/components/settings/SettingSection";
 
 export default function PreferencesTab() {
   // Payments
@@ -56,13 +56,12 @@ export default function PreferencesTab() {
       {/* Payments */}
       <SettingSection title="Payments" footer={<SaveButton />}>
         <Field label="Default Currency">
-          <select
+          <CustomSelect
             value={defaultCurrency}
-            onChange={(e) => setDefaultCurrency(e.target.value)}
-            className="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors"
-          >
-            {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
-          </select>
+            onChange={setDefaultCurrency}
+            options={CURRENCIES.map((c) => ({ value: c, label: c }))}
+            className="max-w-40"
+          />
         </Field>
         <Field label="Accept payments via">
           <div className="space-y-2.5">
@@ -114,14 +113,15 @@ export default function PreferencesTab() {
           <Input value={transferEmail} onChange={setTransferEmail} placeholder="example@example.com" type="email" />
         </Field>
         <Field label="On Reject">
-          <select
+          <CustomSelect
             value={onReject}
-            onChange={(e) => setOnReject(e.target.value)}
-            className="w-full max-w-xs px-3 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors"
-          >
-            <option>Blacklist Recipient</option>
-            <option>Do Nothing</option>
-          </select>
+            onChange={setOnReject}
+            options={[
+              { value: "Blacklist Recipient", label: "Blacklist Recipient" },
+              { value: "Do Nothing", label: "Do Nothing" },
+            ]}
+            className="max-w-xs"
+          />
         </Field>
       </SettingSection>
 
@@ -176,13 +176,12 @@ export default function PreferencesTab() {
           ))}
         </div>
         <Field label="Balance currency">
-          <select
+          <CustomSelect
             value={balanceCurrency}
-            onChange={(e) => setBalanceCurrency(e.target.value)}
-            className="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors"
-          >
-            {CURRENCIES.map((c) => <option key={c}>{c}</option>)}
-          </select>
+            onChange={setBalanceCurrency}
+            options={CURRENCIES.map((c) => ({ value: c, label: c }))}
+            className="max-w-40"
+          />
         </Field>
         <Field label="Receive notifications via">
           <div className="space-y-2.5">
