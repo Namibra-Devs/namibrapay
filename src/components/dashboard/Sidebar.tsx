@@ -57,33 +57,29 @@ const navGroups: NavGroup[] = [
       { label: "Refunds", href: "/refunds", icon: RotateCcw },
       { label: "Payouts", href: "/payouts", icon: Banknote },
       { label: "Disputes", href: "/disputes", icon: AlertTriangle },
-      {
-        label: "Transaction Splits",
-        href: "/transaction-splits",
-        icon: GitBranch,
-      },
-      { label: "Subaccounts", href: "/subaccounts", icon: Layers2 },
-      { label: "Terminals", href: "/terminals", icon: Monitor },
+      // { label: "Transaction Splits", href: "/transaction-splits", icon: GitBranch,},
+      // { label: "Subaccounts", href: "/subaccounts", icon: Layers2 },
+      // { label: "Terminals", href: "/terminals", icon: Monitor },
     ],
   },
-  {
-    section: "RECURRING",
-    items: [
-      { label: "Subscribers", href: "/subscribers", icon: UserCheck },
-      { label: "Plans", href: "/plans", icon: Layers },
-      { label: "Subscriptions", href: "/subscriptions", icon: RefreshCw },
-    ],
-  },
-  {
-    section: "COMMERCE",
-    items: [
-      { label: "Payment Pages", href: "/payment-pages", icon: Globe },
-      { label: "Products", href: "/products", icon: Package },
-      { label: "Storefronts", href: "/storefronts", icon: Store },
-      { label: "Orders", href: "/orders", icon: ShoppingCart },
-      { label: "Invoices", href: "/invoices", icon: Receipt },
-    ],
-  },
+  // {
+  //   section: "RECURRING",
+  //   items: [
+  //     { label: "Subscribers", href: "/subscribers", icon: UserCheck },
+  //     { label: "Plans", href: "/plans", icon: Layers },
+  //     { label: "Subscriptions", href: "/subscriptions", icon: RefreshCw },
+  //   ],
+  // },
+  // {
+  //   section: "COMMERCE",
+  //   items: [
+  //     { label: "Payment Pages", href: "/payment-pages", icon: Globe },
+  //     { label: "Products", href: "/products", icon: Package },
+  //     { label: "Storefronts", href: "/storefronts", icon: Store },
+  //     { label: "Orders", href: "/orders", icon: ShoppingCart },
+  //     { label: "Invoices", href: "/invoices", icon: Receipt },
+  //   ],
+  // },
   {
     section: "DEVELOPER",
     items: [
