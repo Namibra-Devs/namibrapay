@@ -118,7 +118,10 @@ export default function NotificationsDropdown() {
       {/* Bell Icon */}
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 text-gray-600 hover:text-brand-navy transition-colors rounded-lg hover:bg-gray-100"
+        className={cn(
+          "relative p-2 text-gray-600 hover:text-brand-navy transition-all rounded-xl hover:bg-gray-100",
+          open && "bg-gray-100 text-brand-navy"
+        )}
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
@@ -131,13 +134,20 @@ export default function NotificationsDropdown() {
       {/* Dropdown */}
       <AnimatePresence>
         {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute -right-24 md:right-0 mt-2 w-86 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200/70 overflow-hidden z-50"
-          >
+          <>
+            {/* Backdrop to close on outside click */}
+            <div 
+              className="fixed inset-0 z-40"
+              onClick={() => setOpen(false)}
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="absolute -right-24 md:right-0 mt-2 w-86 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200/70 overflow-hidden z-50"
+            >
             {/* Header */}
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <div>
@@ -245,6 +255,7 @@ export default function NotificationsDropdown() {
               </div>
             )}
           </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
