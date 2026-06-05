@@ -430,7 +430,7 @@ Generated on: ${new Date().toISOString()}
                 className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
               >
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold text-gray-600">Generate Report</h2>
+                  <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Generate Report</h2>
                   <button
                     onClick={() => !isProcessing && setShowGenerateModal(false)}
                     disabled={isProcessing}
@@ -500,7 +500,7 @@ Generated on: ${new Date().toISOString()}
                     <div className="w-10 h-10 bg-brand-teal/10 rounded-full flex items-center justify-center">
                       <Eye className="w-5 h-5 text-brand-teal" />
                     </div>
-                    <h2 className="text-lg font-bold text-gray-600">Report History</h2>
+                    <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Report History</h2>
                   </div>
                   <button
                     onClick={() => setShowHistoryModal(false)}
@@ -588,7 +588,7 @@ Generated on: ${new Date().toISOString()}
                 className="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto"
               >
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold text-gray-600">Create Custom Report</h2>
+                  <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Create Custom Report</h2>
                   <button
                     onClick={() => !isProcessing && setShowCustomReportModal(false)}
                     disabled={isProcessing}

@@ -473,7 +473,7 @@ export default function CommunicationsCenter() {
                     <div className="w-10 h-10 bg-brand-teal/10 rounded-full flex items-center justify-center">
                       <Eye className="w-5 h-5 text-brand-teal" />
                     </div>
-                    <h2 className="text-lg font-bold text-gray-600">Message Preview</h2>
+                    <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Message Preview</h2>
                   </div>
                   <button
                     onClick={() => setShowPreviewModal(false)}
@@ -553,7 +553,7 @@ export default function CommunicationsCenter() {
                 className="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto"
               >
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold text-gray-600">Create New Template</h2>
+                  <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Create New Template</h2>
                   <button
                     onClick={() => !isProcessing && setShowNewTemplateModal(false)}
                     disabled={isProcessing}
@@ -676,7 +676,7 @@ export default function CommunicationsCenter() {
                 className="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto"
               >
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold text-gray-600">Edit Template</h2>
+                  <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Edit Template</h2>
                   <button
                     onClick={() => !isProcessing && setShowEditTemplateModal(false)}
                     disabled={isProcessing}

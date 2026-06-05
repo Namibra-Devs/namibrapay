@@ -585,7 +585,7 @@ ${caseData.tasks.map((t) => `- [${t.completed ? "X" : " "}] ${t.description}`).j
               className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-gray-600">Reassign Case</h2>
+                <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Reassign Case</h2>
                 <button
                   onClick={() => !isProcessing && setShowReassignModal(false)}
                   disabled={isProcessing}
@@ -649,7 +649,7 @@ ${caseData.tasks.map((t) => `- [${t.completed ? "X" : " "}] ${t.description}`).j
               className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-gray-600">Close Case</h2>
+                <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Close Case</h2>
                 <button
                   onClick={() => !isProcessing && setShowCloseCaseModal(false)}
                   disabled={isProcessing}
@@ -720,7 +720,7 @@ ${caseData.tasks.map((t) => `- [${t.completed ? "X" : " "}] ${t.description}`).j
               className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-gray-600">Confirm STR Submission</h2>
+                <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Confirm STR Submission</h2>
                 <button
                   onClick={() => !isProcessing && setShowSubmitSTRModal(false)}
                   disabled={isProcessing}

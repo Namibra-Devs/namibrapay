@@ -377,7 +377,7 @@ export default function CasesPage() {
                 className="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6"
               >
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold text-gray-600">Create New Case</h2>
+                  <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Create New Case</h2>
                   <button
                     onClick={() => !isCreatingCase && setShowNewCaseModal(false)}
                     disabled={isCreatingCase}
