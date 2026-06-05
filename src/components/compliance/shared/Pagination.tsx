@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/compliance-utils";
 
 interface PaginationProps {

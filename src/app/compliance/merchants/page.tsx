@@ -5,19 +5,15 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Building2,
-  Search,
-  Filter,
   Download,
   Eye,
   AlertCircle,
   TrendingUp,
-  Users,
   Activity,
 } from "lucide-react";
 import Link from "next/link";
 import DashboardLayout from "@/components/compliance/DashboardLayout";
 import Card from "@/components/compliance/shared/Card";
-import Badge from "@/components/compliance/shared/Badge";
 import SearchBar from "@/components/compliance/shared/SearchBar";
 import Pagination from "@/components/compliance/shared/Pagination";
 import StatCard from "@/components/compliance/shared/StatCard";

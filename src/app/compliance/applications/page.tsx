@@ -5,12 +5,9 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Search,
-  Filter,
   Download,
-  MoreVertical,
   Clock,
   AlertCircle,
-  ChevronDown,
 } from "lucide-react";
 import DashboardLayout from "@/components/compliance/DashboardLayout";
 import Link from "next/link";
@@ -19,7 +16,6 @@ import ApplicationActionsMenu from "@/components/compliance/ApplicationActionsMe
 import Pagination from "@/components/compliance/shared/Pagination";
 import {
   cn,
-  formatDate,
   calculateSLARemaining,
   formatStatus,
   getRiskBadgeColor,

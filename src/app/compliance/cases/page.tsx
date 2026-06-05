@@ -10,8 +10,6 @@ import {
   Clock,
   CheckCircle2,
   AlertTriangle,
-  Search,
-  Filter,
   Download,
 } from "lucide-react";
 import Link from "next/link";

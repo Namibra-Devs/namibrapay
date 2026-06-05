@@ -3,15 +3,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Shield,
   AlertTriangle,
   CheckCircle2,
   XCircle,
   Clock,
   Eye,
-  Filter,
   Download,
-  Search,
 } from "lucide-react";
 import DashboardLayout from "@/components/compliance/DashboardLayout";
 import Card from "@/components/compliance/shared/Card";
@@ -251,20 +248,24 @@ export default function ScreeningPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: index * 0.05 }}
-                  className="hover:bg-gray-50 transition-colors"
+                  onClick={() => {
+                    setSelectedScreening(screening);
+                    setShowDispositionModal(true);
+                  }}
+                  className="hover:bg-gray-50 transition-colors cursor-pointer"
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-3">
                     <div>
                       <p className="font-medium text-gray-900">{screening.subjectName}</p>
                       <p className="text-sm text-gray-500">{screening.id}</p>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-3">
                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-brand-navy/10 text-brand-navy border border-brand-navy/20">
                       {screening.listType.replace(/_/g, " ")}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-3">
                     <span
                       className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${getMatchScoreColor(
                         screening.matchScore
@@ -273,7 +274,7 @@ export default function ScreeningPage() {
                       {screening.matchScore}%
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-3">
                     <div className="flex flex-wrap gap-1">
                       {screening.matchedAttributes.map((attr, i) => (
                         <span
@@ -285,17 +286,17 @@ export default function ScreeningPage() {
                       ))}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-3">
                     <span className="text-xs text-gray-600">
                       {formatDate(screening.screenedAt, true)}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-3">
                     <Badge variant={getDispositionColor(screening.disposition)} size="sm">
                       {screening.disposition.replace(/_/g, " ")}
                     </Badge>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-6 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => {
                         setSelectedScreening(screening);
