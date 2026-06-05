@@ -231,6 +231,44 @@ export default function MerchantDetailPage() {
     setShowStatusModal(true);
   };
 
+  // Handle reactivate action
+  const handleReactivate = () => {
+    setNewStatus("ACTIVE");
+    setShowStatusModal(true);
+  };
+
+  // Handle blacklist action
+  const handleBlacklist = () => {
+    setNewStatus("BLACKLISTED");
+    setShowStatusModal(true);
+  };
+
+  // Handle periodic review
+  const handleTriggerReview = async () => {
+    setProcessing(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      showSuccess("Periodic review triggered successfully. Review case created.");
+    } catch (error) {
+      alert("Failed to trigger review. Please try again.");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  // Handle re-run screening
+  const handleRerunScreening = async () => {
+    setProcessing(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      showSuccess("Screening re-run successfully. New results will appear shortly.");
+    } catch (error) {
+      alert("Failed to re-run screening. Please try again.");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const tabs = [
     { id: "overview", label: "Overview", icon: Building2 },
     { id: "documents", label: "Documents", icon: FileText },
@@ -302,16 +340,55 @@ export default function MerchantDetailPage() {
             <p className="text-sm text-gray-500 mt-1">{merchant.id}</p>
           </div>
         </div>
-        <div className="flex gap-3 shrink-0">
+        <div className="flex flex-wrap gap-3 shrink-0">
+          {/* Status Actions */}
+          {merchant.status === "ACTIVE" && (
+            <button
+              onClick={handleSuspend}
+              disabled={processing}
+              className="px-4 py-2 border border-orange-300 text-orange-700 rounded-lg font-medium hover:bg-orange-50 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Suspend
+            </button>
+          )}
+          {merchant.status === "SUSPENDED" && (
+            <button
+              onClick={handleReactivate}
+              disabled={processing}
+              className="px-4 py-2 border border-green-300 text-green-700 rounded-lg font-medium hover:bg-green-50 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Reactivate
+            </button>
+          )}
+          {merchant.status !== "BLACKLISTED" && (
+            <button
+              onClick={handleBlacklist}
+              disabled={processing}
+              className="px-4 py-2 border border-red-300 text-red-700 rounded-lg font-medium hover:bg-red-50 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Blacklist
+            </button>
+          )}
+          
+          {/* Other Actions */}
           <button
-            onClick={handleSuspend}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm"
+            onClick={handleTriggerReview}
+            disabled={processing}
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Suspend
+            {processing ? "Processing..." : "Trigger Review"}
+          </button>
+          <button
+            onClick={handleRerunScreening}
+            disabled={processing}
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {processing ? "Processing..." : "Re-run Screening"}
           </button>
           <button
             onClick={handleRiskUpdate}
-            className="px-4 py-2 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm"
+            disabled={processing}
+            className="px-4 py-2 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Update Risk
           </button>

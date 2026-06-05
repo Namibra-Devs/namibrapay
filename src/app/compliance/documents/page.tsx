@@ -15,6 +15,8 @@ import {
   XCircle,
   Loader2,
   FileDown,
+  MoreVertical,
+  Upload,
 } from "lucide-react";
 import DashboardLayout from "@/components/compliance/DashboardLayout";
 import Card from "@/components/compliance/shared/Card";
@@ -132,6 +134,10 @@ export default function DocumentsPage() {
   const [rejectingDocument, setRejectingDocument] = useState<Document | null>(null);
   const [rejectionNotes, setRejectionNotes] = useState("");
   const [isExporting, setIsExporting] = useState(false);
+  const [showRequestReuploadModal, setShowRequestReuploadModal] = useState(false);
+  const [reuploadingDocument, setReuploadingDocument] = useState<Document | null>(null);
+  const [reuploadReason, setReuploadReason] = useState("");
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   // Helper functions
   const showToast = (message: string) => {
@@ -288,6 +294,42 @@ export default function DocumentsPage() {
     } catch (error) {
       console.error("Failed to download document:", error);
       showAlert("Failed to download document. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Handle request re-upload
+  const handleRequestReuploadClick = (doc: Document) => {
+    setReuploadingDocument(doc);
+    setReuploadReason("");
+    setShowRequestReuploadModal(true);
+  };
+
+  const handleRequestReuploadConfirm = async () => {
+    if (!reuploadingDocument) return;
+
+    if (!reuploadReason.trim()) {
+      showAlert("Please provide a reason for requesting re-upload");
+      return;
+    }
+
+    setShowRequestReuploadModal(false);
+    setIsProcessing(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // In real app, this would:
+      // 1. Notify applicant via email/SMS
+      // 2. Update document status to PENDING_REUPLOAD
+      // 3. Log in audit trail
+
+      showToast(`Re-upload request sent for ${reuploadingDocument.fileName}`);
+      setReuploadingDocument(null);
+      setReuploadReason("");
+    } catch (error) {
+      console.error("Failed to request re-upload:", error);
+      showAlert("Failed to send re-upload request. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -562,6 +604,18 @@ export default function DocumentsPage() {
                       </button>
                     </>
                   )}
+                  {(viewingDocument.status === "REJECTED" || viewingDocument.status === "EXPIRED") && (
+                    <button
+                      onClick={() => {
+                        setShowViewModal(false);
+                        handleRequestReuploadClick(viewingDocument);
+                      }}
+                      className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors text-sm flex items-center justify-center gap-2"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Request Re-upload
+                    </button>
+                  )}
                   <button
                     onClick={() => setShowViewModal(false)}
                     className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm"
@@ -703,6 +757,86 @@ export default function DocumentsPage() {
                       <XCircle className="w-4 h-4" />
                     )}
                     Reject Document
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Request Re-upload Modal */}
+        <AnimatePresence>
+          {showRequestReuploadModal && reuploadingDocument && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4"
+              onClick={() => !isProcessing && setShowRequestReuploadModal(false)}
+              style={{ margin: 0 }}
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Request Re-upload</h2>
+                  <button
+                    onClick={() => !isProcessing && setShowRequestReuploadModal(false)}
+                    disabled={isProcessing}
+                    className="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="mb-6">
+                  <p className="text-sm text-gray-700 mb-4">
+                    Request the applicant to re-upload <strong>{reuploadingDocument.fileName}</strong>. They will be notified via email/SMS.
+                  </p>
+                  <textarea
+                    value={reuploadReason}
+                    onChange={(e) => setReuploadReason(e.target.value)}
+                    placeholder="E.g., Document is expired, please submit an updated version..."
+                    rows={4}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors"
+                    autoFocus
+                  />
+                </div>
+
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg mb-6">
+                  <p className="text-xs text-blue-800">
+                    The applicant will receive a notification with your message and instructions to upload a new document.
+                  </p>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowRequestReuploadModal(false)}
+                    disabled={isProcessing}
+                    className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleRequestReuploadConfirm}
+                    disabled={isProcessing}
+                    className="flex-1 px-4 py-2.5 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="w-4 h-4" />
+                        Send Request
+                      </>
+                    )}
                   </button>
                 </div>
               </motion.div>
@@ -922,21 +1056,92 @@ export default function DocumentsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-3">
+                      <div className="relative">
                         <button
-                          onClick={() => handleViewDocument(doc)}
-                          className="text-brand-teal hover:text-brand-teal/80 font-medium text-sm flex items-center gap-1 transition-colors"
+                          onClick={() => setOpenDropdownId(openDropdownId === doc.id ? null : doc.id)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                         >
-                          <Eye className="w-4 h-4" />
-                          View
+                          <MoreVertical className="w-4 h-4 text-gray-600" />
                         </button>
-                        <button
-                          onClick={() => handleDownload(doc)}
-                          disabled={isProcessing}
-                          className="text-gray-600 hover:text-gray-900 font-medium text-sm flex items-center gap-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <Download className="w-4 h-4" />
-                        </button>
+                        
+                        {/* Dropdown Menu */}
+                        <AnimatePresence>
+                          {openDropdownId === doc.id && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                              transition={{ duration: 0.15 }}
+                              className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+                              onMouseLeave={() => setOpenDropdownId(null)}
+                            >
+                              <button
+                                onClick={() => {
+                                  setOpenDropdownId(null);
+                                  handleViewDocument(doc);
+                                }}
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                              >
+                                <Eye className="w-4 h-4" />
+                                View Details
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setOpenDropdownId(null);
+                                  handleDownload(doc);
+                                }}
+                                disabled={isProcessing}
+                                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <Download className="w-4 h-4" />
+                                Download
+                              </button>
+                              
+                              {doc.status === "PENDING" && (
+                                <>
+                                  <div className="border-t border-gray-100 my-1"></div>
+                                  <button
+                                    onClick={() => {
+                                      setOpenDropdownId(null);
+                                      handleVerifyClick(doc);
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-green-700 hover:bg-green-50 flex items-center gap-2 transition-colors"
+                                  >
+                                    <CheckCircle2 className="w-4 h-4" />
+                                    Verify
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setOpenDropdownId(null);
+                                      handleRejectClick(doc);
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-red-700 hover:bg-red-50 flex items-center gap-2 transition-colors"
+                                  >
+                                    <XCircle className="w-4 h-4" />
+                                    Reject
+                                  </button>
+                                </>
+                              )}
+                              
+                              {(doc.status === "REJECTED" || doc.status === "EXPIRED") && (
+                                <>
+                                  <div className="border-t border-gray-100 my-1"></div>
+                                  <button
+                                    onClick={() => {
+                                      setOpenDropdownId(null);
+                                      handleRequestReuploadClick(doc);
+                                    }}
+                                    disabled={isProcessing}
+                                    className="w-full px-4 py-2 text-left text-sm text-orange-700 hover:bg-orange-50 flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    <Upload className="w-4 h-4" />
+                                    Request Re-upload
+                                  </button>
+                                </>
+                              )}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                     </td>
                   </motion.tr>

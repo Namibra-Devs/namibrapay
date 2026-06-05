@@ -20,6 +20,7 @@ import {
   ChevronDown,
   ScrollText,
   Activity,
+  GitPullRequest,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -31,6 +32,7 @@ import { cn } from "@/lib/compliance-utils";
 const navItems = [
   { icon: LayoutDashboard, label: "Overview", href: "/compliance/dashboard" },
   { icon: FileText, label: "Applications", href: "/compliance/applications" },
+  { icon: GitPullRequest, label: "Approvals", href: "/compliance/approvals" },
   { icon: Users, label: "Merchants", href: "/compliance/merchants" },
   { icon: Shield, label: "Screening", href: "/compliance/screening" },
   { icon: AlertTriangle, label: "Cases", href: "/compliance/cases" },

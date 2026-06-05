@@ -1,14 +1,11 @@
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Compliance Dashboard | NamibraPay",
-  description: "NamibraPay Compliance Officer Dashboard",
-};
+import { RBACProvider } from "@/contexts/RBACContext";
 
 export default function ComplianceLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <RBACProvider>{children}</RBACProvider>;
 }
