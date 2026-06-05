@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   Clock,
@@ -18,6 +18,10 @@ import {
   MessageSquare,
   History,
   Loader2,
+  X,
+  Save,
+  Check,
+  Upload,
 } from "lucide-react";
 import DashboardLayout from "@/components/compliance/DashboardLayout";
 import Link from "next/link";
@@ -145,6 +149,12 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
   const [decisionNote, setDecisionNote] = useState("");
   const [rejectionReason, setRejectionReason] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [newNote, setNewNote] = useState("");
+  const [isInternalNote, setIsInternalNote] = useState(true);
+  const [notes, setNotes] = useState(mockApplication.notes);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [documents, setDocuments] = useState(mockApplication.documents);
 
   const sla = calculateSLARemaining(mockApplication.slaDeadline);
 
@@ -152,22 +162,109 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
     { id: "info", label: "Information", icon: User },
     { id: "documents", label: "Documents", icon: FileText },
     { id: "screening", label: "Screening", icon: Shield },
-    { id: "notes", label: "Notes", icon: MessageSquare },
+    { id: "notes", label: `Notes (${notes.length})`, icon: MessageSquare },
     { id: "audit", label: "Audit Trail", icon: History },
   ];
 
+  // Show success toast
+  const showSuccess = useCallback((message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  }, []);
+
+  // Handle decision submission
   const handleDecision = async () => {
+    if (!decisionNote.trim()) return;
+    if (selectedAction === "reject" && !rejectionReason) {
+      alert("Please select a rejection reason");
+      return;
+    }
+
     setProcessing(true);
-    // Simulate API call
-    await new Promise((r) => setTimeout(r, 1500));
-    alert(`${selectedAction} action completed!`);
-    setProcessing(false);
-    setShowDecisionPanel(false);
+    try {
+      // Simulate API call
+      await new Promise((r) => setTimeout(r, 1500));
+      
+      const actionMessages: Record<string, string> = {
+        approve: "Application approved successfully!",
+        reject: "Application rejected successfully!",
+        request_info: "Information request sent to applicant!",
+        escalate: "Application escalated to senior officer!",
+      };
+      
+      showSuccess(actionMessages[selectedAction] || "Action completed!");
+      setShowDecisionPanel(false);
+      setDecisionNote("");
+      setRejectionReason("");
+      setSelectedAction("");
+    } catch (error) {
+      alert("Action failed. Please try again.");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  // Add note
+  const handleAddNote = async () => {
+    if (!newNote.trim()) return;
+
+    const note = {
+      id: `NOTE-${Date.now()}`,
+      content: newNote,
+      author: "CO-001",
+      authorName: "Current Officer",
+      createdAt: new Date().toISOString(),
+      isInternal: isInternalNote,
+    };
+
+    setNotes([...notes, note]);
+    setNewNote("");
+    showSuccess("Note added successfully!");
+  };
+
+  // Handle document verification
+  const handleDocumentAction = async (docId: string, action: "verify" | "reject") => {
+    setDocuments(
+      documents.map((doc) =>
+        doc.id === docId
+          ? { ...doc, status: action === "verify" ? "VERIFIED" : "REJECTED" as any }
+          : doc
+      )
+    );
+    showSuccess(`Document ${action === "verify" ? "verified" : "rejected"} successfully!`);
+  };
+
+  // Download document (simulated)
+  const handleDocumentDownload = (doc: any) => {
+    showSuccess(`Downloading ${doc.fileName}...`);
+    // In real implementation, this would trigger actual file download
   };
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        {/* Success Toast */}
+        <AnimatePresence>
+          {showSuccessToast && (
+            <motion.div
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
+            >
+              <Check className="w-5 h-5 shrink-0" />
+              <span className="font-medium">{successMessage}</span>
+              <button
+                onClick={() => setShowSuccessToast(false)}
+                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <Link
@@ -403,47 +500,91 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                 {/* Documents Tab */}
                 {activeTab === "documents" && (
                   <div className="space-y-4">
-                    {mockApplication.documents.map((doc) => (
+                    {documents.map((doc) => (
                       <div
                         key={doc.id}
-                        className="p-4 bg-gray-50 rounded-lg flex items-center justify-between"
+                        className="p-4 bg-gray-50 rounded-lg border border-gray-100 hover:border-brand-teal/30 transition-colors"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-brand-teal/10 rounded-lg flex items-center justify-center">
-                            <FileText className="w-5 h-5 text-brand-teal" />
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <div className="w-10 h-10 bg-brand-teal/10 rounded-lg flex items-center justify-center shrink-0">
+                              <FileText className="w-5 h-5 text-brand-teal" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-gray-900 truncate">
+                                {DOCUMENT_TYPES[doc.type] || doc.type}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {doc.fileName} • Uploaded {formatDate(doc.uploadedAt, true)}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium text-gray-900">
-                              {DOCUMENT_TYPES[doc.type] || doc.type}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {doc.fileName} • Uploaded {formatDate(doc.uploadedAt, true)}
-                            </p>
+                          <div className="flex items-center gap-3 shrink-0">
+                            <span
+                              className={cn(
+                                "px-2.5 py-1 rounded-full text-xs font-medium",
+                                doc.status === "VERIFIED" &&
+                                  "bg-green-100 text-green-700 border border-green-200",
+                                doc.status === "PENDING" &&
+                                  "bg-yellow-100 text-yellow-700 border border-yellow-200",
+                                doc.status === "REJECTED" &&
+                                  "bg-red-100 text-red-700 border border-red-200"
+                              )}
+                            >
+                              {doc.status}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => alert(`Viewing ${doc.fileName}`)}
+                                className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                                title="View document"
+                              >
+                                <Eye className="w-4 h-4 text-gray-600" />
+                              </button>
+                              <button
+                                onClick={() => handleDocumentDownload(doc)}
+                                className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                                title="Download document"
+                              >
+                                <Download className="w-4 h-4 text-gray-600" />
+                              </button>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={cn(
-                              "px-2.5 py-1 rounded-full text-xs font-medium",
-                              doc.status === "VERIFIED" &&
-                                "bg-green-100 text-green-700",
-                              doc.status === "PENDING" &&
-                                "bg-yellow-100 text-yellow-700",
-                              doc.status === "REJECTED" &&
-                                "bg-red-100 text-red-700"
-                            )}
-                          >
-                            {doc.status}
-                          </span>
-                          <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
-                            <Eye className="w-4 h-4 text-gray-600" />
-                          </button>
-                          <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
-                            <Download className="w-4 h-4 text-gray-600" />
-                          </button>
-                        </div>
+                        
+                        {/* Document actions */}
+                        {doc.status === "PENDING" && (
+                          <div className="flex gap-2 mt-3 pt-3 border-t border-gray-200">
+                            <button
+                              onClick={() => handleDocumentAction(doc.id, "verify")}
+                              className="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                              Verify
+                            </button>
+                            <button
+                              onClick={() => handleDocumentAction(doc.id, "reject")}
+                              className="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                            >
+                              <XCircle className="w-4 h-4" />
+                              Reject
+                            </button>
+                          </div>
+                        )}
                       </div>
                     ))}
+
+                    {documents.length === 0 && (
+                      <div className="text-center py-12">
+                        <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          No Documents
+                        </h3>
+                        <p className="text-gray-500">
+                          No documents have been uploaded yet
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -463,10 +604,12 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                 {/* Notes Tab */}
                 {activeTab === "notes" && (
                   <div className="space-y-4">
-                    {mockApplication.notes.map((note) => (
-                      <div
+                    {notes.map((note) => (
+                      <motion.div
                         key={note.id}
-                        className="p-4 bg-gray-50 rounded-lg"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-4 bg-gray-50 rounded-lg border border-gray-100"
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
@@ -483,28 +626,47 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                             </div>
                           </div>
                           {note.isInternal && (
-                            <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded border border-blue-200">
                               Internal
                             </span>
                           )}
                         </div>
                         <p className="text-sm text-gray-700">{note.content}</p>
-                      </div>
+                      </motion.div>
                     ))}
+
+                    {notes.length === 0 && (
+                      <div className="text-center py-8">
+                        <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                        <p className="text-gray-500 text-sm">No notes yet</p>
+                      </div>
+                    )}
                     
                     {/* Add Note */}
-                    <div className="p-4 bg-white border-2 border-dashed border-gray-200 rounded-lg">
+                    <div className="p-4 bg-white border-2 border-dashed border-gray-200 rounded-lg hover:border-brand-teal/30 transition-colors">
                       <textarea
                         placeholder="Add a note..."
+                        value={newNote}
+                        onChange={(e) => setNewNote(e.target.value)}
                         rows={3}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-teal focus:border-transparent resize-none"
                       />
                       <div className="flex items-center justify-between mt-3">
-                        <label className="flex items-center gap-2 text-sm text-gray-600">
-                          <input type="checkbox" className="rounded" defaultChecked />
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={isInternalNote}
+                            onChange={(e) => setIsInternalNote(e.target.checked)}
+                            className="rounded border-gray-300 text-brand-teal focus:ring-brand-teal"
+                          />
                           <span>Internal note (not visible to applicant)</span>
                         </label>
-                        <button className="px-4 py-2 bg-brand-teal text-white rounded-lg text-sm font-medium hover:bg-brand-teal/90 transition-colors">
+                        <button
+                          onClick={handleAddNote}
+                          disabled={!newNote.trim()}
+                          className="px-4 py-2 bg-brand-teal text-white rounded-lg text-sm font-medium hover:bg-brand-teal/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        >
+                          <Save className="w-4 h-4" />
                           Add Note
                         </button>
                       </div>
@@ -545,8 +707,15 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                 Decision Panel
               </h3>
 
-              {!showDecisionPanel ? (
-                <div className="space-y-3">
+              <AnimatePresence mode="wait">
+                {!showDecisionPanel ? (
+                  <motion.div
+                    key="actions"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="space-y-3"
+                  >
                   <button
                     onClick={() => {
                       setSelectedAction("approve");
@@ -587,9 +756,15 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                     <AlertTriangle className="w-4 h-4" />
                     Escalate
                   </button>
-                </div>
+                </motion.div>
               ) : (
-                <div className="space-y-4">
+                <motion.div
+                  key="form"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-4"
+                >
                   <div className="p-3 bg-gray-50 rounded-lg">
                     <p className="text-sm font-medium text-gray-900 capitalize">
                       {selectedAction.replace("_", " ")}
@@ -652,8 +827,9 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                       )}
                     </button>
                   </div>
-                </div>
+                </motion.div>
               )}
+            </AnimatePresence>
 
               {/* Quick Info */}
               <div className="mt-6 pt-6 border-t border-gray-100 space-y-3">

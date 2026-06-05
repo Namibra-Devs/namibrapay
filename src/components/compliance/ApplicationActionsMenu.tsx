@@ -11,14 +11,16 @@ import {
   CheckCircle,
   XCircle,
   Clock,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/compliance-utils";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface ApplicationActionsMenuProps {
   applicationId: string;
   status: string;
-  onAction?: (action: string) => void;
+  onAction?: (action: string, applicationId: string) => void;
 }
 
 export default function ApplicationActionsMenu({
@@ -27,7 +29,9 @@ export default function ApplicationActionsMenu({
   onAction,
 }: ApplicationActionsMenuProps) {
   const [open, setOpen] = useState(false);
+  const [processing, setProcessing] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   // Close on outside click
   useEffect(() => {
@@ -91,10 +95,40 @@ export default function ApplicationActionsMenu({
 
   const filteredActions = actions.filter((action) => action.show !== false);
 
-  const handleAction = (action: string) => {
-    setOpen(false);
-    if (onAction) {
-      onAction(action);
+  const handleAction = async (action: string, actionLabel: string) => {
+    setProcessing(action);
+    
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      // Call the parent handler if provided
+      if (onAction) {
+        onAction(action, applicationId);
+      }
+      
+      // Show success message
+      const messages: Record<string, string> = {
+        assign: `Application ${applicationId} assigned to you`,
+        message: `Message dialog opened for ${applicationId}`,
+        request_info: `Information request sent for ${applicationId}`,
+        approve: `Application ${applicationId} approved`,
+        reject: `Application ${applicationId} rejected`,
+        escalate: `Application ${applicationId} escalated`,
+      };
+      
+      alert(messages[action] || "Action completed");
+      
+      // For approve/reject, navigate to detail page
+      if (action === "approve" || action === "reject") {
+        router.push(`/compliance/applications/${applicationId}`);
+      }
+      
+    } catch (error) {
+      alert("Action failed. Please try again.");
+    } finally {
+      setProcessing(null);
+      setOpen(false);
     }
   };
 
@@ -139,13 +173,18 @@ export default function ApplicationActionsMenu({
               return (
                 <button
                   key={item.label}
-                  onClick={() => item.action && handleAction(item.action)}
+                  onClick={() => item.action && handleAction(item.action, item.label)}
+                  disabled={processing !== null}
                   className={cn(
-                    "w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors text-left",
+                    "w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed",
                     item.color
                   )}
                 >
-                  <Icon className="w-4 h-4" />
+                  {processing === item.action ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Icon className="w-4 h-4" />
+                  )}
                   {item.label}
                 </button>
               );

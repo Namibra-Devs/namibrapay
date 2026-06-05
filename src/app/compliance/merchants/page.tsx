@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Building2,
   Download,
@@ -10,6 +10,10 @@ import {
   AlertCircle,
   TrendingUp,
   Activity,
+  Loader2,
+  FileDown,
+  X,
+  CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
 import DashboardLayout from "@/components/compliance/DashboardLayout";
@@ -110,24 +114,35 @@ export default function MerchantsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [riskFilter, setRiskFilter] = useState<string>("ALL");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isExporting, setIsExporting] = useState(false);
+  const [showExportSuccess, setShowExportSuccess] = useState(false);
   const itemsPerPage = 10;
 
-  // Filter merchants
-  const filteredMerchants = mockMerchants.filter((merchant) => {
-    const matchesSearch =
-      merchant.legalName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      merchant.tradingName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      merchant.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "ALL" || merchant.status === statusFilter;
-    const matchesRisk = riskFilter === "ALL" || merchant.riskBand === riskFilter;
-    return matchesSearch && matchesStatus && matchesRisk;
-  });
+  // Filter merchants with useMemo for performance
+  const filteredMerchants = useMemo(() => {
+    return mockMerchants.filter((merchant) => {
+      const matchesSearch =
+        merchant.legalName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        merchant.tradingName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        merchant.id.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === "ALL" || merchant.status === statusFilter;
+      const matchesRisk = riskFilter === "ALL" || merchant.riskBand === riskFilter;
+      return matchesSearch && matchesStatus && matchesRisk;
+    });
+  }, [searchQuery, statusFilter, riskFilter]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, riskFilter]);
 
   const totalPages = Math.ceil(filteredMerchants.length / itemsPerPage);
-  const displayedMerchants = filteredMerchants.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const displayedMerchants = useMemo(() => {
+    return filteredMerchants.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+  }, [filteredMerchants, currentPage, itemsPerPage]);
 
   // Calculate stats
   const activeCount = mockMerchants.filter((m) => m.status === "ACTIVE").length;
@@ -135,20 +150,109 @@ export default function MerchantsPage() {
   const highRiskCount = mockMerchants.filter((m) => m.riskBand === "HIGH").length;
   const totalVolume = mockMerchants.reduce((sum, m) => sum + m.monthlyVolume, 0);
 
+  // Handle export functionality
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      
+      const headers = ["ID", "Trading Name", "Legal Name", "Status", "Risk", "Industry", "Monthly Volume", "Officer"];
+      const rows = filteredMerchants.map((merchant) => [
+        merchant.id,
+        merchant.tradingName,
+        merchant.legalName,
+        merchant.status.replace(/_/g, " "),
+        merchant.riskBand,
+        merchant.industry,
+        formatCurrency(merchant.monthlyVolume),
+        merchant.assignedOfficer,
+      ]);
+      
+      const csvContent = [
+        headers.join(","),
+        ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+      ].join("\n");
+      
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `merchants-export-${new Date().toISOString().split("T")[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      setShowExportSuccess(true);
+      setTimeout(() => setShowExportSuccess(false), 3000);
+    } catch (error) {
+      console.error("Export failed:", error);
+      alert("Export failed. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("ALL");
+    setRiskFilter("ALL");
+  };
+
+  const hasActiveFilters =
+    searchQuery || statusFilter !== "ALL" || riskFilter !== "ALL";
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Merchants Directory</h1>
-          <p className="text-gray-600 mt-1">Manage and monitor all merchants</p>
+        {/* Export Success Toast */}
+        <AnimatePresence>
+          {showExportSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3"
+            >
+              <FileDown className="w-5 h-5" />
+              <span className="font-medium">Export completed successfully!</span>
+              <button
+                onClick={() => setShowExportSuccess(false)}
+                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Merchants Directory</h1>
+            <p className="text-gray-600 mt-1">
+              {filteredMerchants.length} merchant(s) {hasActiveFilters && "matching filters"}
+            </p>
+          </div>
+          <button
+            onClick={handleExport}
+            disabled={isExporting || filteredMerchants.length === 0}
+            className="px-4 py-2.5 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors flex items-center gap-2 shadow-sm text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isExporting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Exporting...
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4" />
+                Export Report
+              </>
+            )}
+          </button>
         </div>
-        <button className="px-4 py-2.5 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors flex items-center gap-2 shadow-sm text-sm">
-          <Download className="w-4 h-4" />
-          Export Report
-        </button>
-      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -180,42 +284,77 @@ export default function MerchantsPage() {
 
       {/* Filters & Search */}
       <Card>
-        <div className="flex flex-col lg:flex-row gap-4">
-          <SearchBar
-            placeholder="Search by name or ID..."
-            onSearch={setSearchQuery}
-            className="flex-1"
-          />
-          <div className="flex gap-3">
-            <Select
-              value={statusFilter}
-              onChange={setStatusFilter}
-              className="w-full md:w-44"
-              options={[
-                { value: "ALL", label: "All Status" },
-                { value: "ACTIVE", label: "Active" },
-                { value: "UNDER_REVIEW", label: "Under Review" },
-                { value: "SUSPENDED", label: "Suspended" },
-                { value: "BLACKLISTED", label: "Blacklisted" },
-              ]}
-            />
-            <Select
-              value={riskFilter}
-              onChange={setRiskFilter}
-              className="w-full md:w-44"
-              options={[
-                { value: "ALL", label: "All Risk Levels" },
-                { value: "LOW", label: "Low Risk" },
-                { value: "MEDIUM", label: "Medium Risk" },
-                { value: "HIGH", label: "High Risk" },
-              ]}
-            />
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="text-xs text-brand-teal hover:text-brand-teal/80 font-medium transition-colors flex items-center gap-1"
+              >
+                <X className="w-3 h-3" />
+                Clear all
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1 relative">
+              <SearchBar
+                placeholder="Search by name or ID..."
+                onSearch={setSearchQuery}
+                className="flex-1"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+            <div className="flex gap-3">
+              <Select
+                value={statusFilter}
+                onChange={setStatusFilter}
+                className="w-full md:w-44"
+                options={[
+                  { value: "ALL", label: "All Status" },
+                  { value: "ACTIVE", label: "Active" },
+                  { value: "UNDER_REVIEW", label: "Under Review" },
+                  { value: "SUSPENDED", label: "Suspended" },
+                  { value: "BLACKLISTED", label: "Blacklisted" },
+                ]}
+              />
+              <Select
+                value={riskFilter}
+                onChange={setRiskFilter}
+                className="w-full md:w-44"
+                options={[
+                  { value: "ALL", label: "All Risk Levels" },
+                  { value: "LOW", label: "Low Risk" },
+                  { value: "MEDIUM", label: "Medium Risk" },
+                  { value: "HIGH", label: "High Risk" },
+                ]}
+              />
+            </div>
           </div>
         </div>
       </Card>
 
       {/* Merchants Table */}
       <Card padding="none">
+        {/* Results count bar */}
+        {filteredMerchants.length > 0 && (
+          <div className="px-6 py-3 bg-gray-50 border-b border-gray-100">
+            <p className="text-sm text-gray-600">
+              Showing {displayedMerchants.length} of {filteredMerchants.length} merchant(s)
+              {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
+            </p>
+          </div>
+        )}
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -246,13 +385,13 @@ export default function MerchantsPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {displayedMerchants.map((merchant, index) => (
                 <motion.tr
                   key={merchant.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: index * 0.05 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.03 }}
                   onClick={() => router.push(`/compliance/merchants/${merchant.id}`)}
                   className="hover:bg-gray-50 transition-colors cursor-pointer"
                 >
@@ -315,6 +454,35 @@ export default function MerchantsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Empty State */}
+        {filteredMerchants.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="p-12 text-center"
+          >
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Building2 className="w-8 h-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              No merchants found
+            </h3>
+            <p className="text-gray-500 mb-4">
+              {hasActiveFilters
+                ? "Try adjusting your search or filter criteria"
+                : "No merchants available at the moment"}
+            </p>
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="px-4 py-2 bg-brand-teal text-white rounded-lg hover:bg-brand-teal/90 transition-colors text-sm font-medium"
+              >
+                Clear Filters
+              </button>
+            )}
+          </motion.div>
+        )}
 
         {/* Pagination */}
         {totalPages > 1 && (

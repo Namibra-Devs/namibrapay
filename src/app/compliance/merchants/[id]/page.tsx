@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   Building2,
@@ -19,6 +19,8 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
+  X,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -26,6 +28,7 @@ import DashboardLayout from "@/components/compliance/DashboardLayout";
 import Card from "@/components/compliance/shared/Card";
 import Badge from "@/components/compliance/shared/Badge";
 import StatCard from "@/components/compliance/shared/StatCard";
+import Select from "@/components/ui/Select";
 import {
   EntityStatus,
   RiskBand,
@@ -174,8 +177,59 @@ export default function MerchantDetailPage() {
   const [activeTab, setActiveTab] = useState<
     "overview" | "documents" | "transactions" | "screening" | "audit"
   >("overview");
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [newStatus, setNewStatus] = useState<EntityStatus>("ACTIVE");
+  const [statusNote, setStatusNote] = useState("");
+  const [processing, setProcessing] = useState(false);
+  const [merchant, setMerchant] = useState(getMerchantData(merchantId));
 
-  const merchant = getMerchantData(merchantId);
+  // Show success toast
+  const showSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
+  // Handle status update
+  const handleStatusUpdate = async () => {
+    if (!statusNote.trim()) {
+      alert("Please provide a reason for status change");
+      return;
+    }
+
+    setProcessing(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      
+      setMerchant({ ...merchant, status: newStatus });
+      showSuccess(`Merchant status updated to ${newStatus}`);
+      setShowStatusModal(false);
+      setStatusNote("");
+    } catch (error) {
+      alert("Failed to update status. Please try again.");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  // Handle risk update
+  const handleRiskUpdate = () => {
+    // In real app, this would open a risk assessment modal
+    showSuccess("Risk assessment form opened (simulated)");
+  };
+
+  // Handle document upload
+  const handleDocumentUpload = () => {
+    showSuccess("Document upload initiated (simulated)");
+  };
+
+  // Handle suspend action
+  const handleSuspend = () => {
+    setNewStatus("SUSPENDED");
+    setShowStatusModal(true);
+  };
 
   const tabs = [
     { id: "overview", label: "Overview", icon: Building2 },
@@ -188,7 +242,28 @@ export default function MerchantDetailPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-      {/* Back Button */}
+        {/* Success Toast */}
+        <AnimatePresence>
+          {showSuccessToast && (
+            <motion.div
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
+            >
+              <CheckCircle2 className="w-5 h-5 shrink-0" />
+              <span className="font-medium">{successMessage}</span>
+              <button
+                onClick={() => setShowSuccessToast(false)}
+                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Back Button */}
       <Link
         href="/compliance/merchants"
         className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
@@ -228,10 +303,16 @@ export default function MerchantDetailPage() {
           </div>
         </div>
         <div className="flex gap-3 shrink-0">
-          <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm">
+          <button
+            onClick={handleSuspend}
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm"
+          >
             Suspend
           </button>
-          <button className="px-4 py-2 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm">
+          <button
+            onClick={handleRiskUpdate}
+            className="px-4 py-2 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm"
+          >
             Update Risk
           </button>
         </div>
@@ -392,7 +473,10 @@ export default function MerchantDetailPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Documents</h3>
-                <button className="px-4 py-2 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm">
+                <button
+                  onClick={handleDocumentUpload}
+                  className="px-4 py-2 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm"
+                >
                   Upload Document
                 </button>
               </div>
@@ -423,7 +507,10 @@ export default function MerchantDetailPage() {
                     <Badge variant="success" size="sm">
                       {doc.status}
                     </Badge>
-                    <button className="text-brand-teal hover:text-brand-teal/80 font-medium text-sm">
+                    <button
+                      onClick={() => showSuccess(`Viewing ${doc.fileName}`)}
+                      className="text-brand-teal hover:text-brand-teal/80 font-medium text-sm transition-colors"
+                    >
                       View
                     </button>
                   </div>
@@ -554,6 +641,90 @@ export default function MerchantDetailPage() {
           )}
         </div>
       </Card>
+
+      {/* Status Update Modal */}
+      <AnimatePresence>
+        {showStatusModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-2xl shadow-xl max-w-lg w-full"
+            >
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">Update Merchant Status</h2>
+                    <p className="text-gray-600 mt-1">Change status to {newStatus}</p>
+                  </div>
+                  <button
+                    onClick={() => setShowStatusModal(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <XCircle className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    New Status
+                  </label>
+                  <Select
+                    value={newStatus}
+                    onChange={(value) => setNewStatus(value as EntityStatus)}
+                    options={[
+                      { value: "ACTIVE", label: "Active" },
+                      { value: "SUSPENDED", label: "Suspended" },
+                      { value: "UNDER_REVIEW", label: "Under Review" },
+                      { value: "BLACKLISTED", label: "Blacklisted" },
+                    ]}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Reason for Change *
+                  </label>
+                  <textarea
+                    value={statusNote}
+                    onChange={(e) => setStatusNote(e.target.value)}
+                    placeholder="Provide a reason for this status change..."
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors text-sm"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={() => setShowStatusModal(false)}
+                    disabled={processing}
+                    className="flex-1 px-4 py-2 border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleStatusUpdate}
+                    disabled={processing || !statusNote.trim()}
+                    className="flex-1 px-4 py-2 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {processing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      "Update Status"
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
     </DashboardLayout>
   );
