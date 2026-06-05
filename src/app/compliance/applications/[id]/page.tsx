@@ -253,8 +253,8 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
               exit={{ opacity: 0, y: -50 }}
               className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
             >
-              <Check className="w-5 h-5 shrink-0" />
-              <span className="font-medium">{successMessage}</span>
+              <Check className="w-4 h-4 shrink-0" />
+              <span className="text-sn font-medium">{successMessage}</span>
               <button
                 onClick={() => setShowSuccessToast(false)}
                 className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
@@ -306,7 +306,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
             animate={{ opacity: 1, y: 0 }}
             className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-center gap-3"
           >
-            <Clock className="w-5 h-5 text-orange-600 shrink-0" />
+            <Clock className="w-4 h-4 text-orange-600 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-orange-900">
                 SLA Deadline Approaching
@@ -324,7 +324,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
             animate={{ opacity: 1, y: 0 }}
             className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3"
           >
-            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-red-900">SLA Breached</p>
               <p className="text-sm text-red-700">

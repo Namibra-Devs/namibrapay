@@ -251,8 +251,8 @@ export default function MerchantDetailPage() {
               exit={{ opacity: 0, y: -50 }}
               className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
             >
-              <CheckCircle2 className="w-5 h-5 shrink-0" />
-              <span className="font-medium">{successMessage}</span>
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <span className="text-sm font-medium">{successMessage}</span>
               <button
                 onClick={() => setShowSuccessToast(false)}
                 className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
