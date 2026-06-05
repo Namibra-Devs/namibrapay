@@ -1,11 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  trailingSlash: true,
+  // Removed output: "export" to support dynamic routes in compliance dashboard
+  // Static export is not compatible with dynamic routes and authentication
   images: {
     formats: ["image/avif", "image/webp"],
-    unoptimized: true, // required for static export (no image server)
   },
   compress: true,
 };

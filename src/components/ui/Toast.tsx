@@ -1,203 +1,219 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, XCircle, Loader2, Info, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { X, CheckCircle, AlertCircle, Info, AlertTriangle, Loader2 } from "lucide-react";
+import { createContext, useContext, useState, useCallback } from "react";
 
-// ── Types ────────────────────────────────────────────────────────
+type ToastType = "success" | "error" | "info" | "warning" | "loading";
 
-export type ToastType = "success" | "error" | "loading" | "info";
-
-export interface ToastItem {
+interface Toast {
   id: string;
   type: ToastType;
-  title: string;
-  description?: string;
-  /** Auto-dismiss after ms. 0 = stay until manually dismissed. */
-  duration: number;
-}
-
-// ── Module-level store (singleton, no Provider needed) ───────────
-
-let _toasts: ToastItem[] = [];
-const _listeners = new Set<() => void>();
-
-function _notify() {
-  _listeners.forEach((fn) => fn());
-}
-
-function _upsert(item: ToastItem) {
-  _toasts = _toasts.some((t) => t.id === item.id)
-    ? _toasts.map((t) => (t.id === item.id ? item : t))
-    : [..._toasts, item];
-  _notify();
-}
-
-function _remove(id: string) {
-  _toasts = _toasts.filter((t) => t.id !== id);
-  _notify();
-}
-
-function uid() {
-  return Math.random().toString(36).slice(2, 9);
-}
-
-// ── Public toast() API ───────────────────────────────────────────
-
-type ToastOptions = {
+  message: string;
   description?: string;
   duration?: number;
-  /** Pass an existing id to replace that toast in-place. */
-  id?: string;
-};
+}
 
-export const toast = {
-  success(title: string, opts: ToastOptions = {}) {
-    const id = opts.id ?? uid();
-    _upsert({ id, type: "success", title, description: opts.description, duration: opts.duration ?? 4000 });
-    return id;
-  },
-  error(title: string, opts: ToastOptions = {}) {
-    const id = opts.id ?? uid();
-    _upsert({ id, type: "error", title, description: opts.description, duration: opts.duration ?? 5000 });
-    return id;
-  },
-  loading(title: string, opts: ToastOptions = {}) {
-    const id = opts.id ?? uid();
-    _upsert({ id, type: "loading", title, description: opts.description, duration: 0 });
-    return id;
-  },
-  info(title: string, opts: ToastOptions = {}) {
-    const id = opts.id ?? uid();
-    _upsert({ id, type: "info", title, description: opts.description, duration: opts.duration ?? 4000 });
-    return id;
-  },
-  dismiss(id: string) {
-    _remove(id);
-  },
-};
+interface ToastContextType {
+  showToast: (type: ToastType, message: string, options?: { description?: string; duration?: number; id?: string }) => string;
+  removeToast: (id: string) => void;
+  updateToast: (id: string, type: ToastType, message: string, options?: { description?: string }) => void;
+}
 
-// ── Per-type visual config ───────────────────────────────────────
+const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-const CONFIG: Record<
-  ToastType,
-  { icon: React.ElementType; iconClass: string; iconBg: string; bar: string }
-> = {
-  success: {
-    icon: CheckCircle2,
-    iconClass: "text-brand-teal",
-    iconBg: "bg-brand-teal/10",
-    bar: "bg-brand-teal",
-  },
-  error: {
-    icon: XCircle,
-    iconClass: "text-red-500",
-    iconBg: "bg-red-50",
-    bar: "bg-red-500",
-  },
-  loading: {
-    icon: Loader2,
-    iconClass: "text-brand-navy",
-    iconBg: "bg-brand-navy/8",
-    bar: "bg-brand-navy",
-  },
-  info: {
-    icon: Info,
-    iconClass: "text-brand-navy",
-    iconBg: "bg-brand-lavender/30",
-    bar: "bg-brand-navy",
-  },
-};
+export function useToast() {
+  const context = useContext(ToastContext);
+  if (!context) {
+    throw new Error("useToast must be used within a ToastProvider");
+  }
+  return context;
+}
 
-// ── Single toast card ────────────────────────────────────────────
+export function ToastProvider({ children }: { children: React.ReactNode }) {
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
-function ToastCard({ item }: { item: ToastItem }) {
-  const { icon: Icon, iconClass, iconBg, bar } = CONFIG[item.type];
-  const isLoading = item.type === "loading";
+  const showToast = useCallback(
+    (type: ToastType, message: string, options?: { description?: string; duration?: number; id?: string }) => {
+      const id = options?.id || Math.random().toString(36).substring(7);
+      const duration = options?.duration ?? (type === "loading" ? 0 : 5000);
+      
+      setToasts((prev) => {
+        // Remove existing toast with same id if it exists
+        const filtered = prev.filter((toast) => toast.id !== id);
+        return [...filtered, { id, type, message, description: options?.description, duration }];
+      });
 
-  // Auto-dismiss timer — re-runs when duration changes (e.g. loading → success)
-  useEffect(() => {
-    if (!item.duration) return;
-    const t = setTimeout(() => _remove(item.id), item.duration);
-    return () => clearTimeout(t);
-  }, [item.id, item.duration]);
+      if (duration > 0) {
+        setTimeout(() => {
+          setToasts((prev) => prev.filter((toast) => toast.id !== id));
+        }, duration);
+      }
+
+      return id;
+    },
+    []
+  );
+
+  const removeToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  }, []);
+
+  const updateToast = useCallback(
+    (id: string, type: ToastType, message: string, options?: { description?: string }) => {
+      setToasts((prev) =>
+        prev.map((toast) =>
+          toast.id === id
+            ? { ...toast, type, message, description: options?.description }
+            : toast
+        )
+      );
+    },
+    []
+  );
+
+  // Initialize global toast API
+  React.useEffect(() => {
+    initToastAPI(showToast, removeToast, updateToast);
+  }, [showToast, removeToast, updateToast]);
+
+  return (
+    <ToastContext.Provider value={{ showToast, removeToast, updateToast }}>
+      {children}
+      <div className="fixed bottom-4 right-4 z-50 space-y-2">
+        <AnimatePresence>
+          {toasts.map((toast) => (
+            <ToastItem key={toast.id} toast={toast} onClose={() => removeToast(toast.id)} />
+          ))}
+        </AnimatePresence>
+      </div>
+    </ToastContext.Provider>
+  );
+}
+
+function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
+  const icons = {
+    success: CheckCircle,
+    error: AlertCircle,
+    info: Info,
+    warning: AlertTriangle,
+    loading: Loader2,
+  };
+
+  const colors = {
+    success: "bg-green-50 border-green-200 text-green-900",
+    error: "bg-red-50 border-red-200 text-red-900",
+    info: "bg-blue-50 border-blue-200 text-blue-900",
+    warning: "bg-orange-50 border-orange-200 text-orange-900",
+    loading: "bg-blue-50 border-blue-200 text-blue-900",
+  };
+
+  const iconColors = {
+    success: "text-green-600",
+    error: "text-red-600",
+    info: "text-blue-600",
+    warning: "text-orange-600",
+    loading: "text-blue-600",
+  };
+
+  const Icon = icons[toast.type];
 
   return (
     <motion.div
-      layout
-      initial={{ opacity: 0, x: 72, scale: 0.94 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 72, scale: 0.94 }}
-      transition={{ type: "spring", stiffness: 380, damping: 28 }}
-      className="relative w-85 bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden"
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 50 }}
+      className={`${colors[toast.type]} border rounded-xl p-4 shadow-lg flex items-start gap-3 min-w-[300px] max-w-md`}
     >
-      <div className="flex items-start gap-3.5 px-4 py-4">
-        {/* Icon */}
-        <div className={cn("shrink-0 mt-0.5 w-8 h-8 rounded-full flex items-center justify-center", iconBg)}>
-          <Icon
-            size={16}
-            className={cn(iconClass, isLoading && "animate-spin")}
-          />
-        </div>
-
-        {/* Text */}
-        <div className="flex-1 min-w-0 pt-0.5">
-          <p className="text-sm font-semibold text-gray-900 leading-snug">{item.title}</p>
-          {item.description && (
-            <p className="mt-0.5 text-xs text-gray-500 leading-relaxed">{item.description}</p>
-          )}
-        </div>
-
-        {/* Close — hidden while loading */}
-        {!isLoading && (
-          <button
-            title="close"
-            onClick={() => _remove(item.id)}
-            className="shrink-0 -mt-0.5 -mr-0.5 p-0.5 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-          >
-            <X size={14} />
-          </button>
+      <Icon className={`w-5 h-5 ${iconColors[toast.type]} shrink-0 mt-0.5 ${toast.type === "loading" ? "animate-spin" : ""}`} />
+      <div className="flex-1">
+        <p className="text-sm font-medium">{toast.message}</p>
+        {toast.description && (
+          <p className="text-xs mt-1 opacity-80">{toast.description}</p>
         )}
       </div>
-
-      {/* Depleting progress bar for auto-dismiss toasts */}
-      {item.duration > 0 && (
-        <motion.div
-          className={cn("absolute bottom-0 left-0 h-[2.5px] origin-left", bar)}
-          initial={{ scaleX: 1 }}
-          animate={{ scaleX: 0 }}
-          transition={{ duration: item.duration / 1000, ease: "linear" }}
-        />
+      {toast.type !== "loading" && (
+        <button
+          onClick={onClose}
+          className="shrink-0 p-1 hover:bg-black/5 rounded transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
       )}
     </motion.div>
   );
 }
 
-// ── Toaster container (mount once in root layout) ────────────────
-
 export function Toaster() {
-  const [toasts, setToasts] = useState<ToastItem[]>([]);
-
-  useEffect(() => {
-    const sync = () => setToasts([..._toasts]);
-    _listeners.add(sync);
-    return () => { _listeners.delete(sync); };
-  }, []);
-
-  return (
-    <div
-      aria-live="polite"
-      aria-atomic="false"
-      className="fixed top-5 right-5 z-9999 flex flex-col gap-2.5 pointer-events-none"
-    >
-      <AnimatePresence initial={false}>
-        {toasts.map((t) => (
-          <div key={t.id} className="pointer-events-auto">
-            <ToastCard item={t} />
-          </div>
-        ))}
-      </AnimatePresence>
-    </div>
-  );
+  return null; // The ToastProvider handles rendering
 }
+
+// Global toast API (for use outside of React components)
+let globalShowToast: ToastContextType["showToast"] | null = null;
+let globalRemoveToast: ToastContextType["removeToast"] | null = null;
+let globalUpdateToast: ToastContextType["updateToast"] | null = null;
+
+// Initialize global functions when ToastProvider mounts
+export function initToastAPI(
+  showToast: ToastContextType["showToast"],
+  removeToast: ToastContextType["removeToast"],
+  updateToast: ToastContextType["updateToast"]
+) {
+  globalShowToast = showToast;
+  globalRemoveToast = removeToast;
+  globalUpdateToast = updateToast;
+}
+
+// Toast API object
+export const toast = {
+  success: (message: string, options?: { description?: string; duration?: number; id?: string }) => {
+    if (!globalShowToast) {
+      console.warn("Toast provider not initialized");
+      return "";
+    }
+    return globalShowToast("success", message, options);
+  },
+  error: (message: string, options?: { description?: string; duration?: number; id?: string }) => {
+    if (!globalShowToast) {
+      console.warn("Toast provider not initialized");
+      return "";
+    }
+    return globalShowToast("error", message, options);
+  },
+  info: (message: string, options?: { description?: string; duration?: number; id?: string }) => {
+    if (!globalShowToast) {
+      console.warn("Toast provider not initialized");
+      return "";
+    }
+    return globalShowToast("info", message, options);
+  },
+  warning: (message: string, options?: { description?: string; duration?: number; id?: string }) => {
+    if (!globalShowToast) {
+      console.warn("Toast provider not initialized");
+      return "";
+    }
+    return globalShowToast("warning", message, options);
+  },
+  loading: (message: string, options?: { description?: string; id?: string }) => {
+    if (!globalShowToast) {
+      console.warn("Toast provider not initialized");
+      return "";
+    }
+    return globalShowToast("loading", message, { ...options, duration: 0 });
+  },
+  dismiss: (id: string) => {
+    if (!globalRemoveToast) {
+      console.warn("Toast provider not initialized");
+      return;
+    }
+    globalRemoveToast(id);
+  },
+  update: (id: string, type: ToastType, message: string, options?: { description?: string }) => {
+    if (!globalUpdateToast) {
+      console.warn("Toast provider not initialized");
+      return;
+    }
+    globalUpdateToast(id, type, message, options);
+  },
+};

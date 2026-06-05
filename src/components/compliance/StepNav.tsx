@@ -55,7 +55,7 @@ export default function StepNav({ currentStep, completedSteps, onStepClick }: St
                     ? "bg-emerald-500 border-emerald-500"
                     : isActive
                     ? "border-brand-teal"
-                    : "border-gray-300",
+                    : "border-gray-200",
                 )}
               >
                 {isComplete && (

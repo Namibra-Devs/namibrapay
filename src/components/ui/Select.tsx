@@ -69,7 +69,7 @@ export default function Select({
               "h-full bg-gray-50 pl-3 pr-8 py-3 text-sm text-gray-700 border-r border-gray-200"
             : // Standalone field variant
               cn(
-                "gap-2 border rounded-xl px-4 py-3 text-sm text-gray-900 bg-white focus:outline-none",
+                "gap-2 border rounded-lg px-4 py-2 text-sm text-gray-900 bg-white focus:outline-none",
                 open
                   ? "border-brand-teal ring-2 ring-brand-teal/30"
                   : "border-gray-200 hover:border-gray-300"

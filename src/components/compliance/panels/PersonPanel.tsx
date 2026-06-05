@@ -326,7 +326,7 @@ export default function PersonPanel({
                       : "Passport"}
                     {REQ}
                   </label>
-                  <label className="flex items-center justify-center gap-2 w-full border border-dashed border-gray-300 rounded-xl py-3 px-4 cursor-pointer hover:border-brand-teal hover:bg-brand-teal/5 transition-colors">
+                  <label className="flex items-center justify-center gap-2 w-full border border-dashed border-gray-200 rounded-xl py-3 px-4 cursor-pointer hover:border-brand-teal hover:bg-brand-teal/5 transition-colors">
                     <Upload className="w-4 h-4 text-gray-400" />
                     <span className="text-sm text-gray-500 truncate">
                       {form.idFileName || "+ Choose file"}
@@ -405,7 +405,7 @@ export default function PersonPanel({
               <label className={LABEL}>Proof of address{REQ}</label>
 
               {/* Toggle */}
-              <div className="flex rounded-xl border border-gray-200 overflow-hidden mb-3">
+              <div className="flex rounded-xl border border-gray-200/70 overflow-hidden mb-3">
                 {(["document", "gps"] as const).map((method, i) => (
                   <button
                     key={method}
@@ -426,7 +426,7 @@ export default function PersonPanel({
 
               {proofMethod === "document" ? (
                 <>
-                  <label className="flex items-center justify-center gap-2 w-full border border-dashed border-gray-300 rounded-xl py-4 px-4 cursor-pointer hover:border-brand-teal hover:bg-brand-teal/5 transition-colors">
+                  <label className="flex items-center justify-center gap-2 w-full border border-dashed border-gray-200 rounded-xl py-4 px-4 cursor-pointer hover:border-brand-teal hover:bg-brand-teal/5 transition-colors">
                     <Upload className="w-4 h-4 text-gray-400" />
                     <span className="text-sm text-gray-500 truncate">
                       {form.proofFileName ||
@@ -478,7 +478,7 @@ export default function PersonPanel({
         <div className="shrink-0 border-t border-gray-100 px-6 py-4 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            className="flex-1 py-3 border border-gray-200/70 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>

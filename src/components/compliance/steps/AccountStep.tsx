@@ -114,7 +114,7 @@ export default function AccountStep({
         <div className="flex gap-3 mt-6">
           <button
             onClick={() => setEditing(true)}
-            className="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            className="px-5 py-2.5 border border-gray-200/70 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Edit
           </button>
