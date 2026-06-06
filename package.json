@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "docker:build": "docker build -t namibrapay:latest .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env.local namibrapay:latest",
+    "docker:dev": "docker-compose up --build"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.2.8",
