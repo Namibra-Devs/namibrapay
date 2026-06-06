@@ -1,12 +1,11 @@
 "use client";
 
-import { Toaster } from "@/components/ui/Toast";
+import { ToastProvider } from "@/components/ui/Toast";
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <ToastProvider>
       {children}
-      <Toaster />
-    </>
+    </ToastProvider>
   );
 }

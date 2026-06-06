@@ -269,7 +269,7 @@ export default function ProfileStep({
           <Select
             options={BUSINESS_TYPE_OPTIONS}
             value={form.businessType}
-            onChange={(v) => set("businessType", v)}
+            onChange={(v) => set("businessType", v as "" | "registered" | "unregistered")}
             placeholder="Type of business"
           />
           {errors.businessType && (
