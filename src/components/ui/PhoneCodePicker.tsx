@@ -192,7 +192,7 @@ export default function PhoneCodePicker({
         onClick={handleOpen}
         className={cn(
           "flex items-center gap-1 w-full text-left cursor-pointer select-none transition-colors",
-          "border rounded-xl px-3 py-3 text-sm bg-white focus:outline-none",
+          "border rounded-xl px-3 py-2 text-sm bg-white focus:outline-none",
           open
             ? "border-brand-teal ring-2 ring-brand-teal/30"
             : "border-gray-200 hover:border-gray-300"
@@ -219,7 +219,7 @@ export default function PhoneCodePicker({
                 exit={{ opacity: 0, y: -6, scale: 0.97 }}
                 transition={{ duration: 0.14, ease: "easeOut" }}
                 style={{ top: pos.top, left: pos.left, width: 260 }}
-                className="fixed z-[500] bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden"
+                className="fixed z-500 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden"
               >
                 {/* Search */}
                 <div className="p-2 border-b border-gray-100">
