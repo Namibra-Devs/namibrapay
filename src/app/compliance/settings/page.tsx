@@ -18,135 +18,26 @@ import {
   Loader2,
   Eye,
 } from "lucide-react";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
-import Card from "@/components/compliance/shared/Card";
-import Badge from "@/components/compliance/shared/Badge";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
+import Card from "@/components/compliance-officer/shared/Card";
+import Badge from "@/components/compliance-officer/shared/Badge";
 import Select from "@/components/ui/Select";
 import { RiskRule, AuthorityMatrix, UserRole, RiskBand } from "@/types/compliance";
-
-// Mock data
-const mockRiskRules: RiskRule[] = [
-  {
-    id: "RULE-001",
-    name: "High Transaction Volume",
-    factor: "transaction_volume",
-    weight: 25,
-    conditions: { threshold: 500000, period: "monthly" },
-    isActive: true,
-    version: 1,
-  },
-  {
-    id: "RULE-002",
-    name: "High-Risk Industry",
-    factor: "industry_type",
-    weight: 30,
-    conditions: { industries: ["Money Services", "Crypto", "Gaming"] },
-    isActive: true,
-    version: 1,
-  },
-  {
-    id: "RULE-003",
-    name: "PEP Association",
-    factor: "pep_status",
-    weight: 40,
-    conditions: { directOrIndirect: "both" },
-    isActive: true,
-    version: 1,
-  },
-  {
-    id: "RULE-004",
-    name: "Cross-Border Transactions",
-    factor: "geography",
-    weight: 20,
-    conditions: { highRiskCountries: true },
-    isActive: false,
-    version: 1,
-  },
-];
-
-const mockAuthorityMatrix: AuthorityMatrix[] = [
-  {
-    role: "CO",
-    riskBand: "LOW",
-    canApprove: true,
-    canReject: true,
-    requiresSecondAuth: false,
-  },
-  {
-    role: "CO",
-    riskBand: "MEDIUM",
-    canApprove: true,
-    canReject: true,
-    requiresSecondAuth: false,
-  },
-  {
-    role: "CO",
-    riskBand: "HIGH",
-    canApprove: false,
-    canReject: false,
-    requiresSecondAuth: true,
-  },
-  {
-    role: "SENIOR_CO",
-    riskBand: "LOW",
-    canApprove: true,
-    canReject: true,
-    requiresSecondAuth: false,
-  },
-  {
-    role: "SENIOR_CO",
-    riskBand: "MEDIUM",
-    canApprove: true,
-    canReject: true,
-    requiresSecondAuth: false,
-  },
-  {
-    role: "SENIOR_CO",
-    riskBand: "HIGH",
-    canApprove: true,
-    canReject: true,
-    requiresSecondAuth: false,
-  },
-];
-
-const mockTemplates = [
-  {
-    id: "TPL-001",
-    name: "Request Additional Information",
-    category: "Information Request",
-    channel: "EMAIL",
-    isActive: true,
-  },
-  {
-    id: "TPL-002",
-    name: "Application Approved",
-    category: "Approval",
-    channel: "BOTH",
-    isActive: true,
-  },
-  {
-    id: "TPL-003",
-    name: "Application Rejected",
-    category: "Rejection",
-    channel: "EMAIL",
-    isActive: true,
-  },
-  {
-    id: "TPL-004",
-    name: "Document Expiry Reminder",
-    category: "Reminder",
-    channel: "BOTH",
-    isActive: true,
-  },
-];
+import { 
+  MOCK_RISK_RULES, 
+  MOCK_AUTHORITY_MATRIX, 
+  MOCK_SETTINGS_TEMPLATES,
+  MOCK_SYSTEM_SETTINGS,
+  type CommunicationTemplate 
+} from "@/lib/compliance-hub-mock-data/settings";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<"risk" | "authority" | "templates" | "system">("risk");
 
   // State management
-  const [riskRules, setRiskRules] = useState<RiskRule[]>(mockRiskRules);
-  const [authorityMatrix, setAuthorityMatrix] = useState<AuthorityMatrix[]>(mockAuthorityMatrix);
-  const [templates, setTemplates] = useState(mockTemplates);
+  const [riskRules, setRiskRules] = useState<RiskRule[]>(MOCK_RISK_RULES);
+  const [authorityMatrix, setAuthorityMatrix] = useState<AuthorityMatrix[]>(MOCK_AUTHORITY_MATRIX);
+  const [templates, setTemplates] = useState<CommunicationTemplate[]>(MOCK_SETTINGS_TEMPLATES);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -172,9 +63,9 @@ export default function SettingsPage() {
   const [showEditTemplateModal, setShowEditTemplateModal] = useState(false);
   const [showDeleteTemplateModal, setShowDeleteTemplateModal] = useState(false);
   const [showPreviewTemplateModal, setShowPreviewTemplateModal] = useState(false);
-  const [editingTemplate, setEditingTemplate] = useState<any | null>(null);
+  const [editingTemplate, setEditingTemplate] = useState<CommunicationTemplate | null>(null);
   const [deletingTemplateId, setDeletingTemplateId] = useState<string | null>(null);
-  const [previewingTemplate, setPreviewingTemplate] = useState<any | null>(null);
+  const [previewingTemplate, setPreviewingTemplate] = useState<CommunicationTemplate | null>(null);
   const [newTemplate, setNewTemplate] = useState({
     name: "",
     category: "",
@@ -184,13 +75,7 @@ export default function SettingsPage() {
   });
 
   // System settings
-  const [systemSettings, setSystemSettings] = useState({
-    defaultSLA: 3,
-    autoEscalationThreshold: 24,
-    screeningAPIKey: "••••••••••••••••",
-    enableAutoScreening: true,
-    enableEmailNotifications: true,
-  });
+  const [systemSettings, setSystemSettings] = useState(MOCK_SYSTEM_SETTINGS);
 
   // Helper functions
   const showToast = (message: string) => {
@@ -494,7 +379,7 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Success Toast */}
         <AnimatePresence>
           {showSuccessToast && (
@@ -827,8 +712,6 @@ export default function SettingsPage() {
           )}
         </AnimatePresence>
 
-        {/* Add Template Modal - Will add after this replacement */}
-
         {/* Add Template Modal */}
         <AnimatePresence>
           {showAddTemplateModal && (
@@ -1015,7 +898,7 @@ export default function SettingsPage() {
                     </label>
                     <Select
                       value={editingTemplate.channel}
-                      onChange={(value) => setEditingTemplate({ ...editingTemplate, channel: value })}
+                      onChange={(value) => setEditingTemplate({ ...editingTemplate, channel: value as "EMAIL" | "SMS" | "BOTH" })}
                       options={[
                         { value: "EMAIL", label: "Email" },
                         { value: "SMS", label: "SMS" },
@@ -1187,10 +1070,10 @@ export default function SettingsPage() {
           )}
         </AnimatePresence>
 
-      {/* Header */}
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+            <h1 className="text-2xl font-heading font-bold text-gray-900">Settings</h1>
             <p className="text-gray-600 mt-1">Configure compliance system parameters</p>
           </div>
           <button
@@ -1239,7 +1122,7 @@ export default function SettingsPage() {
 
           <div className="p-6">
             {activeTab === "risk" && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">Risk Scoring Rules</h3>
@@ -1319,7 +1202,7 @@ export default function SettingsPage() {
             )}
 
             {activeTab === "authority" && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">Authority Matrix</h3>
                   <p className="text-sm text-gray-600 mt-1">
@@ -1349,7 +1232,7 @@ export default function SettingsPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {mockAuthorityMatrix.map((item, index) => (
+                      {MOCK_AUTHORITY_MATRIX.map((item, index) => (
                         <motion.tr
                           key={`${item.role}-${item.riskBand}`}
                           initial={{ opacity: 0 }}
@@ -1415,7 +1298,7 @@ export default function SettingsPage() {
             )}
 
             {activeTab === "templates" && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">
@@ -1495,7 +1378,7 @@ export default function SettingsPage() {
             )}
 
             {activeTab === "system" && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">System Configuration</h3>
                   <p className="text-sm text-gray-600 mt-1">
@@ -1512,7 +1395,7 @@ export default function SettingsPage() {
                       type="number"
                       value={systemSettings.defaultSLA}
                       onChange={(e) => handleSystemSettingChange("defaultSLA", Number(e.target.value))}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Standard turnaround time for application review
@@ -1527,7 +1410,7 @@ export default function SettingsPage() {
                       type="number"
                       value={systemSettings.autoEscalationThreshold}
                       onChange={(e) => handleSystemSettingChange("autoEscalationThreshold", Number(e.target.value))}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Automatically escalate applications after this period
@@ -1542,7 +1425,7 @@ export default function SettingsPage() {
                       type="password"
                       value={systemSettings.screeningAPIKey}
                       onChange={(e) => handleSystemSettingChange("screeningAPIKey", e.target.value)}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-colors"
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       API key for sanctions and PEP screening service

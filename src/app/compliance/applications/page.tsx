@@ -13,11 +13,11 @@ import {
   X,
   CheckCircle,
 } from "lucide-react";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
 import Link from "next/link";
 import Select from "@/components/ui/Select";
-import ApplicationActionsMenu from "@/components/compliance/ApplicationActionsMenu";
-import Pagination from "@/components/compliance/shared/Pagination";
+import ApplicationActionsMenu from "@/components/compliance-officer/ApplicationActionsMenu";
+import Pagination from "@/components/compliance-officer/shared/Pagination";
 import {
   cn,
   calculateSLARemaining,
@@ -25,272 +25,7 @@ import {
   getRiskBadgeColor,
   getStatusBadgeColor,
 } from "@/lib/compliance-utils";
-import type { Application } from "@/types/compliance";
-
-// Mock data
-const mockApplications: Application[] = [
-  {
-    id: "APP-2024-001",
-    type: "BUSINESS",
-    status: "UNDER_REVIEW",
-    riskScore: 65,
-    riskBand: "MEDIUM",
-    assignedOfficer: "Jane Mensah",
-    submittedAt: "2026-06-02T14:30:00Z",
-    slaDeadline: "2026-06-04T14:30:00Z",
-    screeningStatus: "PENDING",
-    applicant: {
-      legalName: "Kwame Tech Solutions Ltd",
-      phone: "+233244123456",
-      email: "info@kwametech.com",
-      registrationNumber: "CS-123456",
-      industry: "E-commerce",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-101",
-    type: "BUSINESS",
-    status: "UNDER_REVIEW",
-    riskScore: 65,
-    riskBand: "MEDIUM",
-    assignedOfficer: "Jane Mensah",
-    submittedAt: "2026-06-02T14:30:00Z",
-    slaDeadline: "2026-06-04T14:30:00Z",
-    screeningStatus: "PENDING",
-    applicant: {
-      legalName: "Kwame Tech Solutions Ltd",
-      phone: "+233244123456",
-      email: "info@kwametech.com",
-      registrationNumber: "CS-123456",
-      industry: "E-commerce",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-201",
-    type: "BUSINESS",
-    status: "UNDER_REVIEW",
-    riskScore: 65,
-    riskBand: "MEDIUM",
-    assignedOfficer: "Jane Mensah",
-    submittedAt: "2026-06-02T14:30:00Z",
-    slaDeadline: "2026-06-04T14:30:00Z",
-    screeningStatus: "PENDING",
-    applicant: {
-      legalName: "Kwame Tech Solutions Ltd",
-      phone: "+233244123456",
-      email: "info@kwametech.com",
-      registrationNumber: "CS-123456",
-      industry: "E-commerce",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-002",
-    type: "INDIVIDUAL",
-    status: "PENDING_INFO",
-    riskScore: 25,
-    riskBand: "LOW",
-    assignedOfficer: "John Mensah",
-    submittedAt: "2026-06-01T09:15:00Z",
-    slaDeadline: "2026-06-05T09:15:00Z",
-    screeningStatus: "CLEAR",
-    applicant: {
-      fullName: "Sarah Osei",
-      phone: "+233244987654",
-      email: "sarah.osei@gmail.com",
-      occupation: "Freelance Designer",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-003",
-    type: "BUSINESS",
-    status: "ESCALATED",
-    riskScore: 85,
-    riskBand: "HIGH",
-    assignedOfficer: "Jane Mensah",
-    submittedAt: "2026-05-30T11:45:00Z",
-    slaDeadline: "2026-06-03T11:45:00Z",
-    screeningStatus: "HIT",
-    applicant: {
-      legalName: "Global Traders Ltd",
-      phone: "+233201234567",
-      email: "contact@globaltraders.gh",
-      registrationNumber: "CS-789012",
-      industry: "Import/Export",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-004",
-    type: "INDIVIDUAL",
-    status: "SUBMITTED",
-    riskScore: 45,
-    riskBand: "MEDIUM",
-    submittedAt: "2026-06-03T16:20:00Z",
-    slaDeadline: "2026-06-05T16:20:00Z",
-    screeningStatus: "PENDING",
-    applicant: {
-      fullName: "Kwaku Mensah",
-      phone: "+233244555666",
-      email: "kwaku.m@yahoo.com",
-      occupation: "Business Owner",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-005",
-    type: "BUSINESS",
-    status: "UNDER_REVIEW",
-    riskScore: 35,
-    riskBand: "LOW",
-    assignedOfficer: "Peter Owusu",
-    submittedAt: "2026-06-02T10:00:00Z",
-    slaDeadline: "2026-06-04T10:00:00Z",
-    screeningStatus: "CLEAR",
-    applicant: {
-      legalName: "Bright Future Schools",
-      phone: "+233302123456",
-      email: "admin@brightfuture.edu.gh",
-      registrationNumber: "CS-345678",
-      industry: "Education",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-00232",
-    type: "BUSINESS",
-    status: "UNDER_REVIEW",
-    riskScore: 35,
-    riskBand: "LOW",
-    assignedOfficer: "Peter Owusu",
-    submittedAt: "2026-06-02T10:00:00Z",
-    slaDeadline: "2026-06-04T10:00:00Z",
-    screeningStatus: "CLEAR",
-    applicant: {
-      legalName: "Bright Future Schools",
-      phone: "+233302123456",
-      email: "admin@brightfuture.edu.gh",
-      registrationNumber: "CS-345678",
-      industry: "Education",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-0092",
-    type: "BUSINESS",
-    status: "UNDER_REVIEW",
-    riskScore: 35,
-    riskBand: "LOW",
-    assignedOfficer: "Peter Owusu",
-    submittedAt: "2026-06-02T10:00:00Z",
-    slaDeadline: "2026-06-04T10:00:00Z",
-    screeningStatus: "CLEAR",
-    applicant: {
-      legalName: "Bright Future Schools",
-      phone: "+233302123456",
-      email: "admin@brightfuture.edu.gh",
-      registrationNumber: "CS-345678",
-      industry: "Education",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-0062",
-    type: "BUSINESS",
-    status: "UNDER_REVIEW",
-    riskScore: 35,
-    riskBand: "LOW",
-    assignedOfficer: "Peter Owusu",
-    submittedAt: "2026-06-02T10:00:00Z",
-    slaDeadline: "2026-06-04T10:00:00Z",
-    screeningStatus: "CLEAR",
-    applicant: {
-      legalName: "Bright Future Schools",
-      phone: "+233302123456",
-      email: "admin@brightfuture.edu.gh",
-      registrationNumber: "CS-345678",
-      industry: "Education",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-0022",
-    type: "BUSINESS",
-    status: "UNDER_REVIEW",
-    riskScore: 35,
-    riskBand: "LOW",
-    assignedOfficer: "Peter Owusu",
-    submittedAt: "2026-06-02T10:00:00Z",
-    slaDeadline: "2026-06-04T10:00:00Z",
-    screeningStatus: "CLEAR",
-    applicant: {
-      legalName: "Bright Future Schools",
-      phone: "+233302123456",
-      email: "admin@brightfuture.edu.gh",
-      registrationNumber: "CS-345678",
-      industry: "Education",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-  {
-    id: "APP-2024-0042",
-    type: "BUSINESS",
-    status: "UNDER_REVIEW",
-    riskScore: 35,
-    riskBand: "LOW",
-    assignedOfficer: "Peter Owusu",
-    submittedAt: "2026-06-02T10:00:00Z",
-    slaDeadline: "2026-06-04T10:00:00Z",
-    screeningStatus: "CLEAR",
-    applicant: {
-      legalName: "Bright Future Schools",
-      phone: "+233302123456",
-      email: "admin@brightfuture.edu.gh",
-      registrationNumber: "CS-345678",
-      industry: "Education",
-    },
-    documents: [],
-    screeningResults: [],
-    notes: [],
-    auditTrail: [],
-  },
-];
+import { MOCK_APPLICATIONS } from "@/lib/compliance-hub-mock-data";
 
 export default function ApplicationsQueue() {
   const router = useRouter();
@@ -328,7 +63,7 @@ export default function ApplicationsQueue() {
 
   // Filter applications with useMemo for performance
   const filteredApplications = useMemo(() => {
-    return mockApplications.filter((app) => {
+    return MOCK_APPLICATIONS.filter((app) => {
       const matchesSearch =
         app.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (app.applicant.fullName || app.applicant.legalName || "")
@@ -417,7 +152,7 @@ export default function ApplicationsQueue() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Export Success Toast */}
         <AnimatePresence>
           {showExportSuccess && (
@@ -463,7 +198,7 @@ export default function ApplicationsQueue() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-brand-navy">
+            <h1 className="text-2xl font-heading font-bold text-brand-navy">
               Applications Queue
             </h1>
             <p className="text-gray-500 mt-1">

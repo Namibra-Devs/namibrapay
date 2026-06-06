@@ -22,107 +22,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
-import Card from "@/components/compliance/shared/Card";
-import Badge from "@/components/compliance/shared/Badge";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
+import Card from "@/components/compliance-officer/shared/Card";
+import Badge from "@/components/compliance-officer/shared/Badge";
 import { Case, CaseStatus, CaseEvidence, CaseTask, Note } from "@/types/compliance";
 import { formatDate } from "@/lib/compliance-utils";
-
-// Mock case data
-const getCaseData = (id: string): Case => ({
-  id,
-  type: "SANCTIONS_HIT",
-  priority: "CRITICAL",
-  status: "INVESTIGATING",
-  linkedEntities: ["APP-2024-003", "MERCH-002"],
-  assignedInvestigator: "Jane Mensah",
-  openedAt: "2024-02-20T09:00:00Z",
-  openedBy: "System",
-  evidence: [
-    {
-      id: "EV-001",
-      type: "DOCUMENT",
-      description: "Sanctions screening report showing 85% match",
-      fileUrl: "#",
-      addedBy: "Jane Mensah",
-      addedAt: "2024-02-20T10:30:00Z",
-    },
-    {
-      id: "EV-002",
-      type: "SCREENSHOT",
-      description: "Screenshot of OFAC list entry",
-      fileUrl: "#",
-      addedBy: "Jane Mensah",
-      addedAt: "2024-02-20T11:15:00Z",
-    },
-    {
-      id: "EV-003",
-      type: "NOTE",
-      description: "Initial assessment notes from screening review",
-      addedBy: "Jane Mensah",
-      addedAt: "2024-02-20T09:30:00Z",
-    },
-  ],
-  notes: [
-    {
-      id: "NOTE-001",
-      content: "Initial screening triggered on name match. Subject name matches OFAC list entry with 85% confidence. Proceeding with detailed investigation.",
-      author: "jane.mensah@namibrapay.com",
-      authorName: "Jane Mensah",
-      createdAt: "2024-02-20T09:30:00Z",
-      isInternal: true,
-    },
-    {
-      id: "NOTE-002",
-      content: "Reviewed additional identifiers. Date of birth differs by 2 years. Nationality matches. Need to verify with government database.",
-      author: "jane.mensah@namibrapay.com",
-      authorName: "Jane Mensah",
-      createdAt: "2024-02-20T14:20:00Z",
-      isInternal: true,
-    },
-    {
-      id: "NOTE-003",
-      content: "Contacted applicant for additional documentation. Awaiting response.",
-      author: "jane.mensah@namibrapay.com",
-      authorName: "Jane Mensah",
-      createdAt: "2024-02-21T10:00:00Z",
-      isInternal: false,
-    },
-  ],
-  tasks: [
-    {
-      id: "TASK-001",
-      description: "Review sanctions match details and compare all identifiers",
-      assignedTo: "Jane Mensah",
-      dueDate: "2024-02-21T17:00:00Z",
-      completed: true,
-      completedAt: "2024-02-20T14:30:00Z",
-    },
-    {
-      id: "TASK-002",
-      description: "Request additional identity documents from applicant",
-      assignedTo: "Jane Mensah",
-      dueDate: "2024-02-22T17:00:00Z",
-      completed: true,
-      completedAt: "2024-02-21T10:05:00Z",
-    },
-    {
-      id: "TASK-003",
-      description: "Verify identity with government database",
-      assignedTo: "Jane Mensah",
-      dueDate: "2024-02-23T17:00:00Z",
-      completed: false,
-    },
-    {
-      id: "TASK-004",
-      description: "Prepare case summary for senior review",
-      assignedTo: "Jane Mensah",
-      dueDate: "2024-02-24T17:00:00Z",
-      completed: false,
-    },
-  ],
-  strDraft: "",
-});
+import { getCaseDetailData } from "@/lib/compliance-hub-mock-data";
 
 export default function CaseDetailPage() {
   const params = useParams();
@@ -147,7 +52,7 @@ export default function CaseDetailPage() {
   const [alertMessage, setAlertMessage] = useState("");
   
   // State management for case data
-  const [caseData, setCaseData] = useState(() => getCaseData(caseId));
+  const [caseData, setCaseData] = useState(() => getCaseDetailData(caseId));
 
   // Helper function to show success toast
   const showToast = (message: string) => {
@@ -386,28 +291,28 @@ export default function CaseDetailPage() {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       const reportContent = `
-CASE REPORT
------------
-Case ID: ${caseData.id}
-Type: ${caseData.type.replace(/_/g, " ")}
-Priority: ${caseData.priority}
-Status: ${caseData.status}
+      CASE REPORT
+      -----------
+      Case ID: ${caseData.id}
+      Type: ${caseData.type.replace(/_/g, " ")}
+      Priority: ${caseData.priority}
+      Status: ${caseData.status}
 
-Investigator: ${caseData.assignedInvestigator}
-Opened: ${formatDate(caseData.openedAt, true)}
-${caseData.closedAt ? `Closed: ${formatDate(caseData.closedAt, true)}` : ""}
+      Investigator: ${caseData.assignedInvestigator}
+      Opened: ${formatDate(caseData.openedAt, true)}
+      ${caseData.closedAt ? `Closed: ${formatDate(caseData.closedAt, true)}` : ""}
 
-Linked Entities: ${caseData.linkedEntities.join(", ")}
+      Linked Entities: ${caseData.linkedEntities.join(", ")}
 
-NOTES (${caseData.notes.length}):
-${caseData.notes.map((n) => `- ${formatDate(n.createdAt, true)} by ${n.authorName}: ${n.content}`).join("\n")}
+      NOTES (${caseData.notes.length}):
+      ${caseData.notes.map((n) => `- ${formatDate(n.createdAt, true)} by ${n.authorName}: ${n.content}`).join("\n")}
 
-EVIDENCE (${caseData.evidence.length}):
-${caseData.evidence.map((e) => `- ${e.type}: ${e.description}`).join("\n")}
+      EVIDENCE (${caseData.evidence.length}):
+      ${caseData.evidence.map((e) => `- ${e.type}: ${e.description}`).join("\n")}
 
-TASKS (${caseData.tasks.length}):
-${caseData.tasks.map((t) => `- [${t.completed ? "X" : " "}] ${t.description}`).join("\n")}
-      `;
+      TASKS (${caseData.tasks.length}):
+      ${caseData.tasks.map((t) => `- [${t.completed ? "X" : " "}] ${t.description}`).join("\n")}
+            `;
 
       const blob = new Blob([reportContent], { type: "text/plain" });
       const url = window.URL.createObjectURL(blob);

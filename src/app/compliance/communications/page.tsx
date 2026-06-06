@@ -19,115 +19,15 @@ import {
   Save,
   Loader2,
 } from "lucide-react";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
 import Select from "@/components/ui/Select";
 import { cn, formatDate } from "@/lib/compliance-utils";
-
-// Define message type
-type MessageType = {
-  id: string;
-  entityId: string;
-  entityName: string;
-  channel: "EMAIL" | "SMS";
-  subject: string | null;
-  template: string;
-  status: "DELIVERED" | "SENT" | "FAILED";
-  sentAt: string;
-  deliveredAt: string | null;
-};
-
-// Mock data with initial state
-const initialMessages: MessageType[] = [
-  {
-    id: "MSG-001",
-    entityId: "APP-2024-001",
-    entityName: "Kwame Tech Solutions Ltd",
-    channel: "EMAIL",
-    subject: "Additional Information Required",
-    template: "Request for Information",
-    status: "DELIVERED",
-    sentAt: "2026-06-03T10:30:00Z",
-    deliveredAt: "2026-06-03T10:31:00Z",
-  },
-  {
-    id: "MSG-002",
-    entityId: "APP-2024-002",
-    entityName: "Sarah Osei",
-    channel: "SMS",
-    subject: null,
-    template: "Application Received",
-    status: "DELIVERED",
-    sentAt: "2026-06-01T09:16:00Z",
-    deliveredAt: "2026-06-01T09:16:30Z",
-  },
-  {
-    id: "MSG-003",
-    entityId: "APP-2024-045",
-    entityName: "Global Traders Ltd",
-    channel: "EMAIL",
-    subject: "Application Approved",
-    template: "Approval Notification",
-    status: "DELIVERED",
-    sentAt: "2026-06-02T16:45:00Z",
-    deliveredAt: "2026-06-02T16:45:12Z",
-  },
-  {
-    id: "MSG-004",
-    entityId: "APP-2024-038",
-    entityName: "Bright Future Schools",
-    channel: "EMAIL",
-    subject: "Application Status Update",
-    template: "Rejection Notification",
-    status: "FAILED",
-    sentAt: "2026-06-02T14:20:00Z",
-    deliveredAt: null,
-  },
-];
-
-const templates = [
-  { 
-    id: "TPL-001", 
-    name: "Application Received", 
-    channel: "BOTH" as const, 
-    category: "Onboarding",
-    body: "Dear {{applicant_name}},\n\nYour application ({{application_id}}) has been received and is under review. We will notify you of any updates.\n\nThank you for your patience.\n\nNamibraPay Compliance Team"
-  },
-  { 
-    id: "TPL-002", 
-    name: "Request for Information", 
-    channel: "EMAIL" as const, 
-    category: "Review",
-    body: "Dear {{applicant_name}},\n\nWe require additional information for application {{application_id}}:\n\n{{missing_documents}}\n\nPlease submit these documents within 5 business days.\n\nBest regards,\nNamibraPay Compliance Team"
-  },
-  { 
-    id: "TPL-003", 
-    name: "Approval Notification", 
-    channel: "BOTH" as const, 
-    category: "Decision",
-    body: "Dear {{applicant_name}},\n\nCongratulations! Your application ({{application_id}}) has been approved.\n\nYou can now proceed with onboarding.\n\nWelcome to NamibraPay!"
-  },
-  { 
-    id: "TPL-004", 
-    name: "Rejection Notification", 
-    channel: "EMAIL" as const, 
-    category: "Decision",
-    body: "Dear {{applicant_name}},\n\nAfter careful review, we regret to inform you that application {{application_id}} has been declined.\n\nReason: {{decision_reason}}\n\nYou may reapply after 90 days.\n\nNamibraPay Compliance Team"
-  },
-  { 
-    id: "TPL-005", 
-    name: "Document Expiry Reminder", 
-    channel: "SMS" as const, 
-    category: "Maintenance",
-    body: "Hi {{applicant_name}}, your documents for account {{application_id}} are expiring soon. Please update them to avoid service interruption. - NamibraPay"
-  },
-  { 
-    id: "TPL-006", 
-    name: "Periodic Review Request", 
-    channel: "EMAIL" as const, 
-    category: "Maintenance",
-    body: "Dear {{applicant_name}},\n\nAs part of our periodic KYC review for account {{application_id}}, please submit updated documentation.\n\nRequired documents:\n{{missing_documents}}\n\nThank you for your cooperation.\n\nNamibraPay Compliance Team"
-  },
-];
+import {
+  MOCK_MESSAGES,
+  MOCK_TEMPLATES,
+  type MessageType,
+  type Template,
+} from "@/lib/compliance-hub-mock-data";
 
 export default function CommunicationsCenter() {
   const [activeView, setActiveView] = useState<"compose" | "history" | "templates">("history");
@@ -141,7 +41,7 @@ export default function CommunicationsCenter() {
   const [channelFilter, setChannelFilter] = useState<string>("ALL");
   
   // State management
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState(MOCK_MESSAGES);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -180,7 +80,7 @@ export default function CommunicationsCenter() {
   // Load template content when selected
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId);
-    const template = templates.find((t) => t.id === templateId);
+    const template = MOCK_TEMPLATES.find((t) => t.id === templateId);
     if (template) {
       setMessageBody(template.body);
       if (template.channel === "EMAIL" || template.channel === "BOTH") {
@@ -245,7 +145,7 @@ export default function CommunicationsCenter() {
           entityName: recipient,
           channel: "EMAIL",
           subject: subject,
-          template: selectedTemplate ? templates.find((t) => t.id === selectedTemplate)?.name || "Custom" : "Custom",
+          template: selectedTemplate ? MOCK_TEMPLATES.find((t) => t.id === selectedTemplate)?.name || "Custom" : "Custom",
           status: "DELIVERED",
           sentAt: timestamp,
           deliveredAt: new Date(Date.now() + 1000).toISOString(),
@@ -256,7 +156,7 @@ export default function CommunicationsCenter() {
           entityName: recipient,
           channel: "SMS",
           subject: null,
-          template: selectedTemplate ? templates.find((t) => t.id === selectedTemplate)?.name || "Custom" : "Custom",
+          template: selectedTemplate ? MOCK_TEMPLATES.find((t) => t.id === selectedTemplate)?.name || "Custom" : "Custom",
           status: "DELIVERED",
           sentAt: timestamp,
           deliveredAt: new Date(Date.now() + 500).toISOString(),
@@ -268,7 +168,7 @@ export default function CommunicationsCenter() {
           entityName: recipient,
           channel: selectedChannel,
           subject: selectedChannel === "EMAIL" ? subject : null,
-          template: selectedTemplate ? templates.find((t) => t.id === selectedTemplate)?.name || "Custom" : "Custom",
+          template: selectedTemplate ? MOCK_TEMPLATES.find((t) => t.id === selectedTemplate)?.name || "Custom" : "Custom",
           status: "DELIVERED",
           sentAt: timestamp,
           deliveredAt: new Date(Date.now() + 1000).toISOString(),
@@ -338,7 +238,7 @@ export default function CommunicationsCenter() {
   };
 
   // Open edit template modal
-  const handleEditTemplateClick = (template: typeof templates[0]) => {
+  const handleEditTemplateClick = (template: Template) => {
     setEditingTemplate({
       id: template.id,
       name: template.name,
@@ -392,7 +292,7 @@ export default function CommunicationsCenter() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Success Toast */}
         <AnimatePresence>
           {showSuccessToast && (
@@ -783,7 +683,7 @@ export default function CommunicationsCenter() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-brand-navy">Communications Center</h1>
+            <h1 className="text-2xl font-heading font-bold text-brand-navy">Communications Center</h1>
             <p className="text-gray-500 mt-1">
               Send notices and manage communications with applicants
             </p>
@@ -875,7 +775,7 @@ export default function CommunicationsCenter() {
                 <Select
                   options={[
                     { value: "", label: "Select a template..." },
-                    ...templates
+                    ...MOCK_TEMPLATES
                       .filter(
                         (t) =>
                           t.channel === selectedChannel ||
@@ -1034,7 +934,7 @@ export default function CommunicationsCenter() {
 
             {/* Results Counter */}
             {filteredMessages.length > 0 && (
-              <div className="px-4 py-2 bg-gray-50 rounded-lg">
+              <div className="px-4 bg-gray-50 rounded-lg">
                 <p className="text-sm text-gray-600">
                   Showing {filteredMessages.length} message(s)
                   {(searchQuery || statusFilter !== "ALL" || channelFilter !== "ALL") && " matching filters"}
@@ -1151,7 +1051,7 @@ export default function CommunicationsCenter() {
               </button>
             </div>
             <div className="divide-y divide-gray-200">
-              {templates.map((template, index) => (
+              {MOCK_TEMPLATES.map((template, index) => (
                 <motion.div
                   key={template.id}
                   initial={{ opacity: 0, y: 10 }}

@@ -4,9 +4,9 @@ import { useState, useMemo } from "react";
 import { Search, Download, TrendingUp, DollarSign } from "lucide-react";
 import { MOCK_ORDERS } from "@/lib/mock-data/orders";
 import type { Order, OrderStatus } from "@/lib/mock-data/orders";
-import OrderFilters from "@/components/orders/OrderFilters";
-import type { OrderFilterState } from "@/components/orders/OrderFilters";
-import OrderList from "@/components/orders/OrderList";
+import OrderFilters from "@/components/namibrapay-main/orders/OrderFilters";
+import type { OrderFilterState } from "@/components/namibrapay-main/orders/OrderFilters";
+import OrderList from "@/components/namibrapay-main/orders/OrderList";
 
 const DEFAULT_FILTERS: OrderFilterState = {
   productIds: [],

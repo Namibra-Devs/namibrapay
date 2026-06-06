@@ -15,11 +15,11 @@ import {
   Shield,
   TrendingUp,
 } from "lucide-react";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
 import Link from "next/link";
 import Select from "@/components/ui/Select";
-import Pagination from "@/components/compliance/shared/Pagination";
-import StatCard from "@/components/compliance/shared/StatCard";
+import Pagination from "@/components/compliance-officer/shared/Pagination";
+import StatCard from "@/components/compliance-officer/shared/StatCard";
 import { cn, formatDate, calculateSLARemaining } from "@/lib/compliance-utils";
 import { useRBAC } from "@/contexts/RBACContext";
 
@@ -186,7 +186,7 @@ export default function ApprovalsQueuePage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Success Toast */}
         <AnimatePresence>
           {showSuccessToast && (
@@ -207,7 +207,7 @@ export default function ApprovalsQueuePage() {
 
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-brand-navy">Maker-Checker Approvals</h1>
+          <h1 className="text-2xl font-heading font-bold text-brand-navy">Maker-Checker Approvals</h1>
           <p className="text-gray-500 mt-1">
             High-risk applications requiring senior authorization
           </p>
@@ -220,7 +220,7 @@ export default function ApprovalsQueuePage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard title="Pending Authorization" value={pendingCount} icon={Clock} color="peach" />
           <StatCard title="Urgent (SLA)" value={urgentCount} icon={AlertTriangle} color="pink" />
           <StatCard title="Authorized Today" value={approvedCount} icon={CheckCircle} color="teal" />

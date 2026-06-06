@@ -5,12 +5,12 @@ import Link from "next/link";
 import { ChevronRight, Package, Archive, ArchiveRestore } from "lucide-react";
 import { MOCK_PRODUCTS } from "@/lib/mock-data/products";
 import type { Product } from "@/lib/mock-data/products";
-import OrdersTab from "@/components/products/product-detail/OrdersTab";
-import InventoryTab from "@/components/products/product-detail/InventoryTab";
-import CustomizeProductTab from "@/components/products/product-detail/CustomizeProductTab";
-import DiscountCodesTab from "@/components/products/product-detail/DiscountCodesTab";
-import DeliveryTab from "@/components/products/product-detail/DeliveryTab";
-import AfterPurchaseTab from "@/components/products/product-detail/AfterPurchaseTab";
+import OrdersTab from "@/components/namibrapay-main/products/product-detail/OrdersTab";
+import InventoryTab from "@/components/namibrapay-main/products/product-detail/InventoryTab";
+import CustomizeProductTab from "@/components/namibrapay-main/products/product-detail/CustomizeProductTab";
+import DiscountCodesTab from "@/components/namibrapay-main/products/product-detail/DiscountCodesTab";
+import DeliveryTab from "@/components/namibrapay-main/products/product-detail/DeliveryTab";
+import AfterPurchaseTab from "@/components/namibrapay-main/products/product-detail/AfterPurchaseTab";
 
 type TabId = "orders" | "inventory" | "customize" | "discounts" | "delivery" | "after-purchase";
 

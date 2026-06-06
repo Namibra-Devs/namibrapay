@@ -24,19 +24,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
-import Card from "@/components/compliance/shared/Card";
-import Badge from "@/components/compliance/shared/Badge";
-import StatCard from "@/components/compliance/shared/StatCard";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
+import Card from "@/components/compliance-officer/shared/Card";
+import Badge from "@/components/compliance-officer/shared/Badge";
+import StatCard from "@/components/compliance-officer/shared/StatCard";
 import Select from "@/components/ui/Select";
-import {
-  EntityStatus,
-  RiskBand,
-  Document,
-  ScreeningResult,
-  Case,
-  TransactionSummary,
-} from "@/types/compliance";
+import {EntityStatus} from "@/types/compliance";
 import {
   getStatusBadgeColor,
   getRiskBadgeColor,
@@ -44,132 +37,7 @@ import {
   formatCurrency,
   getInitials,
 } from "@/lib/compliance-utils";
-
-// Mock merchant data
-const getMerchantData = (id: string) => ({
-  id,
-  legalName: "Accra Retail Solutions Ltd",
-  tradingName: "ShopNow Ghana",
-  status: "ACTIVE" as EntityStatus,
-  riskBand: "LOW" as RiskBand,
-  riskScore: 25,
-  industry: "Retail",
-  businessType: "Private Limited Company",
-  registrationNumber: "CS-2023-45678",
-  dateOfIncorporation: "2023-01-15T00:00:00Z",
-  onboardedAt: "2024-01-15T10:00:00Z",
-  lastActivity: "2024-02-20T14:30:00Z",
-  assignedOfficer: "Jane Mensah",
-  contact: {
-    email: "info@shopnowgh.com",
-    phone: "+233 24 123 4567",
-    website: "https://shopnowgh.com",
-    registeredAddress: "Plot 45, Liberation Road, Accra, Ghana",
-    operatingAddress: "Shop 12, Accra Mall, Tetteh Quarshie, Accra",
-  },
-  transactionSummary: {
-    totalVolume: 453,
-    totalValue: 125000,
-    averageValue: 276,
-    channelBreakdown: {
-      "Mobile Money": 280000,
-      "Bank Transfer": 95000,
-      "Card": 50000,
-    },
-    period: "Last 30 days",
-    flaggedCount: 2,
-  } as TransactionSummary,
-  documents: [
-    {
-      id: "DOC-001",
-      type: "BUSINESS_REG",
-      entityId: id,
-      status: "VERIFIED",
-      uploadedBy: "System",
-      uploadedAt: "2024-01-15T10:00:00Z",
-      expiryDate: "2025-01-15T00:00:00Z",
-      verifiedBy: "Jane Mensah",
-      verifiedAt: "2024-01-15T11:30:00Z",
-      fileUrl: "#",
-      fileName: "business-registration.pdf",
-      fileSize: 245000,
-    },
-    {
-      id: "DOC-002",
-      type: "TAX_CERT",
-      entityId: id,
-      status: "VERIFIED",
-      uploadedBy: "System",
-      uploadedAt: "2024-01-15T10:05:00Z",
-      expiryDate: "2024-12-31T00:00:00Z",
-      verifiedBy: "Jane Mensah",
-      verifiedAt: "2024-01-15T11:35:00Z",
-      fileUrl: "#",
-      fileName: "tax-certificate.pdf",
-      fileSize: 189000,
-    },
-    {
-      id: "DOC-003",
-      type: "BANK_STATEMENT",
-      entityId: id,
-      status: "VERIFIED",
-      uploadedBy: "System",
-      uploadedAt: "2024-01-15T10:10:00Z",
-      verifiedBy: "Jane Mensah",
-      verifiedAt: "2024-01-15T11:40:00Z",
-      fileUrl: "#",
-      fileName: "bank-statement-december.pdf",
-      fileSize: 512000,
-    },
-  ] as Document[],
-  screeningResults: [
-    {
-      id: "SCR-001",
-      subjectId: id,
-      subjectName: "Accra Retail Solutions Ltd",
-      listType: "SANCTIONS",
-      matchScore: 0,
-      matchedAttributes: [],
-      screenedAt: "2024-01-15T10:30:00Z",
-      disposition: "FALSE_POSITIVE",
-      dispositionBy: "Jane Mensah",
-      dispositionAt: "2024-01-15T11:00:00Z",
-    },
-    {
-      id: "SCR-002",
-      subjectId: id,
-      subjectName: "Accra Retail Solutions Ltd",
-      listType: "PEP",
-      matchScore: 0,
-      matchedAttributes: [],
-      screenedAt: "2024-01-15T10:30:00Z",
-      disposition: "FALSE_POSITIVE",
-      dispositionBy: "Jane Mensah",
-      dispositionAt: "2024-01-15T11:00:00Z",
-    },
-  ] as ScreeningResult[],
-  beneficialOwners: [
-    {
-      id: "BO-001",
-      name: "Kofi Mensah",
-      dateOfBirth: "1985-03-20",
-      nationality: "Ghanaian",
-      ownershipPercent: 60,
-      role: "DIRECTOR" as const,
-      screeningStatus: "CLEAR" as const,
-    },
-    {
-      id: "BO-002",
-      name: "Ama Asante",
-      dateOfBirth: "1990-07-15",
-      nationality: "Ghanaian",
-      ownershipPercent: 40,
-      role: "SHAREHOLDER" as const,
-      screeningStatus: "CLEAR" as const,
-    },
-  ],
-  cases: [] as Case[],
-});
+import { getMerchantData } from "@/lib/compliance-hub-mock-data";
 
 export default function MerchantDetailPage() {
   const params = useParams();

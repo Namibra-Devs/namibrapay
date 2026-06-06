@@ -1,10 +1,10 @@
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import Hero from "@/components/sections/Hero";
-import Partners from "@/components/sections/Partners";
-import Features from "@/components/sections/Features";
-import UseCases from "@/components/sections/UseCases";
-import CTA from "@/components/sections/CTA";
+import Navbar from "@/components/landing-page/layout/Navbar";
+import Footer from "@/components/landing-page/layout/Footer";
+import Hero from "@/components/landing-page/sections/Hero";
+import Partners from "@/components/landing-page/sections/Partners";
+import Features from "@/components/landing-page/sections/Features";
+import UseCases from "@/components/landing-page/sections/UseCases";
+import CTA from "@/components/landing-page/sections/CTA";
 
 export default function Home() {
   return (

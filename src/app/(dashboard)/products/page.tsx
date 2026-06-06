@@ -4,10 +4,10 @@ import { useState, useMemo } from "react";
 import { Plus, Search } from "lucide-react";
 import { MOCK_PRODUCTS } from "@/lib/mock-data/products";
 import type { Product } from "@/lib/mock-data/products";
-import ProductFilters from "@/components/products/ProductFilters";
-import type { ProductFilterState } from "@/components/products/ProductFilters";
-import ProductList from "@/components/products/ProductList";
-import NewProductModal from "@/components/products/NewProductModal";
+import ProductFilters from "@/components/namibrapay-main/products/ProductFilters";
+import type { ProductFilterState } from "@/components/namibrapay-main/products/ProductFilters";
+import ProductList from "@/components/namibrapay-main/products/ProductList";
+import NewProductModal from "@/components/namibrapay-main/products/NewProductModal";
 
 type NewProductData = Omit<Product, "id" | "createdAt" | "unitsSold" | "revenue" | "slug">;
 

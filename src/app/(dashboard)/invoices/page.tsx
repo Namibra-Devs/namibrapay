@@ -4,11 +4,11 @@ import { useState, useMemo } from "react";
 import { Search, Download, Receipt, DollarSign, Clock, FileCheck } from "lucide-react";
 import { MOCK_INVOICES } from "@/lib/mock-data/invoices";
 import type { Invoice } from "@/lib/mock-data/invoices";
-import InvoiceFilters from "@/components/invoices/InvoiceFilters";
-import type { InvoiceFilterState } from "@/components/invoices/InvoiceFilters";
-import { DEFAULT_INVOICE_FILTERS } from "@/components/invoices/InvoiceFilters";
-import InvoiceList from "@/components/invoices/InvoiceList";
-import RequestPaymentModal from "@/components/invoices/RequestPaymentModal";
+import InvoiceFilters from "@/components/namibrapay-main/invoices/InvoiceFilters";
+import type { InvoiceFilterState } from "@/components/namibrapay-main/invoices/InvoiceFilters";
+import { DEFAULT_INVOICE_FILTERS } from "@/components/namibrapay-main/invoices/InvoiceFilters";
+import InvoiceList from "@/components/namibrapay-main/invoices/InvoiceList";
+import RequestPaymentModal from "@/components/namibrapay-main/invoices/RequestPaymentModal";
 
 let nextId = MOCK_INVOICES.length + 1;
 function genRef() {

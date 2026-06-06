@@ -1,4 +1,4 @@
-import ComplianceFlow from "@/components/compliance/ComplianceFlow";
+import ComplianceFlow from "@/components/namibrapay-main/compliance/ComplianceFlow";
 
 export default function CompliancePage() {
   return (

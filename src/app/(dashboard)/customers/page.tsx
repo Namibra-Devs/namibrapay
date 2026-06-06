@@ -2,13 +2,13 @@
 
 import { useState, useMemo } from "react";
 import { UserPlus } from "lucide-react";
-import CustomerFilters from "@/components/customers/CustomerFilters";
-import AddCustomerModal from "@/components/customers/AddCustomerModal";
+import CustomerFilters from "@/components/namibrapay-main/customers/CustomerFilters";
+import AddCustomerModal from "@/components/namibrapay-main/customers/AddCustomerModal";
 import { mockCustomers } from "@/lib/mock-data/customers";
 import type { Customer } from "@/lib/mock-data/customers";
-import type { CustomerFilterState } from "@/components/customers/CustomerFilters";
-import type { NewCustomerData } from "@/components/customers/AddCustomerModal";
-import { DEFAULT_CUSTOMER_FILTERS } from "@/components/customers/CustomerFilters";
+import type { CustomerFilterState } from "@/components/namibrapay-main/customers/CustomerFilters";
+import type { NewCustomerData } from "@/components/namibrapay-main/customers/AddCustomerModal";
+import { DEFAULT_CUSTOMER_FILTERS } from "@/components/namibrapay-main/customers/CustomerFilters";
 import { cn } from "@/lib/utils";
 
 function formatDate(dateStr: string) {

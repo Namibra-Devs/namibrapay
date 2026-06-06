@@ -4,9 +4,9 @@ import { useState, useMemo } from "react";
 import { Plus, Search } from "lucide-react";
 import { MOCK_PAYMENT_PAGES } from "@/lib/mock-data/payment-pages";
 import type { PaymentPage } from "@/lib/mock-data/payment-pages";
-import PaymentPageFilters from "@/components/payment-pages/PaymentPageFilters";
-import PaymentPageList from "@/components/payment-pages/PaymentPageList";
-import NewPageModal from "@/components/payment-pages/NewPageModal";
+import PaymentPageFilters from "@/components/namibrapay-main/payment-pages/PaymentPageFilters";
+import PaymentPageList from "@/components/namibrapay-main/payment-pages/PaymentPageList";
+import NewPageModal from "@/components/namibrapay-main/payment-pages/NewPageModal";
 
 type StatusFilter = "all" | "active" | "inactive";
 type NewPageData = Omit<PaymentPage, "id" | "createdAt" | "visits" | "revenue">;

@@ -18,7 +18,7 @@ import {
   Smartphone,
   Loader2,
 } from "lucide-react";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -133,7 +133,7 @@ export default function ProfilePage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Success Toast */}
         <AnimatePresence>
           {showSuccessToast && (
@@ -154,7 +154,7 @@ export default function ProfilePage() {
 
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-brand-navy">Account Settings</h1>
+          <h1 className="text-2xl font-heading font-bold text-brand-navy">Account Settings</h1>
           <p className="text-gray-500 mt-1">Manage your profile, security and preferences</p>
         </div>
 
@@ -185,7 +185,7 @@ export default function ProfilePage() {
         <div className="bg-white rounded-2xl shadow-[0_30px_70px_-50px_rgba(15,23,42,0.45)] border border-gray-200/70 p-6">
           {/* Profile Tab */}
           {activeTab === "profile" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
               <div>
                 <h3 className="text-sm font-semibold tracking-wide uppercase text-gray-400 mb-4">Personal Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -293,7 +293,7 @@ export default function ProfilePage() {
 
           {/* Notifications Tab */}
           {activeTab === "notifications" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
               <h3 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Notification Preferences</h3>
               <div className="space-y-4">
                 {Object.entries(notificationSettings).map(([key, value]) => (
@@ -318,7 +318,7 @@ export default function ProfilePage() {
 
           {/* Sessions Tab */}
           {activeTab === "sessions" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
               <h3 className="text-sm font-semibold tracking-wide uppercase text-gray-400">Active Sessions</h3>
               <div className="space-y-4">
                 {activeSessions.map((session) => (

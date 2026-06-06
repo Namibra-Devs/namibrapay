@@ -1,13 +1,13 @@
 "use client";
 
 import { TrendingUp, ArrowLeftRight, Users, Banknote } from "lucide-react";
-import StatCard from "@/components/dashboard/StatCard";
-import RecentTransactions from "@/components/dashboard/RecentTransactions";
-import QuickActions from "@/components/dashboard/QuickActions";
-import BalancePanel from "@/components/dashboard/BalancePanel";
-import RevenueChart from "@/components/dashboard/charts/RevenueChart";
-import SuccessRateChart from "@/components/dashboard/charts/SuccessRateChart";
-import PaymentIssuesChart from "@/components/dashboard/charts/PaymentIssuesChart";
+import StatCard from "@/components/namibrapay-main/dashboard/StatCard";
+import RecentTransactions from "@/components/namibrapay-main/dashboard/RecentTransactions";
+import QuickActions from "@/components/namibrapay-main/dashboard/QuickActions";
+import BalancePanel from "@/components/namibrapay-main/dashboard/BalancePanel";
+import RevenueChart from "@/components/namibrapay-main/dashboard/charts/RevenueChart";
+import SuccessRateChart from "@/components/namibrapay-main/dashboard/charts/SuccessRateChart";
+import PaymentIssuesChart from "@/components/namibrapay-main/dashboard/charts/PaymentIssuesChart";
 import { mockDashboardStats } from "@/lib/mock-data/dashboard";
 import { mockTransactions } from "@/lib/mock-data/transactions";
 import { mockUser } from "@/lib/mock-data/dashboard";

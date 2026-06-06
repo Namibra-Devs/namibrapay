@@ -16,97 +16,12 @@ import {
   Eye,
   Flag,
 } from "lucide-react";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
 import Select from "@/components/ui/Select";
-import Pagination from "@/components/compliance/shared/Pagination";
-import StatCard from "@/components/compliance/shared/StatCard";
+import Pagination from "@/components/compliance-officer/shared/Pagination";
+import StatCard from "@/components/compliance-officer/shared/StatCard";
 import { formatDate } from "@/lib/compliance-utils";
-
-// Alert type
-interface TransactionAlert {
-  id: string;
-  merchantId: string;
-  merchantName: string;
-  alertType: string;
-  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  amount?: number;
-  transactionCount?: number;
-  triggeredRule: string;
-  detectedAt: string;
-  status: "OPEN" | "INVESTIGATING" | "DISMISSED" | "ESCALATED";
-  assignedTo?: string;
-  vendorSource?: string;
-}
-
-// Mock alerts data
-const mockAlerts: TransactionAlert[] = [
-  {
-    id: "ALERT-2024-001",
-    merchantId: "MERCH-789",
-    merchantName: "QuickPay Solutions",
-    alertType: "THRESHOLD_BREACH",
-    severity: "HIGH",
-    amount: 250000,
-    transactionCount: 45,
-    triggeredRule: "Daily volume exceeds 200,000 GHS",
-    detectedAt: "2026-06-05T09:30:00Z",
-    status: "OPEN",
-    vendorSource: "MTN Mobile Money",
-  },
-  {
-    id: "ALERT-2024-002",
-    merchantId: "MERCH-445",
-    merchantName: "Global Traders Ltd",
-    alertType: "VELOCITY_SPIKE",
-    severity: "CRITICAL",
-    transactionCount: 120,
-    triggeredRule: "Transaction velocity 300% above baseline",
-    detectedAt: "2026-06-05T08:15:00Z",
-    status: "INVESTIGATING",
-    assignedTo: "Jane Mensah",
-    vendorSource: "Zeepay",
-  },
-  {
-    id: "ALERT-2024-003",
-    merchantId: "MERCH-223",
-    merchantName: "Tech Innovations Inc",
-    alertType: "STRUCTURING_PATTERN",
-    severity: "MEDIUM",
-    amount: 98500,
-    transactionCount: 25,
-    triggeredRule: "Multiple just-below-threshold transactions",
-    detectedAt: "2026-06-04T16:45:00Z",
-    status: "OPEN",
-    vendorSource: "Airtel Money",
-  },
-  {
-    id: "ALERT-2024-004",
-    merchantId: "MERCH-112",
-    merchantName: "ABC Logistics",
-    alertType: "INCONSISTENT_ACTIVITY",
-    severity: "LOW",
-    amount: 45000,
-    triggeredRule: "Activity pattern differs from declared business",
-    detectedAt: "2026-06-04T14:20:00Z",
-    status: "DISMISSED",
-    assignedTo: "Peter Owusu",
-    vendorSource: "MTN Mobile Money",
-  },
-  {
-    id: "ALERT-2024-005",
-    merchantId: "MERCH-667",
-    merchantName: "Premium Retail Group",
-    alertType: "FLAGGED_COUNTERPARTY",
-    severity: "HIGH",
-    amount: 75000,
-    transactionCount: 8,
-    triggeredRule: "Transaction with flagged counterparty",
-    detectedAt: "2026-06-04T11:00:00Z",
-    status: "ESCALATED",
-    assignedTo: "Jane Mensah",
-    vendorSource: "Zeepay",
-  },
-];
+import { MOCK_TRANSACTION_ALERTS, type TransactionAlert } from "@/lib/compliance-hub-mock-data";
 
 export default function TransactionMonitoringPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -120,7 +35,7 @@ export default function TransactionMonitoringPage() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showActionSuccess, setShowActionSuccess] = useState(false);
   const [actionMessage, setActionMessage] = useState("");
-  const [alerts, setAlerts] = useState<TransactionAlert[]>(mockAlerts);
+  const [alerts, setAlerts] = useState<TransactionAlert[]>(MOCK_TRANSACTION_ALERTS);
   const itemsPerPage = 10;
 
   // Calculate stats
@@ -267,7 +182,7 @@ export default function TransactionMonitoringPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Success Toast */}
         <AnimatePresence>
           {showActionSuccess && (
@@ -313,7 +228,7 @@ export default function TransactionMonitoringPage() {
         {/* Header with Vendor Warning */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-brand-navy">Transaction Monitoring</h1>
+            <h1 className="text-2xl font-heading font-bold text-brand-navy">Transaction Monitoring</h1>
             <p className="text-gray-500 mt-1">
               {filteredAlerts.length} alert(s) {hasActiveFilters && "matching filters"}
             </p>
@@ -344,7 +259,7 @@ export default function TransactionMonitoringPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Open Alerts"
             value={openCount}

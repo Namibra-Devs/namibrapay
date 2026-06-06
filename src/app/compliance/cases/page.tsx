@@ -17,12 +17,12 @@ import {
   CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
-import Card from "@/components/compliance/shared/Card";
-import Badge from "@/components/compliance/shared/Badge";
-import SearchBar from "@/components/compliance/shared/SearchBar";
-import Pagination from "@/components/compliance/shared/Pagination";
-import StatCard from "@/components/compliance/shared/StatCard";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
+import Card from "@/components/compliance-officer/shared/Card";
+import Badge from "@/components/compliance-officer/shared/Badge";
+import SearchBar from "@/components/compliance-officer/shared/SearchBar";
+import Pagination from "@/components/compliance-officer/shared/Pagination";
+import StatCard from "@/components/compliance-officer/shared/StatCard";
 import Select from "@/components/ui/Select";
 import { Case, CaseStatus } from "@/types/compliance";
 import { formatDate } from "@/lib/compliance-utils";
@@ -300,7 +300,7 @@ export default function CasesPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Export Success Toast */}
         <AnimatePresence>
           {showExportSuccess && (
@@ -486,7 +486,7 @@ export default function CasesPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Case Management</h1>
+            <h1 className="text-2xl font-heading font-bold text-gray-900">Case Management</h1>
             <p className="text-gray-600 mt-1">
               {filteredCases.length} case(s) {hasActiveFilters && "matching filters"}
             </p>
@@ -519,262 +519,262 @@ export default function CasesPage() {
           </div>
         </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Open Cases"
-          value={openCount}
-          icon={Briefcase}
-          color="teal"
-        />
-        <StatCard
-          title="Pending Review"
-          value={pendingReviewCount}
-          icon={Clock}
-          color="peach"
-        />
-        <StatCard
-          title="Critical Priority"
-          value={criticalCount}
-          icon={AlertTriangle}
-          color="pink"
-        />
-        <StatCard
-          title="Closed Cases"
-          value={closedCount}
-          icon={CheckCircle2}
-          color="mint"
-        />
-      </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard
+            title="Open Cases"
+            value={openCount}
+            icon={Briefcase}
+            color="teal"
+          />
+          <StatCard
+            title="Pending Review"
+            value={pendingReviewCount}
+            icon={Clock}
+            color="peach"
+          />
+          <StatCard
+            title="Critical Priority"
+            value={criticalCount}
+            icon={AlertTriangle}
+            color="pink"
+          />
+          <StatCard
+            title="Closed Cases"
+            value={closedCount}
+            icon={CheckCircle2}
+            color="mint"
+          />
+        </div>
 
-      {/* Filters & Search */}
-      <Card>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
-            {hasActiveFilters && (
-              <button
-                onClick={clearFilters}
-                className="text-xs text-brand-teal hover:text-brand-teal/80 font-medium transition-colors flex items-center gap-1"
-              >
-                <X className="w-3 h-3" />
-                Clear all
-              </button>
-            )}
-          </div>
-
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative">
-              <SearchBar
-                placeholder="Search by case ID or linked entities..."
-                onSearch={setSearchQuery}
-                className="flex-1"
-              />
-              {searchQuery && (
+        {/* Filters & Search */}
+        <Card>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
+              {hasActiveFilters && (
                 <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  onClick={clearFilters}
+                  className="text-xs text-brand-teal hover:text-brand-teal/80 font-medium transition-colors flex items-center gap-1"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3 h-3" />
+                  Clear all
                 </button>
               )}
             </div>
-            <div className="flex flex-wrap gap-3">
-              <Select
-                value={statusFilter}
-                onChange={setStatusFilter}
-                className="w-full md:w-44"
-                options={[
-                  { value: "ALL", label: "All Status" },
-                  { value: "OPEN", label: "Open" },
-                  { value: "INVESTIGATING", label: "Investigating" },
-                  { value: "PENDING_REVIEW", label: "Pending Review" },
-                  { value: "CLOSED", label: "Closed" },
-                  { value: "REPORTED", label: "Reported" },
-                ]}
-              />
-              <Select
-                value={priorityFilter}
-                onChange={setPriorityFilter}
-                className="w-full md:w-44"
-                options={[
-                  { value: "ALL", label: "All Priorities" },
-                  { value: "CRITICAL", label: "Critical" },
-                  { value: "HIGH", label: "High" },
-                  { value: "MEDIUM", label: "Medium" },
-                  { value: "LOW", label: "Low" },
-                ]}
-              />
-              <Select
-                value={typeFilter}
-                onChange={setTypeFilter}
-                className="w-full md:w-44"
-                options={[
-                  { value: "ALL", label: "All Types" },
-                  { value: "SANCTIONS_HIT", label: "Sanctions Hit" },
-                  { value: "SUSPICIOUS_ACTIVITY", label: "Suspicious Activity" },
-                  { value: "COMPLAINT", label: "Complaint" },
-                  { value: "DOCUMENT_FRAUD", label: "Document Fraud" },
-                  { value: "OTHER", label: "Other" },
-                ]}
-              />
+
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="flex-1 relative">
+                <SearchBar
+                  placeholder="Search by case ID or linked entities..."
+                  onSearch={setSearchQuery}
+                  className="flex-1"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Select
+                  value={statusFilter}
+                  onChange={setStatusFilter}
+                  className="w-full md:w-44"
+                  options={[
+                    { value: "ALL", label: "All Status" },
+                    { value: "OPEN", label: "Open" },
+                    { value: "INVESTIGATING", label: "Investigating" },
+                    { value: "PENDING_REVIEW", label: "Pending Review" },
+                    { value: "CLOSED", label: "Closed" },
+                    { value: "REPORTED", label: "Reported" },
+                  ]}
+                />
+                <Select
+                  value={priorityFilter}
+                  onChange={setPriorityFilter}
+                  className="w-full md:w-44"
+                  options={[
+                    { value: "ALL", label: "All Priorities" },
+                    { value: "CRITICAL", label: "Critical" },
+                    { value: "HIGH", label: "High" },
+                    { value: "MEDIUM", label: "Medium" },
+                    { value: "LOW", label: "Low" },
+                  ]}
+                />
+                <Select
+                  value={typeFilter}
+                  onChange={setTypeFilter}
+                  className="w-full md:w-44"
+                  options={[
+                    { value: "ALL", label: "All Types" },
+                    { value: "SANCTIONS_HIT", label: "Sanctions Hit" },
+                    { value: "SUSPICIOUS_ACTIVITY", label: "Suspicious Activity" },
+                    { value: "COMPLAINT", label: "Complaint" },
+                    { value: "DOCUMENT_FRAUD", label: "Document Fraud" },
+                    { value: "OTHER", label: "Other" },
+                  ]}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
 
-      {/* Cases Table */}
-      <Card padding="none">
-        {/* Results count bar */}
-        {filteredCases.length > 0 && (
-          <div className="px-6 py-3 bg-gray-50 border-b border-gray-100">
-            <p className="text-sm text-gray-600">
-              Showing {displayedCases.length} of {filteredCases.length} case(s)
-              {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
-            </p>
+        {/* Cases Table */}
+        <Card padding="none">
+          {/* Results count bar */}
+          {filteredCases.length > 0 && (
+            <div className="px-6 py-3 bg-gray-50 border-b border-gray-100">
+              <p className="text-sm text-gray-600">
+                Showing {displayedCases.length} of {filteredCases.length} case(s)
+                {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
+              </p>
+            </div>
+          )}
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-100">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Case ID
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Type
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Priority
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Linked Entities
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Investigator
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Opened
+                  </th>
+                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {displayedCases.map((caseItem, index) => (
+                  <motion.tr
+                    key={caseItem.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.03 }}
+                    onClick={() => router.push(`/compliance/cases/${caseItem.id}`)}
+                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                  >
+                    <td className="px-6 py-4">
+                      <Link href={`/compliance/cases/${caseItem.id}`}>
+                        <p className="font-medium text-sm text-gray-900 hover:text-brand-teal transition-colors">
+                          {caseItem.id}
+                        </p>
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm text-gray-900">
+                        {caseItem.type.replace(/_/g, " ")}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getPriorityColor(
+                          caseItem.priority
+                        )}`}
+                      >
+                        {caseItem.priority}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <Badge variant={getStatusColor(caseItem.status)} size="sm">
+                        {caseItem.status.replace(/_/g, " ")}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1">
+                        {caseItem.linkedEntities.map((entity, i) => (
+                          <span
+                            key={i}
+                            className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-brand-teal/10 text-brand-teal font-medium"
+                          >
+                            {entity}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm text-gray-900">{caseItem.assignedInvestigator}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-xs text-gray-600">{formatDate(caseItem.openedAt)}</span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <Link
+                        href={`/compliance/cases/${caseItem.id}`}
+                        className="inline-flex items-center gap-1 text-brand-teal hover:text-brand-teal/80 font-medium text-sm transition-colors"
+                      >
+                        <Eye className="w-4 h-4" />
+                        View
+                      </Link>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-100">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Case ID
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Priority
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Linked Entities
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Investigator
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Opened
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {displayedCases.map((caseItem, index) => (
-                <motion.tr
-                  key={caseItem.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.03 }}
-                  onClick={() => router.push(`/compliance/cases/${caseItem.id}`)}
-                  className="hover:bg-gray-50 transition-colors cursor-pointer"
+          {/* Empty State */}
+          {filteredCases.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-12 text-center"
+            >
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Briefcase className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                No cases found
+              </h3>
+              <p className="text-gray-500 mb-4">
+                {hasActiveFilters
+                  ? "Try adjusting your search or filter criteria"
+                  : "No cases available at the moment"}
+              </p>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="px-4 py-2 bg-brand-teal text-white rounded-lg hover:bg-brand-teal/90 transition-colors text-sm font-medium"
                 >
-                  <td className="px-6 py-4">
-                    <Link href={`/compliance/cases/${caseItem.id}`}>
-                      <p className="font-medium text-sm text-gray-900 hover:text-brand-teal transition-colors">
-                        {caseItem.id}
-                      </p>
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-900">
-                      {caseItem.type.replace(/_/g, " ")}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getPriorityColor(
-                        caseItem.priority
-                      )}`}
-                    >
-                      {caseItem.priority}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <Badge variant={getStatusColor(caseItem.status)} size="sm">
-                      {caseItem.status.replace(/_/g, " ")}
-                    </Badge>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-1">
-                      {caseItem.linkedEntities.map((entity, i) => (
-                        <span
-                          key={i}
-                          className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-brand-teal/10 text-brand-teal font-medium"
-                        >
-                          {entity}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-900">{caseItem.assignedInvestigator}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs text-gray-600">{formatDate(caseItem.openedAt)}</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link
-                      href={`/compliance/cases/${caseItem.id}`}
-                      className="inline-flex items-center gap-1 text-brand-teal hover:text-brand-teal/80 font-medium text-sm transition-colors"
-                    >
-                      <Eye className="w-4 h-4" />
-                      View
-                    </Link>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  Clear Filters
+                </button>
+              )}
+            </motion.div>
+          )}
 
-        {/* Empty State */}
-        {filteredCases.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="p-12 text-center"
-          >
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Briefcase className="w-8 h-8 text-gray-400" />
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="px-6 py-4 border-t border-gray-100">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              No cases found
-            </h3>
-            <p className="text-gray-500 mb-4">
-              {hasActiveFilters
-                ? "Try adjusting your search or filter criteria"
-                : "No cases available at the moment"}
-            </p>
-            {hasActiveFilters && (
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2 bg-brand-teal text-white rounded-lg hover:bg-brand-teal/90 transition-colors text-sm font-medium"
-              >
-                Clear Filters
-              </button>
-            )}
-          </motion.div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-100">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </div>
-        )}
-      </Card>
-    </div>
+          )}
+        </Card>
+      </div>
     </DashboardLayout>
   );
 }

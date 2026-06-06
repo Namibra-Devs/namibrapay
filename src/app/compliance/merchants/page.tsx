@@ -16,97 +16,15 @@ import {
   CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
-import Card from "@/components/compliance/shared/Card";
-import SearchBar from "@/components/compliance/shared/SearchBar";
-import Pagination from "@/components/compliance/shared/Pagination";
-import StatCard from "@/components/compliance/shared/StatCard";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
+import Card from "@/components/compliance-officer/shared/Card";
+import SearchBar from "@/components/compliance-officer/shared/SearchBar";
+import Pagination from "@/components/compliance-officer/shared/Pagination";
+import StatCard from "@/components/compliance-officer/shared/StatCard";
 import Select from "@/components/ui/Select";
 import { EntityStatus, RiskBand } from "@/types/compliance";
 import { getStatusBadgeColor, getRiskBadgeColor, formatDate, formatCurrency } from "@/lib/compliance-utils";
-
-interface Merchant {
-  id: string;
-  legalName: string;
-  tradingName: string;
-  status: EntityStatus;
-  riskBand: RiskBand;
-  industry: string;
-  onboardedAt: string;
-  lastActivity: string;
-  monthlyVolume: number;
-  transactionCount: number;
-  assignedOfficer: string;
-}
-
-// Mock data
-const mockMerchants: Merchant[] = [
-  {
-    id: "MERCH-001",
-    legalName: "Accra Retail Solutions Ltd",
-    tradingName: "ShopNow Ghana",
-    status: "ACTIVE",
-    riskBand: "LOW",
-    industry: "Retail",
-    onboardedAt: "2024-01-15T10:00:00Z",
-    lastActivity: "2024-02-20T14:30:00Z",
-    monthlyVolume: 125000,
-    transactionCount: 453,
-    assignedOfficer: "Jane Mensah",
-  },
-  {
-    id: "MERCH-002",
-    legalName: "TechHub Innovations Ghana",
-    tradingName: "TechHub GH",
-    status: "ACTIVE",
-    riskBand: "MEDIUM",
-    industry: "Technology",
-    onboardedAt: "2024-02-01T09:00:00Z",
-    lastActivity: "2024-02-21T16:45:00Z",
-    monthlyVolume: 450000,
-    transactionCount: 892,
-    assignedOfficer: "Kwame Asante",
-  },
-  {
-    id: "MERCH-003",
-    legalName: "Global Remittance Services",
-    tradingName: "QuickSend",
-    status: "UNDER_REVIEW",
-    riskBand: "HIGH",
-    industry: "Financial Services",
-    onboardedAt: "2024-02-10T11:30:00Z",
-    lastActivity: "2024-02-19T10:20:00Z",
-    monthlyVolume: 850000,
-    transactionCount: 234,
-    assignedOfficer: "Jane Mensah",
-  },
-  {
-    id: "MERCH-004",
-    legalName: "Premium Hospitality Group",
-    tradingName: "Premium Hotels",
-    status: "ACTIVE",
-    riskBand: "LOW",
-    industry: "Hospitality",
-    onboardedAt: "2023-11-20T08:00:00Z",
-    lastActivity: "2024-02-20T18:00:00Z",
-    monthlyVolume: 320000,
-    transactionCount: 678,
-    assignedOfficer: "Kwame Asante",
-  },
-  {
-    id: "MERCH-005",
-    legalName: "Pharma Distribution Ltd",
-    tradingName: "HealthPlus Pharmacy",
-    status: "SUSPENDED",
-    riskBand: "HIGH",
-    industry: "Healthcare",
-    onboardedAt: "2023-12-05T10:30:00Z",
-    lastActivity: "2024-02-15T12:00:00Z",
-    monthlyVolume: 0,
-    transactionCount: 0,
-    assignedOfficer: "Jane Mensah",
-  },
-];
+import { MOCK_MERCHANTS, type Merchant } from "@/lib/compliance-hub-mock-data";
 
 export default function MerchantsPage() {
   const router = useRouter();
@@ -120,7 +38,7 @@ export default function MerchantsPage() {
 
   // Filter merchants with useMemo for performance
   const filteredMerchants = useMemo(() => {
-    return mockMerchants.filter((merchant) => {
+    return MOCK_MERCHANTS.filter((merchant) => {
       const matchesSearch =
         merchant.legalName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         merchant.tradingName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -145,10 +63,10 @@ export default function MerchantsPage() {
   }, [filteredMerchants, currentPage, itemsPerPage]);
 
   // Calculate stats
-  const activeCount = mockMerchants.filter((m) => m.status === "ACTIVE").length;
-  const underReviewCount = mockMerchants.filter((m) => m.status === "UNDER_REVIEW").length;
-  const highRiskCount = mockMerchants.filter((m) => m.riskBand === "HIGH").length;
-  const totalVolume = mockMerchants.reduce((sum, m) => sum + m.monthlyVolume, 0);
+  const activeCount = MOCK_MERCHANTS.filter((m) => m.status === "ACTIVE").length;
+  const underReviewCount = MOCK_MERCHANTS.filter((m) => m.status === "UNDER_REVIEW").length;
+  const highRiskCount = MOCK_MERCHANTS.filter((m) => m.riskBand === "HIGH").length;
+  const totalVolume = MOCK_MERCHANTS.reduce((sum, m) => sum + m.monthlyVolume, 0);
 
   // Handle export functionality
   const handleExport = async () => {
@@ -205,7 +123,7 @@ export default function MerchantsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Export Success Toast */}
         <AnimatePresence>
           {showExportSuccess && (
@@ -230,7 +148,7 @@ export default function MerchantsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Merchants Directory</h1>
+            <h1 className="text-2xl font-heading font-bold text-gray-900">Merchants Directory</h1>
             <p className="text-gray-600 mt-1">
               {filteredMerchants.length} merchant(s) {hasActiveFilters && "matching filters"}
             </p>
@@ -255,7 +173,7 @@ export default function MerchantsPage() {
         </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Active Merchants"
           value={activeCount}

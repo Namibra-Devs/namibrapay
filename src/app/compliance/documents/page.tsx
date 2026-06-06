@@ -18,99 +18,16 @@ import {
   MoreVertical,
   Upload,
 } from "lucide-react";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
-import Card from "@/components/compliance/shared/Card";
-import Badge from "@/components/compliance/shared/Badge";
-import SearchBar from "@/components/compliance/shared/SearchBar";
-import Pagination from "@/components/compliance/shared/Pagination";
-import StatCard from "@/components/compliance/shared/StatCard";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
+import Card from "@/components/compliance-officer/shared/Card";
+import Badge from "@/components/compliance-officer/shared/Badge";
+import SearchBar from "@/components/compliance-officer/shared/SearchBar";
+import Pagination from "@/components/compliance-officer/shared/Pagination";
+import StatCard from "@/components/compliance-officer/shared/StatCard";
 import Select from "@/components/ui/Select";
 import { Document, DocumentStatus } from "@/types/compliance";
 import { formatDate, DOCUMENT_TYPES } from "@/lib/compliance-utils";
-
-// Mock documents data - initial state
-const initialDocuments: Document[] = [
-  {
-    id: "DOC-001",
-    type: "NATIONAL_ID",
-    entityId: "APP-2024-001",
-    status: "VERIFIED",
-    uploadedBy: "System",
-    uploadedAt: "2024-02-20T10:00:00Z",
-    expiryDate: "2027-06-15T00:00:00Z",
-    verifiedBy: "Jane Mensah",
-    verifiedAt: "2024-02-20T11:30:00Z",
-    fileUrl: "#",
-    fileName: "national-id-front.pdf",
-    fileSize: 245000,
-  },
-  {
-    id: "DOC-002",
-    type: "BUSINESS_REG",
-    entityId: "MERCH-001",
-    status: "VERIFIED",
-    uploadedBy: "System",
-    uploadedAt: "2024-02-19T14:30:00Z",
-    expiryDate: "2025-12-31T00:00:00Z",
-    verifiedBy: "Kwame Asante",
-    verifiedAt: "2024-02-19T16:00:00Z",
-    fileUrl: "#",
-    fileName: "business-registration.pdf",
-    fileSize: 512000,
-  },
-  {
-    id: "DOC-003",
-    type: "TAX_CERT",
-    entityId: "MERCH-002",
-    status: "EXPIRED",
-    uploadedBy: "System",
-    uploadedAt: "2023-06-15T10:00:00Z",
-    expiryDate: "2024-01-31T00:00:00Z",
-    verifiedBy: "Jane Mensah",
-    verifiedAt: "2023-06-15T11:00:00Z",
-    fileUrl: "#",
-    fileName: "tax-certificate-2023.pdf",
-    fileSize: 189000,
-  },
-  {
-    id: "DOC-004",
-    type: "PASSPORT",
-    entityId: "APP-2024-003",
-    status: "PENDING",
-    uploadedBy: "System",
-    uploadedAt: "2024-02-21T09:15:00Z",
-    fileUrl: "#",
-    fileName: "passport-scan.pdf",
-    fileSize: 378000,
-  },
-  {
-    id: "DOC-005",
-    type: "BANK_STATEMENT",
-    entityId: "APP-2024-005",
-    status: "REJECTED",
-    uploadedBy: "System",
-    uploadedAt: "2024-02-20T15:20:00Z",
-    verifiedBy: "Kwame Asante",
-    verifiedAt: "2024-02-20T16:30:00Z",
-    verificationNotes: "Document is illegible and dates are not recent enough",
-    fileUrl: "#",
-    fileName: "bank-statement-jan.pdf",
-    fileSize: 456000,
-  },
-  {
-    id: "DOC-006",
-    type: "PROOF_OF_ADDRESS",
-    entityId: "APP-2024-002",
-    status: "VERIFIED",
-    uploadedBy: "System",
-    uploadedAt: "2024-02-18T10:00:00Z",
-    verifiedBy: "Jane Mensah",
-    verifiedAt: "2024-02-18T12:00:00Z",
-    fileUrl: "#",
-    fileName: "utility-bill.pdf",
-    fileSize: 234000,
-  },
-];
+import { MOCK_DOCUMENTS } from "@/lib/compliance-hub-mock-data";
 
 export default function DocumentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -120,7 +37,7 @@ export default function DocumentsPage() {
   const itemsPerPage = 10;
 
   // State management
-  const [documents, setDocuments] = useState<Document[]>(initialDocuments);
+  const [documents, setDocuments] = useState<Document[]>(MOCK_DOCUMENTS);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -420,7 +337,7 @@ export default function DocumentsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Success Toast */}
         <AnimatePresence>
           {showSuccessToast && (
@@ -847,7 +764,7 @@ export default function DocumentsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Document Management</h1>
+            <h1 className="text-2xl font-heading font-bold text-gray-900">Document Management</h1>
             <p className="text-gray-600 mt-1">Track and manage all compliance documents</p>
           </div>
           <button
@@ -870,7 +787,7 @@ export default function DocumentsPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Pending Verification"
             value={pendingCount}

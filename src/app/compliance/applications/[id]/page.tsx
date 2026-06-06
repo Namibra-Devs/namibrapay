@@ -26,7 +26,7 @@ import {
   Lock,
   Pause,
 } from "lucide-react";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
 import Link from "next/link";
 import Select from "@/components/ui/Select";
 import {
@@ -40,111 +40,7 @@ import {
   REJECTION_REASONS,
 } from "@/lib/compliance-utils";
 import { useRBAC } from "@/contexts/RBACContext";
-
-// Mock data for a single application
-const mockApplication = {
-  id: "APP-2024-001",
-  type: "BUSINESS" as const,
-  status: "UNDER_REVIEW" as const,
-  riskScore: 65,
-  riskBand: "MEDIUM" as const,
-  assignedOfficer: "Jane Mensah",
-  submittedAt: "2026-06-02T14:30:00Z",
-  slaDeadline: "2026-06-04T14:30:00Z",
-  screeningStatus: "PENDING" as const,
-  applicant: {
-    legalName: "Kwame Tech Solutions Ltd",
-    tradingName: "KTS Digital",
-    businessType: "Limited Liability Company",
-    registrationNumber: "CS-123456",
-    dateOfIncorporation: "2020-05-15",
-    registeredAddress: "123 Independence Ave, Accra, Ghana",
-    operatingAddress: "123 Independence Ave, Accra, Ghana",
-    industry: "E-commerce Technology",
-    website: "https://www.kwametech.com",
-    phone: "+233244123456",
-    email: "info@kwametech.com",
-    tin: "C0012345678",
-    expectedMonthlyVolume: 150000,
-    intendedChannels: ["Mobile Money", "Bank Transfer", "Card Payments"],
-  },
-  documents: [
-    {
-      id: "DOC-001",
-      type: "BUSINESS_REG",
-      status: "VERIFIED" as "VERIFIED" | "PENDING" | "REJECTED" | "EXPIRED",
-      uploadedAt: "2026-06-02T14:35:00Z",
-      fileName: "business_registration.pdf",
-      fileSize: 245678,
-    },
-    {
-      id: "DOC-002",
-      type: "TAX_CERT",
-      status: "PENDING" as "VERIFIED" | "PENDING" | "REJECTED" | "EXPIRED",
-      uploadedAt: "2026-06-02T14:36:00Z",
-      fileName: "tax_certificate.pdf",
-      fileSize: 189234,
-    },
-    {
-      id: "DOC-003",
-      type: "DIRECTORS_ID",
-      status: "PENDING" as "VERIFIED" | "PENDING" | "REJECTED" | "EXPIRED",
-      uploadedAt: "2026-06-02T14:38:00Z",
-      fileName: "director_id.pdf",
-      fileSize: 567890,
-    },
-  ],
-  beneficialOwners: [
-    {
-      id: "BO-001",
-      name: "Kwame Mensah",
-      dateOfBirth: "1985-03-20",
-      nationality: "Ghanaian",
-      ownershipPercent: 60,
-      role: "DIRECTOR" as const,
-      screeningStatus: "CLEAR" as const,
-    },
-    {
-      id: "BO-002",
-      name: "Abena Osei",
-      dateOfBirth: "1988-07-12",
-      nationality: "Ghanaian",
-      ownershipPercent: 40,
-      role: "SHAREHOLDER" as const,
-      screeningStatus: "PENDING" as const,
-    },
-  ],
-  notes: [
-    {
-      id: "NOTE-001",
-      content: "Initial review completed. Tax certificate needs verification.",
-      author: "CO-001",
-      authorName: "Jane Mensah",
-      createdAt: "2026-06-03T09:15:00Z",
-      isInternal: true,
-    },
-  ],
-  auditTrail: [
-    {
-      id: "AUDIT-001",
-      actor: "CO-001",
-      actorName: "Jane Mensah",
-      action: "Application submitted",
-      targetType: "APPLICATION",
-      targetId: "APP-2024-001",
-      timestamp: "2026-06-02T14:30:00Z",
-    },
-    {
-      id: "AUDIT-002",
-      actor: "CO-001",
-      actorName: "Jane Mensah",
-      action: "Assigned to officer",
-      targetType: "APPLICATION",
-      targetId: "APP-2024-001",
-      timestamp: "2026-06-03T09:00:00Z",
-    },
-  ],
-};
+import { MOCK_APPLICATION_DETAIL } from "@/lib/compliance-hub-mock-data";
 
 export default function ApplicationDetail({ params }: { params: { id: string } }) {
   const { hasPermission, canApprove, requiresMakerChecker } = useRBAC();
@@ -156,15 +52,15 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
   const [processing, setProcessing] = useState(false);
   const [newNote, setNewNote] = useState("");
   const [isInternalNote, setIsInternalNote] = useState(true);
-  const [notes, setNotes] = useState(mockApplication.notes);
+  const [notes, setNotes] = useState(MOCK_APPLICATION_DETAIL.notes);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [documents, setDocuments] = useState(mockApplication.documents);
+  const [documents, setDocuments] = useState(MOCK_APPLICATION_DETAIL.documents);
   const [riskOverride, setRiskOverride] = useState<number | null>(null);
   const [overrideJustification, setOverrideJustification] = useState("");
   const [showRiskOverride, setShowRiskOverride] = useState(false);
 
-  const sla = calculateSLARemaining(mockApplication.slaDeadline);
+  const sla = calculateSLARemaining(MOCK_APPLICATION_DETAIL.slaDeadline);
 
   const tabs = [
     { id: "info", label: "Information", icon: User },
@@ -284,26 +180,26 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
           </Link>
           <div className="flex-1 min-w-0">
             <h1 className="text-xl md:text-2xl font-bold text-brand-navy truncate">
-              {mockApplication.applicant.legalName}
+              {MOCK_APPLICATION_DETAIL.applicant.legalName}
             </h1>
-            <p className="text-gray-500 mt-1 text-sm md:text-base">{mockApplication.id}</p>
+            <p className="text-gray-500 mt-1 text-sm md:text-base">{MOCK_APPLICATION_DETAIL.id}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <span
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border",
-                getStatusBadgeColor(mockApplication.status)
+                getStatusBadgeColor(MOCK_APPLICATION_DETAIL.status)
               )}
             >
-              {formatStatus(mockApplication.status)}
+              {formatStatus(MOCK_APPLICATION_DETAIL.status)}
             </span>
             <span
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs md:text-sm font-medium border",
-                getRiskBadgeColor(mockApplication.riskBand)
+                getRiskBadgeColor(MOCK_APPLICATION_DETAIL.riskBand)
               )}
             >
-              {mockApplication.riskBand} RISK
+              {MOCK_APPLICATION_DETAIL.riskBand} RISK
             </span>
           </div>
         </div>
@@ -386,7 +282,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                             Legal Name
                           </label>
                           <p className="mt-1 text-sm text-gray-900">
-                            {mockApplication.applicant.legalName}
+                            {MOCK_APPLICATION_DETAIL.applicant.legalName}
                           </p>
                         </div>
                         <div>
@@ -394,7 +290,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                             Trading Name
                           </label>
                           <p className="mt-1 text-sm text-gray-900">
-                            {mockApplication.applicant.tradingName}
+                            {MOCK_APPLICATION_DETAIL.applicant.tradingName}
                           </p>
                         </div>
                         <div>
@@ -402,7 +298,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                             Registration Number
                           </label>
                           <p className="mt-1 text-sm text-gray-900 font-mono">
-                            {mockApplication.applicant.registrationNumber}
+                            {MOCK_APPLICATION_DETAIL.applicant.registrationNumber}
                           </p>
                         </div>
                         <div>
@@ -410,7 +306,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                             TIN
                           </label>
                           <p className="mt-1 text-sm text-gray-900 font-mono">
-                            {mockApplication.applicant.tin}
+                            {MOCK_APPLICATION_DETAIL.applicant.tin}
                           </p>
                         </div>
                         <div>
@@ -418,7 +314,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                             Date of Incorporation
                           </label>
                           <p className="mt-1 text-sm text-gray-900">
-                            {formatDate(mockApplication.applicant.dateOfIncorporation || "")}
+                            {formatDate(MOCK_APPLICATION_DETAIL.applicant.dateOfIncorporation || "")}
                           </p>
                         </div>
                         <div>
@@ -426,7 +322,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                             Industry
                           </label>
                           <p className="mt-1 text-sm text-gray-900">
-                            {mockApplication.applicant.industry}
+                            {MOCK_APPLICATION_DETAIL.applicant.industry}
                           </p>
                         </div>
                         <div className="col-span-2">
@@ -434,7 +330,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                             Registered Address
                           </label>
                           <p className="mt-1 text-sm text-gray-900">
-                            {mockApplication.applicant.registeredAddress}
+                            {MOCK_APPLICATION_DETAIL.applicant.registeredAddress}
                           </p>
                         </div>
                       </div>
@@ -452,7 +348,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                               Email
                             </label>
                             <p className="text-sm text-gray-900">
-                              {mockApplication.applicant.email}
+                              {MOCK_APPLICATION_DETAIL.applicant.email}
                             </p>
                           </div>
                         </div>
@@ -463,7 +359,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                               Phone
                             </label>
                             <p className="text-sm text-gray-900">
-                              {mockApplication.applicant.phone}
+                              {MOCK_APPLICATION_DETAIL.applicant.phone}
                             </p>
                           </div>
                         </div>
@@ -475,7 +371,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                         Beneficial Owners
                       </h3>
                       <div className="space-y-3">
-                        {mockApplication.beneficialOwners.map((owner) => (
+                        {MOCK_APPLICATION_DETAIL.beneficialOwners.map((owner) => (
                           <div
                             key={owner.id}
                             className="p-4 bg-gray-50 rounded-lg flex items-center justify-between"
@@ -615,9 +511,9 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-blue-700">Business Entity:</span>
-                          <span className="font-medium text-blue-900">{mockApplication.screeningStatus}</span>
+                          <span className="font-medium text-blue-900">{MOCK_APPLICATION_DETAIL.screeningStatus}</span>
                         </div>
-                        {mockApplication.beneficialOwners.map((owner) => (
+                        {MOCK_APPLICATION_DETAIL.beneficialOwners.map((owner) => (
                           <div key={owner.id} className="flex justify-between">
                             <span className="text-blue-700">{owner.name}:</span>
                             <span className="font-medium text-blue-900">{owner.screeningStatus}</span>
@@ -642,17 +538,17 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                           <div>
                             <p className="text-sm text-gray-600 mb-1">Current Risk Score</p>
                             <p className="text-4xl font-bold text-brand-navy">
-                              {riskOverride || mockApplication.riskScore}
+                              {riskOverride || MOCK_APPLICATION_DETAIL.riskScore}
                               <span className="text-lg text-gray-500">/100</span>
                             </p>
                           </div>
                           <span
                             className={cn(
                               "px-4 py-2 rounded-xl text-lg font-bold border-2",
-                              getRiskBadgeColor(mockApplication.riskBand)
+                              getRiskBadgeColor(MOCK_APPLICATION_DETAIL.riskBand)
                             )}
                           >
-                            {mockApplication.riskBand}
+                            {MOCK_APPLICATION_DETAIL.riskBand}
                           </span>
                         </div>
                         
@@ -662,7 +558,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                               <AlertTriangle className="w-4 h-4" />
                               Risk score has been manually overridden
                             </p>
-                            <p className="text-xs text-gray-600 mt-1">Original: {mockApplication.riskScore}</p>
+                            <p className="text-xs text-gray-600 mt-1">Original: {MOCK_APPLICATION_DETAIL.riskScore}</p>
                           </div>
                         )}
                       </div>
@@ -715,7 +611,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                                 type="number"
                                 min="0"
                                 max="100"
-                                value={riskOverride || mockApplication.riskScore}
+                                value={riskOverride || MOCK_APPLICATION_DETAIL.riskScore}
                                 onChange={(e) => setRiskOverride(parseInt(e.target.value) || 0)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                               />
@@ -841,7 +737,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                 {/* Audit Trail Tab */}
                 {activeTab === "audit" && (
                   <div className="space-y-4">
-                    {mockApplication.auditTrail.map((event) => (
+                    {MOCK_APPLICATION_DETAIL.auditTrail.map((event) => (
                       <div
                         key={event.id}
                         className="flex items-start gap-4"
@@ -872,7 +768,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
               </h3>
 
               {/* Maker-Checker Warning */}
-              {requiresMakerChecker(mockApplication.riskScore) && (
+              {requiresMakerChecker(MOCK_APPLICATION_DETAIL.riskScore) && (
                 <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                   <p className="text-xs font-medium text-orange-900 flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4" />
@@ -885,7 +781,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
               )}
 
               {/* Authority Warning */}
-              {!canApprove(mockApplication.riskScore, mockApplication.applicant.expectedMonthlyVolume) && (
+              {!canApprove(MOCK_APPLICATION_DETAIL.riskScore, MOCK_APPLICATION_DETAIL.applicant.expectedMonthlyVolume) && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-xs font-medium text-red-900 flex items-center gap-2">
                     <Lock className="w-4 h-4" />
@@ -911,7 +807,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                       setSelectedAction("approve");
                       setShowDecisionPanel(true);
                     }}
-                    disabled={!canApprove(mockApplication.riskScore, mockApplication.applicant.expectedMonthlyVolume)}
+                    disabled={!canApprove(MOCK_APPLICATION_DETAIL.riskScore, MOCK_APPLICATION_DETAIL.applicant.expectedMonthlyVolume)}
                     className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <CheckCircle className="w-4 h-4" />
@@ -1029,7 +925,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                     Assigned Officer
                   </label>
                   <p className="text-sm text-gray-900 mt-1">
-                    {mockApplication.assignedOfficer}
+                    {MOCK_APPLICATION_DETAIL.assignedOfficer}
                   </p>
                 </div>
                 <div>
@@ -1037,7 +933,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                     Submitted
                   </label>
                   <p className="text-sm text-gray-900 mt-1">
-                    {formatDate(mockApplication.submittedAt, true)}
+                    {formatDate(MOCK_APPLICATION_DETAIL.submittedAt, true)}
                   </p>
                 </div>
                 <div>
@@ -1045,7 +941,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                     Risk Score
                   </label>
                   <p className="text-sm text-gray-900 mt-1">
-                    {mockApplication.riskScore}/100
+                    {MOCK_APPLICATION_DETAIL.riskScore}/100
                   </p>
                 </div>
               </div>

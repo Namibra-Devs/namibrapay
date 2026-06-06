@@ -2,11 +2,11 @@
 
 import { useState, useMemo } from "react";
 import { Download } from "lucide-react";
-import RefundFilters from "@/components/refunds/RefundFilters";
-import RefundTable from "@/components/refunds/RefundTable";
+import RefundFilters from "@/components/namibrapay-main/refunds/RefundFilters";
+import RefundTable from "@/components/namibrapay-main/refunds/RefundTable";
 import { mockRefunds } from "@/lib/mock-data/refunds";
-import type { RefundFilterState } from "@/components/refunds/RefundFilters";
-import { DEFAULT_REFUND_FILTERS } from "@/components/refunds/RefundFilters";
+import type { RefundFilterState } from "@/components/namibrapay-main/refunds/RefundFilters";
+import { DEFAULT_REFUND_FILTERS } from "@/components/namibrapay-main/refunds/RefundFilters";
 
 export default function RefundsPage() {
   const [filters, setFilters] = useState<RefundFilterState>(DEFAULT_REFUND_FILTERS);

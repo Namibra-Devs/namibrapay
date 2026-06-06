@@ -12,115 +12,22 @@ import {
   Users,
   Activity,
 } from "lucide-react";
-import DashboardLayout from "@/components/compliance/DashboardLayout";
+import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
 import { cn, formatDate, calculateSLARemaining } from "@/lib/compliance-utils";
-
-// Mock data
-const kpis = [
-  {
-    label: "Pending Applications",
-    value: 24,
-    change: "+12%",
-    trend: "up",
-    icon: FileText,
-    color: "blue",
-  },
-  {
-    label: "Under Review",
-    value: 18,
-    change: "-5%",
-    trend: "down",
-    icon: Clock,
-    color: "purple",
-  },
-  {
-    label: "Approved Today",
-    value: 7,
-    change: "+3",
-    trend: "up",
-    icon: CheckCircle,
-    color: "green",
-  },
-  {
-    label: "Escalated Cases",
-    value: 3,
-    change: "+1",
-    trend: "up",
-    icon: AlertTriangle,
-    color: "red",
-  },
-];
-
-const myQueue = [
-  {
-    id: "APP-2024-001",
-    applicantName: "Kwame Tech Solutions",
-    type: "BUSINESS",
-    status: "UNDER_REVIEW",
-    riskBand: "MEDIUM",
-    slaDeadline: "2026-06-04T10:00:00Z",
-    submittedAt: "2026-06-02T14:30:00Z",
-  },
-  {
-    id: "APP-2024-002",
-    applicantName: "Sarah Osei",
-    type: "INDIVIDUAL",
-    status: "PENDING_INFO",
-    riskBand: "LOW",
-    slaDeadline: "2026-06-05T16:00:00Z",
-    submittedAt: "2026-06-01T09:15:00Z",
-  },
-  {
-    id: "APP-2024-003",
-    applicantName: "Global Traders Ltd",
-    type: "BUSINESS",
-    status: "ESCALATED",
-    riskBand: "HIGH",
-    slaDeadline: "2026-06-03T12:00:00Z",
-    submittedAt: "2026-05-30T11:45:00Z",
-  },
-];
-
-const recentActivity = [
-  {
-    user: "John Mensah",
-    action: "approved",
-    target: "APP-2024-045",
-    time: "10 minutes ago",
-  },
-  {
-    user: "Mary Adu",
-    action: "rejected",
-    target: "APP-2024-038",
-    time: "25 minutes ago",
-  },
-  {
-    user: "Peter Owusu",
-    action: "requested more info",
-    target: "APP-2024-042",
-    time: "1 hour ago",
-  },
-  {
-    user: "Jane Mensah",
-    action: "escalated",
-    target: "APP-2024-003",
-    time: "2 hours ago",
-  },
-];
-
-const riskDistribution = [
-  { band: "Low", count: 42, color: "bg-green-500" },
-  { band: "Medium", count: 28, color: "bg-yellow-500" },
-  { band: "High", count: 8, color: "bg-red-500" },
-];
+import {
+  MOCK_KPIS,
+  MOCK_MY_QUEUE,
+  MOCK_RECENT_ACTIVITY,
+  MOCK_RISK_DISTRIBUTION,
+} from "@/lib/compliance-hub-mock-data";
 
 export default function ComplianceDashboard() {
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Page Header */}
         <div>
-          <h1 className="text-2xl font-bold text-brand-navy">
+          <h1 className="text-2xl font-heading font-bold text-brand-navy">
             Compliance Overview
           </h1>
           <p className="text-gray-500 mt-1">
@@ -129,9 +36,15 @@ export default function ComplianceDashboard() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {kpis.map((kpi, index) => {
-            const Icon = kpi.icon;
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {MOCK_KPIS.map((kpi, index) => {
+            const iconMap: Record<string, any> = {
+              FileText,
+              Clock,
+              CheckCircle,
+              AlertTriangle,
+            };
+            const Icon = iconMap[kpi.icon];
             return (
               <motion.div
                 key={kpi.label}
@@ -180,7 +93,7 @@ export default function ComplianceDashboard() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* My Queue */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -197,7 +110,7 @@ export default function ComplianceDashboard() {
               </p>
             </div>
             <div className="divide-y divide-gray-200">
-              {myQueue.map((item) => {
+              {MOCK_MY_QUEUE.map((item) => {
                 const sla = calculateSLARemaining(item.slaDeadline);
                 return (
                   <Link
@@ -276,8 +189,8 @@ export default function ComplianceDashboard() {
               <p className="text-sm text-gray-500 mt-1">Pending applications</p>
             </div>
             <div className="p-6 space-y-6">
-              {riskDistribution.map((risk) => {
-                const total = riskDistribution.reduce(
+              {MOCK_RISK_DISTRIBUTION.map((risk) => {
+                const total = MOCK_RISK_DISTRIBUTION.reduce(
                   (acc, r) => acc + r.count,
                   0
                 );
@@ -322,7 +235,7 @@ export default function ComplianceDashboard() {
             <p className="text-sm text-gray-500 mt-1">Team compliance actions</p>
           </div>
           <div className="divide-y divide-gray-200">
-            {recentActivity.map((activity, index) => (
+            {MOCK_RECENT_ACTIVITY.map((activity, index) => (
               <div
                 key={index}
                 className="px-6 py-3 flex items-center gap-4 hover:bg-gray-50 transition-colors"

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import ProfileTab from "@/components/settings/tabs/ProfileTab";
-import ContactTab from "@/components/settings/tabs/ContactTab";
-import AccountsTab from "@/components/settings/tabs/AccountsTab";
-import PreferencesTab from "@/components/settings/tabs/PreferencesTab";
-import TeamTab from "@/components/settings/tabs/TeamTab";
-import ApiKeysTab from "@/components/settings/tabs/ApiKeysTab";
+import ProfileTab from "@/components/namibrapay-main/settings/tabs/ProfileTab";
+import ContactTab from "@/components/namibrapay-main/settings/tabs/ContactTab";
+import AccountsTab from "@/components/namibrapay-main/settings/tabs/AccountsTab";
+import PreferencesTab from "@/components/namibrapay-main/settings/tabs/PreferencesTab";
+import TeamTab from "@/components/namibrapay-main/settings/tabs/TeamTab";
+import ApiKeysTab from "@/components/namibrapay-main/settings/tabs/ApiKeysTab";
 
 const TABS = [
   { id: "profile", label: "Profile" },

@@ -7,9 +7,9 @@ import type { AuditLog } from "@/lib/mock-data/audit-logs";
 import AuditLogFilters, {
   DEFAULT_AUDIT_FILTERS,
   type AuditFilterState,
-} from "@/components/audit-logs/AuditLogFilters";
-import AuditLogList from "@/components/audit-logs/AuditLogList";
-import AuditLogDetail from "@/components/audit-logs/AuditLogDetail";
+} from "@/components/namibrapay-main/audit-logs/AuditLogFilters";
+import AuditLogList from "@/components/namibrapay-main/audit-logs/AuditLogList";
+import AuditLogDetail from "@/components/namibrapay-main/audit-logs/AuditLogDetail";
 
 export default function AuditLogsPage() {
   const [filters, setFilters] = useState<AuditFilterState>(DEFAULT_AUDIT_FILTERS);

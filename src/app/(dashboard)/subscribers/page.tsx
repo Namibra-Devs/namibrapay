@@ -1,5 +1,5 @@
 import { UserCheck } from "lucide-react";
-import EmptyState from "@/components/dashboard/EmptyState";
+import EmptyState from "@/components/namibrapay-main/dashboard/EmptyState";
 
 export default function SubscribersPage() {
   return (

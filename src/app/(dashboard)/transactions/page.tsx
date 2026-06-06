@@ -2,11 +2,11 @@
 
 import { useState, useMemo } from "react";
 import { Download } from "lucide-react";
-import TransactionFilters from "@/components/transactions/TransactionFilters";
-import TransactionTable from "@/components/transactions/TransactionTable";
+import TransactionFilters from "@/components/namibrapay-main/transactions/TransactionFilters";
+import TransactionTable from "@/components/namibrapay-main/transactions/TransactionTable";
 import { mockTransactions } from "@/lib/mock-data/transactions";
-import type { TransactionFilterState } from "@/components/transactions/TransactionFilters";
-import { DEFAULT_STATUS_FILTER } from "@/components/transactions/TransactionFilters";
+import type { TransactionFilterState } from "@/components/namibrapay-main/transactions/TransactionFilters";
+import { DEFAULT_STATUS_FILTER } from "@/components/namibrapay-main/transactions/TransactionFilters";
 
 const INITIAL_FILTERS: TransactionFilterState = {
   account: "all",

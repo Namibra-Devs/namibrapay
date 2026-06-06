@@ -2,12 +2,12 @@
 
 import { useState, useMemo } from "react";
 import { Download } from "lucide-react";
-import PayoutFilters from "@/components/payouts/PayoutFilters";
-import PayoutTable from "@/components/payouts/PayoutTable";
-import PendingPayoutPanel from "@/components/payouts/PendingPayoutPanel";
+import PayoutFilters from "@/components/namibrapay-main/payouts/PayoutFilters";
+import PayoutTable from "@/components/namibrapay-main/payouts/PayoutTable";
+import PendingPayoutPanel from "@/components/namibrapay-main/payouts/PendingPayoutPanel";
 import { mockPayouts } from "@/lib/mock-data/payouts";
-import type { PayoutFilterState } from "@/components/payouts/PayoutFilters";
-import { DEFAULT_PAYOUT_FILTERS } from "@/components/payouts/PayoutFilters";
+import type { PayoutFilterState } from "@/components/namibrapay-main/payouts/PayoutFilters";
+import { DEFAULT_PAYOUT_FILTERS } from "@/components/namibrapay-main/payouts/PayoutFilters";
 
 export default function PayoutsPage() {
   const [filters, setFilters] = useState<PayoutFilterState>(DEFAULT_PAYOUT_FILTERS);

@@ -1,5 +1,5 @@
 import { Zap, Plus } from "lucide-react";
-import EmptyState from "@/components/dashboard/EmptyState";
+import EmptyState from "@/components/namibrapay-main/dashboard/EmptyState";
 
 export default function WebhooksPage() {
   return (
