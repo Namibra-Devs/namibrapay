@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Standalone output for Docker/Coolify deployment
-  output: "standalone",
+  // Netlify automatically handles Next.js deployment
+  // No need for 'output' configuration
   
   images: {
     formats: ["image/avif", "image/webp"],
