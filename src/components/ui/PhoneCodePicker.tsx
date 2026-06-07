@@ -192,7 +192,7 @@ export default function PhoneCodePicker({
         onClick={handleOpen}
         className={cn(
           "flex items-center gap-1 w-full text-left cursor-pointer select-none transition-colors",
-          "border rounded-xl px-3 py-2 text-sm bg-white focus:outline-none",
+          "border rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none",
           open
             ? "border-brand-teal ring-2 ring-brand-teal/30"
             : "border-gray-200 hover:border-gray-300"
