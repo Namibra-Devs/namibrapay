@@ -22,6 +22,7 @@ import Pagination from "@/components/compliance-officer/shared/Pagination";
 import StatCard from "@/components/compliance-officer/shared/StatCard";
 import { formatDate } from "@/lib/compliance-utils";
 import { MOCK_TRANSACTION_ALERTS, type TransactionAlert } from "@/lib/compliance-hub-mock-data";
+import { toast } from "@/components/ui/Toast";
 
 export default function TransactionMonitoringPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,8 +34,6 @@ export default function TransactionMonitoringPage() {
   const [showExportSuccess, setShowExportSuccess] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<TransactionAlert | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [showActionSuccess, setShowActionSuccess] = useState(false);
-  const [actionMessage, setActionMessage] = useState("");
   const [alerts, setAlerts] = useState<TransactionAlert[]>(MOCK_TRANSACTION_ALERTS);
   const itemsPerPage = 10;
 
@@ -43,13 +42,6 @@ export default function TransactionMonitoringPage() {
   const investigatingCount = alerts.filter((a) => a.status === "INVESTIGATING").length;
   const criticalCount = alerts.filter((a) => a.severity === "CRITICAL").length;
   const highCount = alerts.filter((a) => a.severity === "HIGH").length;
-
-  // Show action toast
-  const showSuccess = (message: string) => {
-    setActionMessage(message);
-    setShowActionSuccess(true);
-    setTimeout(() => setShowActionSuccess(false), 3000);
-  };
 
   // Filter alerts
   const filteredAlerts = useMemo(() => {
@@ -143,7 +135,7 @@ export default function TransactionMonitoringPage() {
       return a;
     }));
     
-    showSuccess(actionMessages[action] || "Action completed");
+    toast.success(actionMessages[action] || "Action completed");
     setShowDetailModal(false);
   };
 
@@ -183,27 +175,6 @@ export default function TransactionMonitoringPage() {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        {/* Success Toast */}
-        <AnimatePresence>
-          {showActionSuccess && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-50 bg-brand-teal text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
-            >
-              <CheckCircle className="w-4 h-4 shrink-0" />
-              <span className="text-sm font-medium">{actionMessage}</span>
-              <button
-                onClick={() => setShowActionSuccess(false)}
-                className="ml-2 hover:bg-brand-teal/80 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Export Success Toast */}
         <AnimatePresence>
           {showExportSuccess && (

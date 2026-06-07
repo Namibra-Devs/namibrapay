@@ -28,6 +28,7 @@ import Select from "@/components/ui/Select";
 import { Document, DocumentStatus } from "@/types/compliance";
 import { formatDate, DOCUMENT_TYPES } from "@/lib/compliance-utils";
 import { MOCK_DOCUMENTS } from "@/lib/compliance-hub-mock-data";
+import { AlertModal } from "@/components/compliance-officer/modals";
 
 export default function DocumentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -360,40 +361,12 @@ export default function DocumentsPage() {
         </AnimatePresence>
 
         {/* Alert Modal */}
-        <AnimatePresence>
-          {showAlertModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4"
-              onClick={() => setShowAlertModal(false)}
-              style={{ margin: 0 }}
-            >
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <AlertTriangle className="w-5 h-5 text-red-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Alert</h3>
-                </div>
-                <p className="text-sm text-gray-700 mb-6">{alertMessage}</p>
-                <button
-                  onClick={() => setShowAlertModal(false)}
-                  className="w-full px-4 py-2.5 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm"
-                >
-                  OK
-                </button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <AlertModal
+          message={alertMessage}
+          isVisible={showAlertModal}
+          onClose={() => setShowAlertModal(false)}
+          variant="error"
+        />
 
         {/* View Document Modal */}
         <AnimatePresence>

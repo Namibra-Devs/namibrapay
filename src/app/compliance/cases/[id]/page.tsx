@@ -13,11 +13,9 @@ import {
   Clock,
   AlertTriangle,
   Send,
-  Paperclip,
   Download,
   User,
   X,
-  CheckCircle,
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
@@ -25,9 +23,11 @@ import { useParams, useRouter } from "next/navigation";
 import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
 import Card from "@/components/compliance-officer/shared/Card";
 import Badge from "@/components/compliance-officer/shared/Badge";
-import { Case, CaseStatus, CaseEvidence, CaseTask, Note } from "@/types/compliance";
+import { CaseStatus, CaseEvidence, CaseTask, Note } from "@/types/compliance";
 import { formatDate } from "@/lib/compliance-utils";
 import { getCaseDetailData } from "@/lib/compliance-hub-mock-data";
+import { toast } from "@/components/ui/Toast";
+import { AlertModal } from "@/components/compliance-officer/modals";
 
 export default function CaseDetailPage() {
   const params = useParams();
@@ -39,8 +39,6 @@ export default function CaseDetailPage() {
   const [newTask, setNewTask] = useState("");
   const [strDraft, setStrDraft] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   
   // Modal states
   const [showReassignModal, setShowReassignModal] = useState(false);
@@ -54,14 +52,7 @@ export default function CaseDetailPage() {
   // State management for case data
   const [caseData, setCaseData] = useState(() => getCaseDetailData(caseId));
 
-  // Helper function to show success toast
-  const showToast = (message: string) => {
-    setSuccessMessage(message);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 3000);
-  };
-
-  // Helper function to show alert modal
+  // Helper function to show alert
   const showAlert = (message: string) => {
     setAlertMessage(message);
     setShowAlertModal(true);
@@ -93,7 +84,7 @@ export default function CaseDetailPage() {
       });
 
       setNewNote("");
-      showToast("Note added successfully!");
+      toast.success("Note added successfully!");
     } catch (error) {
       console.error("Failed to add note:", error);
       showAlert("Failed to add note. Please try again.");
@@ -127,7 +118,7 @@ export default function CaseDetailPage() {
       });
 
       setNewTask("");
-      showToast("Task added successfully!");
+      toast.success("Task added successfully!");
     } catch (error) {
       console.error("Failed to add task:", error);
       showAlert("Failed to add task. Please try again.");
@@ -157,7 +148,7 @@ export default function CaseDetailPage() {
         tasks: updatedTasks,
       });
 
-      showToast("Task status updated!");
+      toast.success("Task status updated!");
     } catch (error) {
       console.error("Failed to update task:", error);
       alert("Failed to update task. Please try again.");
@@ -186,7 +177,7 @@ export default function CaseDetailPage() {
         evidence: [...caseData.evidence, evidence],
       });
 
-      showToast("Evidence added successfully!");
+      toast.success("Evidence added successfully!");
     } catch (error) {
       console.error("Failed to add evidence:", error);
       showAlert("Failed to add evidence. Please try again.");
@@ -206,7 +197,7 @@ export default function CaseDetailPage() {
         strDraft: strDraft,
       });
 
-      showToast("STR draft saved successfully!");
+      toast.success("STR draft saved successfully!");
     } catch (error) {
       console.error("Failed to save STR draft:", error);
       showAlert("Failed to save STR draft. Please try again.");
@@ -239,7 +230,7 @@ export default function CaseDetailPage() {
         outcome: "Suspicious Transaction Report filed with FIU",
       });
 
-      showToast("STR submitted successfully to FIU!");
+      toast.success("STR submitted successfully to FIU!");
       
       setTimeout(() => {
         router.push("/compliance/cases");
@@ -275,7 +266,7 @@ export default function CaseDetailPage() {
         assignedInvestigator: reassignInvestigator,
       });
 
-      showToast(`Case reassigned to ${reassignInvestigator}!`);
+      toast.success(`Case reassigned to ${reassignInvestigator}!`);
     } catch (error) {
       console.error("Failed to reassign case:", error);
       showAlert("Failed to reassign case. Please try again.");
@@ -324,7 +315,7 @@ export default function CaseDetailPage() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      showToast("Report exported successfully!");
+      toast.success("Report exported successfully!");
     } catch (error) {
       console.error("Failed to export report:", error);
       showAlert("Failed to export report. Please try again.");
@@ -358,7 +349,7 @@ export default function CaseDetailPage() {
         outcome: closeCaseOutcome,
       });
 
-      showToast("Case closed successfully!");
+      toast.success("Case closed successfully!");
       
       setTimeout(() => {
         router.push("/compliance/cases");
@@ -414,62 +405,13 @@ export default function CaseDetailPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-      {/* Success Toast */}
-      <AnimatePresence>
-        {showSuccessToast && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-4 right-4 z-60 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3"
-          >
-            <CheckCircle className="w-4 h-4" />
-            <span className="text-sm font-medium">{successMessage}</span>
-            <button
-              onClick={() => setShowSuccessToast(false)}
-              className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Alert Modal */}
-      <AnimatePresence>
-        {showAlertModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4"
-            onClick={() => setShowAlertModal(false)}
-            style={{ margin: 0 }}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                  <AlertTriangle className="w-4 h-4 text-red-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">Alert</h3>
-              </div>
-              <p className="text-sm text-gray-700 mb-6">{alertMessage}</p>
-              <button
-                onClick={() => setShowAlertModal(false)}
-                className="w-full px-4 py-2.5 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm"
-              >
-                OK
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <AlertModal
+        message={alertMessage}
+        isVisible={showAlertModal}
+        onClose={() => setShowAlertModal(false)}
+        variant="error"
+      />
 
       {/* Reassign Case Modal */}
       <AnimatePresence>
@@ -1117,7 +1059,7 @@ export default function CaseDetailPage() {
                     Date: ${new Date().toLocaleDateString()}
                     `;
                     setStrDraft(template);
-                    showToast("STR template generated!");
+                    toast.success("STR template generated!");
                   }}
                   className="px-4 py-2 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm"
                 >

@@ -30,6 +30,8 @@ import {
   MOCK_SYSTEM_SETTINGS,
   type CommunicationTemplate 
 } from "@/lib/compliance-hub-mock-data/settings";
+import { toast } from "@/components/ui/Toast";
+import { AlertModal } from "@/components/compliance-officer/modals";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<"risk" | "authority" | "templates" | "system">("risk");
@@ -39,8 +41,6 @@ export default function SettingsPage() {
   const [authorityMatrix, setAuthorityMatrix] = useState<AuthorityMatrix[]>(MOCK_AUTHORITY_MATRIX);
   const [templates, setTemplates] = useState<CommunicationTemplate[]>(MOCK_SETTINGS_TEMPLATES);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -78,12 +78,6 @@ export default function SettingsPage() {
   const [systemSettings, setSystemSettings] = useState(MOCK_SYSTEM_SETTINGS);
 
   // Helper functions
-  const showToast = (message: string) => {
-    setSuccessMessage(message);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 3000);
-  };
-
   const showAlert = (message: string) => {
     setAlertMessage(message);
     setShowAlertModal(true);
@@ -101,7 +95,7 @@ export default function SettingsPage() {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       setHasUnsavedChanges(false);
-      showToast("All changes saved successfully!");
+      toast.success("All changes saved successfully!");
     } catch (error) {
       console.error("Failed to save changes:", error);
       showAlert("Failed to save changes. Please try again.");
@@ -159,7 +153,7 @@ export default function SettingsPage() {
 
       setRiskRules([...riskRules, rule]);
       setHasUnsavedChanges(true);
-      showToast("Risk rule added successfully!");
+      toast.success("Risk rule added successfully!");
       setShowAddRuleModal(false);
     } catch (error) {
       console.error("Failed to add rule:", error);
@@ -203,7 +197,7 @@ export default function SettingsPage() {
       );
 
       setHasUnsavedChanges(true);
-      showToast("Risk rule updated successfully!");
+      toast.success("Risk rule updated successfully!");
       setShowEditRuleModal(false);
       setEditingRule(null);
     } catch (error) {
@@ -229,7 +223,7 @@ export default function SettingsPage() {
 
       setRiskRules(riskRules.filter((rule) => rule.id !== deletingRuleId));
       setHasUnsavedChanges(true);
-      showToast("Risk rule deleted successfully!");
+      toast.success("Risk rule deleted successfully!");
       setShowDeleteRuleModal(false);
       setDeletingRuleId(null);
     } catch (error) {
@@ -283,7 +277,7 @@ export default function SettingsPage() {
 
       setTemplates([...templates, template]);
       setHasUnsavedChanges(true);
-      showToast("Template created successfully!");
+      toast.success("Template created successfully!");
       setShowAddTemplateModal(false);
     } catch (error) {
       console.error("Failed to create template:", error);
@@ -318,7 +312,7 @@ export default function SettingsPage() {
       );
 
       setHasUnsavedChanges(true);
-      showToast("Template updated successfully!");
+      toast.success("Template updated successfully!");
       setShowEditTemplateModal(false);
       setEditingTemplate(null);
     } catch (error) {
@@ -344,7 +338,7 @@ export default function SettingsPage() {
 
       setTemplates(templates.filter((template) => template.id !== deletingTemplateId));
       setHasUnsavedChanges(true);
-      showToast("Template deleted successfully!");
+      toast.success("Template deleted successfully!");
       setShowDeleteTemplateModal(false);
       setDeletingTemplateId(null);
     } catch (error) {
@@ -380,62 +374,13 @@ export default function SettingsPage() {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        {/* Success Toast */}
-        <AnimatePresence>
-          {showSuccessToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-60 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3"
-            >
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{successMessage}</span>
-              <button
-                onClick={() => setShowSuccessToast(false)}
-                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Alert Modal */}
-        <AnimatePresence>
-          {showAlertModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4"
-              onClick={() => setShowAlertModal(false)}
-              style={{ margin: 0 }}
-            >
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <AlertTriangle className="w-5 h-5 text-red-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Alert</h3>
-                </div>
-                <p className="text-sm text-gray-700 mb-6">{alertMessage}</p>
-                <button
-                  onClick={() => setShowAlertModal(false)}
-                  className="w-full px-4 py-2.5 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm"
-                >
-                  OK
-                </button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <AlertModal
+          message={alertMessage}
+          isVisible={showAlertModal}
+          onClose={() => setShowAlertModal(false)}
+          variant="error"
+        />
 
         {/* Add Risk Rule Modal */}
         <AnimatePresence>

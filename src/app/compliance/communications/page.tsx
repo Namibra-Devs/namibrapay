@@ -28,6 +28,7 @@ import {
   type MessageType,
   type Template,
 } from "@/lib/compliance-hub-mock-data";
+import { AlertModal, SuccessToast } from "@/components/compliance-officer/modals";
 
 export default function CommunicationsCenter() {
   const [activeView, setActiveView] = useState<"compose" | "history" | "templates">("history");
@@ -65,16 +66,11 @@ export default function CommunicationsCenter() {
     body: string;
   } | null>(null);
 
-  // Helper functions
+  // Helper function
   const showToast = (message: string) => {
     setSuccessMessage(message);
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 3000);
-  };
-
-  const showAlert = (message: string) => {
-    setAlertMessage(message);
-    setShowAlertModal(true);
   };
 
   // Load template content when selected
@@ -92,7 +88,8 @@ export default function CommunicationsCenter() {
   // Preview message
   const handlePreview = () => {
     if (!messageBody.trim()) {
-      showAlert("Please enter a message body");
+      setAlertMessage("Please enter a message body");
+      setShowAlertModal(true);
       return;
     }
 
@@ -114,17 +111,20 @@ export default function CommunicationsCenter() {
   const handleSendMessage = async () => {
     // Validation
     if (!recipient.trim()) {
-      showAlert("Please enter a recipient");
+      setAlertMessage("Please enter a recipient");
+      setShowAlertModal(true);
       return;
     }
 
     if ((selectedChannel === "EMAIL" || selectedChannel === "BOTH") && !subject.trim()) {
-      showAlert("Please enter a subject for email messages");
+      setAlertMessage("Please enter a subject for email messages");
+      setShowAlertModal(true);
       return;
     }
 
     if (!messageBody.trim()) {
-      showAlert("Please enter a message body");
+      setAlertMessage("Please enter a message body");
+      setShowAlertModal(true);
       return;
     }
 
@@ -191,7 +191,8 @@ export default function CommunicationsCenter() {
       }, 1500);
     } catch (error) {
       console.error("Failed to send message:", error);
-      showAlert("Failed to send message. Please try again.");
+      setAlertMessage("Failed to send message. Please try again.");
+      setShowAlertModal(true);
     } finally {
       setIsProcessing(false);
     }
@@ -200,7 +201,8 @@ export default function CommunicationsCenter() {
   // Save as draft
   const handleSaveDraft = () => {
     if (!messageBody.trim()) {
-      showAlert("Please enter a message body to save");
+      setAlertMessage("Please enter a message body to save");
+      setShowAlertModal(true);
       return;
     }
 
@@ -211,7 +213,8 @@ export default function CommunicationsCenter() {
   // Create new template
   const handleCreateTemplate = async () => {
     if (!newTemplate.name.trim() || !newTemplate.category.trim() || !newTemplate.body.trim()) {
-      showAlert("Please fill in all required fields");
+      setAlertMessage("Please fill in all required fields");
+      setShowAlertModal(true);
       return;
     }
 
@@ -231,7 +234,8 @@ export default function CommunicationsCenter() {
       });
     } catch (error) {
       console.error("Failed to create template:", error);
-      showAlert("Failed to create template. Please try again.");
+      setAlertMessage("Failed to create template. Please try again.");
+      setShowAlertModal(true);
     } finally {
       setIsProcessing(false);
     }
@@ -254,7 +258,8 @@ export default function CommunicationsCenter() {
     if (!editingTemplate) return;
 
     if (!editingTemplate.name.trim() || !editingTemplate.category.trim() || !editingTemplate.body.trim()) {
-      showAlert("Please fill in all required fields");
+      setAlertMessage("Please fill in all required fields");
+      setShowAlertModal(true);
       return;
     }
 
@@ -269,7 +274,8 @@ export default function CommunicationsCenter() {
       setEditingTemplate(null);
     } catch (error) {
       console.error("Failed to update template:", error);
-      showAlert("Failed to update template. Please try again.");
+      setAlertMessage("Failed to update template. Please try again.");
+      setShowAlertModal(true);
     } finally {
       setIsProcessing(false);
     }
@@ -314,41 +320,20 @@ export default function CommunicationsCenter() {
           )}
         </AnimatePresence>
 
+        {/* Success Toast */}
+        <SuccessToast
+          message={successMessage}
+          isVisible={showSuccessToast}
+          onClose={() => setShowSuccessToast(false)}
+        />
+
         {/* Alert Modal */}
-        <AnimatePresence>
-          {showAlertModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4"
-              onClick={() => setShowAlertModal(false)}
-              style={{ margin: 0 }}
-            >
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <AlertTriangle className="w-4 h-4 text-red-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Alert</h3>
-                </div>
-                <p className="text-sm text-gray-700 mb-6">{alertMessage}</p>
-                <button
-                  onClick={() => setShowAlertModal(false)}
-                  className="w-full px-4 py-2.5 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm"
-                >
-                  OK
-                </button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <AlertModal
+          message={alertMessage}
+          isVisible={showAlertModal}
+          onClose={() => setShowAlertModal(false)}
+          variant="error"
+        />
 
         {/* Preview Modal */}
         <AnimatePresence>

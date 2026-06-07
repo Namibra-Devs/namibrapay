@@ -29,6 +29,7 @@ import {
 import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
 import Link from "next/link";
 import Select from "@/components/ui/Select";
+import { toast } from "@/components/ui/Toast";
 import {
   cn,
   formatDate,
@@ -53,8 +54,6 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
   const [newNote, setNewNote] = useState("");
   const [isInternalNote, setIsInternalNote] = useState(true);
   const [notes, setNotes] = useState(MOCK_APPLICATION_DETAIL.notes);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [documents, setDocuments] = useState(MOCK_APPLICATION_DETAIL.documents);
   const [riskOverride, setRiskOverride] = useState<number | null>(null);
   const [overrideJustification, setOverrideJustification] = useState("");
@@ -70,13 +69,6 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
     { id: "notes", label: `Notes (${notes.length})`, icon: MessageSquare },
     { id: "audit", label: "Audit Trail", icon: History },
   ];
-
-  // Show success toast
-  const showSuccess = useCallback((message: string) => {
-    setSuccessMessage(message);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 3000);
-  }, []);
 
   // Handle decision submission
   const handleDecision = async () => {
@@ -98,7 +90,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
         escalate: "Application escalated to senior officer!",
       };
       
-      showSuccess(actionMessages[selectedAction] || "Action completed!");
+      toast.success(actionMessages[selectedAction] || "Action completed!");
       setShowDecisionPanel(false);
       setDecisionNote("");
       setRejectionReason("");
@@ -125,7 +117,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
 
     setNotes([...notes, note]);
     setNewNote("");
-    showSuccess("Note added successfully!");
+    toast.success("Note added successfully!");
   };
 
   // Handle document verification
@@ -137,38 +129,18 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
           : doc
       )
     );
-    showSuccess(`Document ${action === "verify" ? "verified" : "rejected"} successfully!`);
+    toast.success(`Document ${action === "verify" ? "verified" : "rejected"} successfully!`);
   };
 
   // Download document (simulated)
   const handleDocumentDownload = (doc: any) => {
-    showSuccess(`Downloading ${doc.fileName}...`);
+    toast.info(`Downloading ${doc.fileName}...`);
     // In real implementation, this would trigger actual file download
   };
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Success Toast */}
-        <AnimatePresence>
-          {showSuccessToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
-            >
-              <Check className="w-4 h-4 shrink-0" />
-              <span className="text-sn font-medium">{successMessage}</span>
-              <button
-                onClick={() => setShowSuccessToast(false)}
-                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -642,7 +614,7 @@ export default function ApplicationDetail({ params }: { params: { id: string } }
                               <button
                                 onClick={() => {
                                   if (overrideJustification.trim()) {
-                                    showSuccess("Risk score override saved");
+                                    toast.success("Risk score override saved");
                                     setShowRiskOverride(false);
                                   } else {
                                     alert("Justification is required");

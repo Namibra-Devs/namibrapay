@@ -26,6 +26,7 @@ import {
   getStatusBadgeColor,
 } from "@/lib/compliance-utils";
 import { MOCK_APPLICATIONS } from "@/lib/compliance-hub-mock-data";
+import { toast } from "@/components/ui/Toast";
 
 export default function ApplicationsQueue() {
   const router = useRouter();
@@ -36,16 +37,7 @@ export default function ApplicationsQueue() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isExporting, setIsExporting] = useState(false);
   const [showExportSuccess, setShowExportSuccess] = useState(false);
-  const [showActionToast, setShowActionToast] = useState(false);
-  const [actionMessage, setActionMessage] = useState("");
   const itemsPerPage = 10;
-
-  // Show action toast
-  const showActionSuccess = (message: string) => {
-    setActionMessage(message);
-    setShowActionToast(true);
-    setTimeout(() => setShowActionToast(false), 3000);
-  };
 
   // Handle actions from the menu
   const handleApplicationAction = (action: string, applicationId: string) => {
@@ -58,7 +50,7 @@ export default function ApplicationsQueue() {
       escalate: `Application ${applicationId} escalated to senior officer`,
     };
     
-    showActionSuccess(messages[action] || "Action completed successfully");
+    toast.success(messages[action] || "Action completed successfully");
   };
 
   // Filter applications with useMemo for performance
@@ -167,27 +159,6 @@ export default function ApplicationsQueue() {
               <button
                 onClick={() => setShowExportSuccess(false)}
                 className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Action Success Toast */}
-        <AnimatePresence>
-          {showActionToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-50 bg-brand-teal text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
-            >
-              <CheckCircle className="w-4 h-4 shrink-0" />
-              <span className="text-sm font-medium">{actionMessage}</span>
-              <button
-                onClick={() => setShowActionToast(false)}
-                className="ml-2 hover:bg-brand-teal/80 rounded p-1 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>

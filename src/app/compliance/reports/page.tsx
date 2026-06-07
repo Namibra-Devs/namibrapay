@@ -24,6 +24,8 @@ import StatCard from "@/components/compliance-officer/shared/StatCard";
 import Select from "@/components/ui/Select";
 import { formatDate } from "@/lib/compliance-utils";
 import { MOCK_REPORTS, type Report } from "@/lib/compliance-hub-mock-data";
+import { toast } from "@/components/ui/Toast";
+import { AlertModal } from "@/components/compliance-officer/modals";
 
 export default function ReportsPage() {
   const [typeFilter, setTypeFilter] = useState<string>("ALL");
@@ -33,8 +35,6 @@ export default function ReportsPage() {
   // State management
   const [reports, setReports] = useState<Report[]>(MOCK_REPORTS);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [showCustomReportModal, setShowCustomReportModal] = useState(false);
@@ -51,12 +51,6 @@ export default function ReportsPage() {
   });
 
   // Helper functions
-  const showToast = (message: string) => {
-    setSuccessMessage(message);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 3000);
-  };
-
   const showAlert = (message: string) => {
     setAlertMessage(message);
     setShowAlertModal(true);
@@ -113,7 +107,7 @@ export default function ReportsPage() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      showToast("Report downloaded successfully!");
+      toast.success("Report downloaded successfully!");
     } catch (error) {
       console.error("Failed to download report:", error);
       showAlert("Failed to download report. Please try again.");
@@ -149,7 +143,7 @@ export default function ReportsPage() {
         )
       );
 
-      showToast("Report generated successfully!");
+      toast.success("Report generated successfully!");
       setGeneratingReport(null);
     } catch (error) {
       console.error("Failed to generate report:", error);
@@ -201,7 +195,7 @@ export default function ReportsPage() {
 
       setReports([newReport, ...reports]);
 
-      showToast("Custom report created successfully!");
+      toast.success("Custom report created successfully!");
       setShowCustomReportModal(false);
     } catch (error) {
       console.error("Failed to create custom report:", error);
@@ -251,62 +245,13 @@ export default function ReportsPage() {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        {/* Success Toast */}
-        <AnimatePresence>
-          {showSuccessToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-60 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3"
-            >
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{successMessage}</span>
-              <button
-                onClick={() => setShowSuccessToast(false)}
-                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Alert Modal */}
-        <AnimatePresence>
-          {showAlertModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4"
-              onClick={() => setShowAlertModal(false)}
-              style={{ margin: 0 }}
-            >
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <AlertTriangle className="w-5 h-5 text-red-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Alert</h3>
-                </div>
-                <p className="text-sm text-gray-700 mb-6">{alertMessage}</p>
-                <button
-                  onClick={() => setShowAlertModal(false)}
-                  className="w-full px-4 py-2.5 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-teal/90 transition-colors text-sm"
-                >
-                  OK
-                </button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <AlertModal
+          message={alertMessage}
+          isVisible={showAlertModal}
+          onClose={() => setShowAlertModal(false)}
+          variant="error"
+        />
 
         {/* Generate Report Modal */}
         <AnimatePresence>

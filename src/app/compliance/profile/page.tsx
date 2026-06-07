@@ -19,6 +19,7 @@ import {
   Loader2,
 } from "lucide-react";
 import DashboardLayout from "@/components/compliance-officer/DashboardLayout";
+import { toast } from "@/components/ui/Toast";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -26,8 +27,6 @@ export default function ProfilePage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
 
   // Mock user data
   const [profileData, setProfileData] = useState({
@@ -74,19 +73,12 @@ export default function ProfilePage() {
     },
   ]);
 
-  // Show success message
-  const showSuccess = (message: string) => {
-    setSuccessMessage(message);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 3000);
-  };
-
   // Handle profile save
   const handleSaveProfile = async () => {
     setIsSaving(true);
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsSaving(false);
-    showSuccess("Profile updated successfully");
+    toast.success("Profile updated successfully");
   };
 
   // Handle password change
@@ -104,7 +96,7 @@ export default function ProfilePage() {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
     setIsSaving(false);
-    showSuccess("Password changed successfully");
+    toast.success("Password changed successfully");
   };
 
   // Handle MFA toggle
@@ -113,7 +105,7 @@ export default function ProfilePage() {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setMfaEnabled(!mfaEnabled);
     setIsSaving(false);
-    showSuccess(mfaEnabled ? "MFA disabled" : "MFA enabled successfully");
+    toast.success(mfaEnabled ? "MFA disabled" : "MFA enabled successfully");
   };
 
   // Handle notification save
@@ -121,7 +113,7 @@ export default function ProfilePage() {
     setIsSaving(true);
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsSaving(false);
-    showSuccess("Notification preferences saved");
+    toast.success("Notification preferences saved");
   };
 
   const tabs = [
@@ -134,24 +126,6 @@ export default function ProfilePage() {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        {/* Success Toast */}
-        <AnimatePresence>
-          {showSuccessToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3"
-            >
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{successMessage}</span>
-              <button onClick={() => setShowSuccessToast(false)} className="ml-2 hover:bg-green-700 rounded p-1 transition-colors">
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Header */}
         <div>
           <h1 className="text-2xl font-heading font-bold text-brand-navy">Account Settings</h1>

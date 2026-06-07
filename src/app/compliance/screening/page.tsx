@@ -24,6 +24,7 @@ import Select from "@/components/ui/Select";
 import { ScreeningResult, ScreeningDisposition } from "@/types/compliance";
 import { formatDate } from "@/lib/compliance-utils";
 import { MOCK_SCREENINGS } from "@/lib/compliance-hub-mock-data";
+import { toast } from "@/components/ui/Toast";
 
 export default function ScreeningPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -35,18 +36,9 @@ export default function ScreeningPage() {
   const [screenings, setScreenings] = useState<ScreeningResult[]>(MOCK_SCREENINGS);
   const [dispositionNote, setDispositionNote] = useState("");
   const [processing, setProcessing] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [isExporting, setIsExporting] = useState(false);
   const [showExportSuccess, setShowExportSuccess] = useState(false);
   const itemsPerPage = 10;
-
-  // Show success toast
-  const showSuccess = (message: string) => {
-    setSuccessMessage(message);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 3000);
-  };
 
   // Filter screenings with useMemo for performance
   const filteredScreenings = useMemo(() => {
@@ -152,7 +144,7 @@ export default function ScreeningPage() {
         ESCALATED: `${selectedScreening?.id} escalated to senior officer`,
       };
       
-      showSuccess(dispositionMessages[disposition as Exclude<ScreeningDisposition, "PENDING">] || "Disposition saved successfully");
+      toast.success(dispositionMessages[disposition as Exclude<ScreeningDisposition, "PENDING">] || "Disposition saved successfully");
       setShowDispositionModal(false);
       setDispositionNote("");
       setSelectedScreening(null);
@@ -197,27 +189,6 @@ export default function ScreeningPage() {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        {/* Success Toast */}
-        <AnimatePresence>
-          {showSuccessToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
-            >
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
-              <span className="text-sm font-medium">{successMessage}</span>
-              <button
-                onClick={() => setShowSuccessToast(false)}
-                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Export Success Toast */}
         <AnimatePresence>
           {showExportSuccess && (
