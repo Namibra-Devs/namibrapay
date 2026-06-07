@@ -28,7 +28,7 @@ import {
   type MessageType,
   type Template,
 } from "@/lib/compliance-hub-mock-data";
-import { AlertModal, SuccessToast } from "@/components/compliance-officer/modals";
+import { AlertModal } from "@/components/compliance-officer/modals";
 
 export default function CommunicationsCenter() {
   const [activeView, setActiveView] = useState<"compose" | "history" | "templates">("history");
@@ -319,13 +319,6 @@ export default function CommunicationsCenter() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Success Toast */}
-        <SuccessToast
-          message={successMessage}
-          isVisible={showSuccessToast}
-          onClose={() => setShowSuccessToast(false)}
-        />
 
         {/* Alert Modal */}
         <AlertModal
