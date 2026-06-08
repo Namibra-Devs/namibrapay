@@ -36,7 +36,6 @@ export default function ApplicationsQueue() {
   const [selectedType, setSelectedType] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
   const [isExporting, setIsExporting] = useState(false);
-  const [showExportSuccess, setShowExportSuccess] = useState(false);
   const itemsPerPage = 10;
 
   // Handle actions from the menu
@@ -121,8 +120,7 @@ export default function ApplicationsQueue() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
       
-      setShowExportSuccess(true);
-      setTimeout(() => setShowExportSuccess(false), 3000);
+      toast.success("Export completed successfully!");
     } catch (error) {
       console.error("Export failed:", error);
       alert("Export failed. Please try again.");
@@ -145,27 +143,6 @@ export default function ApplicationsQueue() {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        {/* Export Success Toast */}
-        <AnimatePresence>
-          {showExportSuccess && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3"
-            >
-              <FileDown className="w-5 h-5" />
-              <span className="font-medium">Export completed successfully!</span>
-              <button
-                onClick={() => setShowExportSuccess(false)}
-                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>

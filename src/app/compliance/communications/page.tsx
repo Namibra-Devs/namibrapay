@@ -29,6 +29,7 @@ import {
   type Template,
 } from "@/lib/compliance-hub-mock-data";
 import { AlertModal } from "@/components/compliance-officer/modals";
+import { toast } from "@/components/ui/Toast";
 
 export default function CommunicationsCenter() {
   const [activeView, setActiveView] = useState<"compose" | "history" | "templates">("history");
@@ -44,8 +45,6 @@ export default function CommunicationsCenter() {
   // State management
   const [messages, setMessages] = useState(MOCK_MESSAGES);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -65,13 +64,6 @@ export default function CommunicationsCenter() {
     category: string;
     body: string;
   } | null>(null);
-
-  // Helper function
-  const showToast = (message: string) => {
-    setSuccessMessage(message);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 3000);
-  };
 
   // Load template content when selected
   const handleTemplateSelect = (templateId: string) => {
@@ -183,7 +175,7 @@ export default function CommunicationsCenter() {
       setMessageBody("");
       setSelectedTemplate("");
       
-      showToast(`Message sent successfully via ${selectedChannel}!`);
+      toast.success(`Message sent successfully via ${selectedChannel}!`);
       
       // Switch to history view after a delay
       setTimeout(() => {
@@ -207,7 +199,7 @@ export default function CommunicationsCenter() {
     }
 
     // In a real app, this would save to backend
-    showToast("Draft saved successfully!");
+    toast.success("Draft saved successfully!");
   };
 
   // Create new template
@@ -223,7 +215,7 @@ export default function CommunicationsCenter() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // In a real app, this would create template via API
-      showToast("Template created successfully!");
+      toast.success("Template created successfully!");
       
       setShowNewTemplateModal(false);
       setNewTemplate({
@@ -268,7 +260,7 @@ export default function CommunicationsCenter() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // In a real app, this would update template via API
-      showToast("Template updated successfully!");
+      toast.success("Template updated successfully!");
       
       setShowEditTemplateModal(false);
       setEditingTemplate(null);
@@ -299,27 +291,6 @@ export default function CommunicationsCenter() {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        {/* Success Toast */}
-        <AnimatePresence>
-          {showSuccessToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-60 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3"
-            >
-              <CheckCircle className="w-5 h-5" />
-              <span className="text-sm font-medium">{successMessage}</span>
-              <button
-                onClick={() => setShowSuccessToast(false)}
-                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Alert Modal */}
         <AlertModal
           message={alertMessage}

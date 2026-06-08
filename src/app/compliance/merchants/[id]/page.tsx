@@ -32,12 +32,13 @@ import Select from "@/components/ui/Select";
 import {EntityStatus} from "@/types/compliance";
 import {
   getStatusBadgeColor,
-  getRiskBadgeColor,
   formatDate,
   formatCurrency,
   getInitials,
+  getRiskBadgeColor,
 } from "@/lib/compliance-utils";
 import { getMerchantData } from "@/lib/compliance-hub-mock-data";
+import { toast } from "@/components/ui/Toast";
 
 export default function MerchantDetailPage() {
   const params = useParams();
@@ -45,20 +46,11 @@ export default function MerchantDetailPage() {
   const [activeTab, setActiveTab] = useState<
     "overview" | "documents" | "transactions" | "screening" | "audit"
   >("overview");
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [newStatus, setNewStatus] = useState<EntityStatus>("ACTIVE");
   const [statusNote, setStatusNote] = useState("");
   const [processing, setProcessing] = useState(false);
   const [merchant, setMerchant] = useState(getMerchantData(merchantId));
-
-  // Show success toast
-  const showSuccess = (message: string) => {
-    setSuccessMessage(message);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 3000);
-  };
 
   // Handle status update
   const handleStatusUpdate = async () => {
@@ -72,11 +64,11 @@ export default function MerchantDetailPage() {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       
       setMerchant({ ...merchant, status: newStatus });
-      showSuccess(`Merchant status updated to ${newStatus}`);
+      toast.success(`Merchant status updated to ${newStatus}`);
       setShowStatusModal(false);
       setStatusNote("");
     } catch (error) {
-      alert("Failed to update status. Please try again.");
+      toast.error("Failed to update status. Please try again.");
     } finally {
       setProcessing(false);
     }
@@ -85,12 +77,12 @@ export default function MerchantDetailPage() {
   // Handle risk update
   const handleRiskUpdate = () => {
     // In real app, this would open a risk assessment modal
-    showSuccess("Risk assessment form opened (simulated)");
+    toast.success("Risk assessment form opened (simulated)");
   };
 
   // Handle document upload
   const handleDocumentUpload = () => {
-    showSuccess("Document upload initiated (simulated)");
+    toast.success("Document upload initiated (simulated)");
   };
 
   // Handle suspend action
@@ -116,9 +108,9 @@ export default function MerchantDetailPage() {
     setProcessing(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      showSuccess("Periodic review triggered successfully. Review case created.");
+      toast.success("Periodic review triggered successfully. Review case created.");
     } catch (error) {
-      alert("Failed to trigger review. Please try again.");
+      toast.error("Failed to trigger review. Please try again.");
     } finally {
       setProcessing(false);
     }
@@ -129,9 +121,9 @@ export default function MerchantDetailPage() {
     setProcessing(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      showSuccess("Screening re-run successfully. New results will appear shortly.");
+      toast.success("Screening re-run successfully. New results will appear shortly.");
     } catch (error) {
-      alert("Failed to re-run screening. Please try again.");
+      toast.error("Failed to re-run screening. Please try again.");
     } finally {
       setProcessing(false);
     }
@@ -148,27 +140,6 @@ export default function MerchantDetailPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Success Toast */}
-        <AnimatePresence>
-          {showSuccessToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 max-w-md"
-            >
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
-              <span className="text-sm font-medium">{successMessage}</span>
-              <button
-                onClick={() => setShowSuccessToast(false)}
-                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Back Button */}
       <Link
         href="/compliance/merchants"
@@ -453,7 +424,7 @@ export default function MerchantDetailPage() {
                       {doc.status}
                     </Badge>
                     <button
-                      onClick={() => showSuccess(`Viewing ${doc.fileName}`)}
+                      onClick={() => toast.success(`Viewing ${doc.fileName}`)}
                       className="text-brand-teal hover:text-brand-teal/80 font-medium text-sm transition-colors"
                     >
                       View

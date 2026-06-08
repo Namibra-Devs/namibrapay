@@ -112,7 +112,7 @@ export default function ComplianceSearchBar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-gray-200/70 py-2 max-h-96 overflow-y-auto z-50"
+            className="fixed md:absolute top-[72px] md:top-full left-2 right-2 md:left-auto md:right-auto mt-2 md:w-full bg-white rounded-xl shadow-xl border border-gray-200/70 py-2 max-h-96 overflow-y-auto z-50"
           >
             <div className="px-3 py-2 border-b border-gray-100">
               <p className="text-xs font-semibold text-gray-500">
@@ -128,7 +128,7 @@ export default function ComplianceSearchBar() {
                     key={result.id}
                     href={result.href}
                     onClick={handleResultClick}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors group"
                   >
                     <div className={cn(
                       "w-10 h-10 rounded-lg flex items-center justify-center shrink-0",
@@ -169,9 +169,9 @@ export default function ComplianceSearchBar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-xl border border-gray-200/70 py-8 text-center z-50"
+            className="fixed md:absolute top-[72px] md:top-full left-2 right-2 md:left-auto md:right-auto mt-2 md:w-full bg-white rounded-xl shadow-xl border border-gray-200/70 py-8 text-center z-50"
           >
-            <Search className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <Search className="w-6 md:w-10 h-6 md:h-10 text-gray-300 mx-auto mb-3" />
             <p className="text-sm font-medium text-gray-900 mb-1">No results found</p>
             <p className="text-xs text-gray-500">
               Try searching for applications, merchants, or cases

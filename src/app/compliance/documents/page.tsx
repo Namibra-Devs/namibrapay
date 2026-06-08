@@ -29,6 +29,7 @@ import { Document, DocumentStatus } from "@/types/compliance";
 import { formatDate, DOCUMENT_TYPES } from "@/lib/compliance-utils";
 import { MOCK_DOCUMENTS } from "@/lib/compliance-hub-mock-data";
 import { AlertModal } from "@/components/compliance-officer/modals";
+import { toast } from "@/components/ui/Toast";
 
 export default function DocumentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,8 +41,6 @@ export default function DocumentsPage() {
   // State management
   const [documents, setDocuments] = useState<Document[]>(MOCK_DOCUMENTS);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [showViewModal, setShowViewModal] = useState(false);
@@ -58,12 +57,6 @@ export default function DocumentsPage() {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   // Helper functions
-  const showToast = (message: string) => {
-    setSuccessMessage(message);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 3000);
-  };
-
   const showAlert = (message: string) => {
     setAlertMessage(message);
     setShowAlertModal(true);
@@ -140,7 +133,7 @@ export default function DocumentsPage() {
         )
       );
 
-      showToast("Document verified successfully!");
+      toast.success("Document verified successfully!");
       setVerifyingDocument(null);
     } catch (error) {
       console.error("Failed to verify document:", error);
@@ -184,7 +177,7 @@ export default function DocumentsPage() {
         )
       );
 
-      showToast("Document rejected successfully!");
+      toast.success("Document rejected successfully!");
       setRejectingDocument(null);
       setRejectionNotes("");
     } catch (error) {
@@ -202,7 +195,7 @@ export default function DocumentsPage() {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Simulated download
-      showToast(`Downloading ${doc.fileName}...`);
+      toast.info(`Downloading ${doc.fileName}...`);
 
       // In a real app, this would trigger actual file download
       // const link = document.createElement('a');
@@ -242,7 +235,7 @@ export default function DocumentsPage() {
       // 2. Update document status to PENDING_REUPLOAD
       // 3. Log in audit trail
 
-      showToast(`Re-upload request sent for ${reuploadingDocument.fileName}`);
+      toast.success(`Re-upload request sent for ${reuploadingDocument.fileName}`);
       setReuploadingDocument(null);
       setReuploadReason("");
     } catch (error) {
@@ -295,7 +288,7 @@ export default function DocumentsPage() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      showToast("Report exported successfully!");
+      toast.success("Report exported successfully!");
     } catch (error) {
       console.error("Export failed:", error);
       showAlert("Export failed. Please try again.");
@@ -339,27 +332,6 @@ export default function DocumentsPage() {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        {/* Success Toast */}
-        <AnimatePresence>
-          {showSuccessToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-60 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3"
-            >
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{successMessage}</span>
-              <button
-                onClick={() => setShowSuccessToast(false)}
-                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Alert Modal */}
         <AlertModal
           message={alertMessage}

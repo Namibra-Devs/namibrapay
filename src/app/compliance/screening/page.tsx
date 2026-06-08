@@ -37,7 +37,6 @@ export default function ScreeningPage() {
   const [dispositionNote, setDispositionNote] = useState("");
   const [processing, setProcessing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const [showExportSuccess, setShowExportSuccess] = useState(false);
   const itemsPerPage = 10;
 
   // Filter screenings with useMemo for performance
@@ -103,8 +102,7 @@ export default function ScreeningPage() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
       
-      setShowExportSuccess(true);
-      setTimeout(() => setShowExportSuccess(false), 3000);
+      toast.success("Export completed successfully!");
     } catch (error) {
       console.error("Export failed:", error);
       alert("Export failed. Please try again.");
@@ -189,27 +187,6 @@ export default function ScreeningPage() {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        {/* Export Success Toast */}
-        <AnimatePresence>
-          {showExportSuccess && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-50 bg-brand-teal text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3"
-            >
-              <FileDown className="w-4 h-4" />
-              <span className="text-sm font-medium">Export completed successfully!</span>
-              <button
-                onClick={() => setShowExportSuccess(false)}
-                className="ml-2 hover:bg-brand-teal/80 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>

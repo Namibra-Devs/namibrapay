@@ -27,6 +27,7 @@ import Select from "@/components/ui/Select";
 import { Case, CaseStatus } from "@/types/compliance";
 import { formatDate } from "@/lib/compliance-utils";
 import { AlertModal } from "@/components/compliance-officer/modals";
+import { toast } from "@/components/ui/Toast";
 
 // Mock cases data
 const mockCases: Case[] = [
@@ -126,7 +127,6 @@ export default function CasesPage() {
   const [typeFilter, setTypeFilter] = useState<string>("ALL");
   const [currentPage, setCurrentPage] = useState(1);
   const [isExporting, setIsExporting] = useState(false);
-  const [showExportSuccess, setShowExportSuccess] = useState(false);
   const [showNewCaseModal, setShowNewCaseModal] = useState(false);
   const [isCreatingCase, setIsCreatingCase] = useState(false);
   const [newCaseData, setNewCaseData] = useState({
@@ -203,8 +203,7 @@ export default function CasesPage() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
       
-      setShowExportSuccess(true);
-      setTimeout(() => setShowExportSuccess(false), 3000);
+      toast.success("Export completed successfully!");
     } catch (error) {
       console.error("Export failed:", error);
       setAlertMessage("Export failed. Please try again.");
@@ -242,8 +241,7 @@ export default function CasesPage() {
         description: "",
       });
 
-      setShowExportSuccess(true);
-      setTimeout(() => setShowExportSuccess(false), 3000);
+      toast.success("Case created successfully!");
 
       // Would normally navigate to the new case detail page
       // router.push(`/compliance/cases/${newCaseId}`);
@@ -302,27 +300,6 @@ export default function CasesPage() {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        {/* Export Success Toast */}
-        <AnimatePresence>
-          {showExportSuccess && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3"
-            >
-              <FileDown className="w-4 h-4" />
-              <span className="text-sm font-medium">Export completed successfully!</span>
-              <button
-                onClick={() => setShowExportSuccess(false)}
-                className="ml-2 hover:bg-green-700 rounded p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Alert Modal */}
         <AlertModal
           message={alertMessage}
