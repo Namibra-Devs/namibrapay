@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Loader2 } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import { toast } from "@/components/ui/Toast";

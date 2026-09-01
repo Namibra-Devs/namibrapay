@@ -7,12 +7,14 @@ const manrope = Manrope({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
+  variable: "--font-body",
 });
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
+  variable: "--font-heading",
 });
 
 export const metadata: Metadata = {
@@ -40,10 +42,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${manrope.className} ${spaceGrotesk.className} h-full scroll-smooth antialiased`}
+      className={`${manrope.variable} ${spaceGrotesk.variable} h-full scroll-smooth antialiased`}
       data-scroll-behavior="smooth"
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col font-body">
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>

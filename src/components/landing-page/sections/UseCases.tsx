@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion, type Variants } from "motion/react";
 import { Store, GraduationCap, Truck, Landmark } from "lucide-react";
 import SectionBadge from "@/components/ui/SectionBadge";
 import { type LucideIcon } from "lucide-react";

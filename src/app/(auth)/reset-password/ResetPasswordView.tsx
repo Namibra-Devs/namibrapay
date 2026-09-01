@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Eye, EyeOff, Loader2, XCircle } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import { FieldError } from "@/components/ui/FieldError";

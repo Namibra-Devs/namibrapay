@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm, type Path, type PathValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Logo from "@/components/ui/Logo";
 import Select, { type SelectOption } from "@/components/ui/Select";
 import { FieldError } from "@/components/ui/FieldError";

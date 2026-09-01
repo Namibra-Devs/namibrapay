@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { AlertCircle } from "lucide-react";
 
 export function FieldError({ message }: { message?: string }) {

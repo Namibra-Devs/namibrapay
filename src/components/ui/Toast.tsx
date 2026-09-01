@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle, Loader2 } from "lucide-react";
 import { createContext, useContext, useState, useCallback } from "react";
 

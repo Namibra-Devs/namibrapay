@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { MailOpen, CheckCircle2, Loader2 } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import { toast } from "@/components/ui/Toast";

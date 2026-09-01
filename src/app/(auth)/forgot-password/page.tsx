@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { MailOpen, Loader2 } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import { FieldError } from "@/components/ui/FieldError";

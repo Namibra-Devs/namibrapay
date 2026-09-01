@@ -1,54 +1,91 @@
-import axios from "axios";
-import api from "./api";
 import type { SignInPayload, SignUpPayload, AuthResponse, SignInResponse, ApiErrorBody } from "@/types/auth";
 
+// Mock auth functions - replace with real API calls later
 export async function signIn(payload: SignInPayload): Promise<SignInResponse> {
-  const { data } = await api.post<SignInResponse>("/auth/signin", payload);
-  return data;
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  // Mock response - returning successful auth (no MFA required)
+  return {
+    token: "mock-token",
+    user: {
+      id: "1",
+      email: payload.email,
+      firstName: "Test",
+      lastName: "User",
+      businessName: "Test Business",
+      role: "owner",
+    },
+  };
 }
 
 export async function verifyOtp(session: string, otp: string): Promise<AuthResponse> {
-  const { data } = await api.post<AuthResponse>("/auth/verify-otp", { session, otp });
-  return data;
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  return {
+    token: "mock-token",
+    user: {
+      id: "1",
+      email: "user@example.com",
+      firstName: "Test",
+      lastName: "User",
+      businessName: "Test Business",
+      role: "owner",
+    },
+  };
 }
 
 export async function resendOtp(session: string): Promise<{ session: string }> {
-  const { data } = await api.post<{ session: string }>("/auth/resend-otp", { session });
-  return data;
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return { session: "new-session-id" };
 }
 
 export async function forgotPassword(email: string): Promise<void> {
-  await api.post("/auth/forgot-password", { email });
+  await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 export async function resetPassword(token: string, password: string): Promise<void> {
-  await api.post("/auth/reset-password", { token, password });
+  await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
 export async function signUp(payload: SignUpPayload): Promise<AuthResponse> {
-  const { data } = await api.post<AuthResponse>("/auth/signup", payload);
-  return data;
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  return {
+    token: "mock-token",
+    user: {
+      id: "1",
+      email: payload.email,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      businessName: payload.businessName,
+      role: "owner",
+    },
+  };
 }
 
 export async function resendVerificationEmail(email: string): Promise<void> {
-  await api.post("/auth/resend-verification", { email });
+  await new Promise(resolve => setTimeout(resolve, 500));
 }
 
 export async function confirmEmail(token: string): Promise<AuthResponse> {
-  const { data } = await api.post<AuthResponse>("/auth/confirm-email", { token });
-  return data;
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  return {
+    token: "mock-token",
+    user: {
+      id: "1",
+      email: "user@example.com",
+      firstName: "Test",
+      lastName: "User",
+      businessName: "Test Business",
+      role: "owner",
+    },
+  };
 }
 
 /** Extract a human-readable message from any thrown error. */
 export function getErrorMessage(err: unknown): string {
-  if (axios.isAxiosError<ApiErrorBody>(err)) {
-    const body = err.response?.data;
-    if (body?.message) return body.message;
-    if (err.response?.status === 0 || !err.response) {
-      return "Unable to reach the server. Check your connection.";
-    }
-    return err.message ?? "Something went wrong.";
-  }
   if (err instanceof Error) return err.message;
   return "An unexpected error occurred.";
 }

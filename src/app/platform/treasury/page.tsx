@@ -1,0 +1,723 @@
+'use client';
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend,
+} from "recharts";
+import {
+  DollarSign, AlertTriangle, CheckCircle, Clock, XCircle, TrendingUp, TrendingDown,
+  RefreshCw, Download, Plus, ChevronDown, ChevronUp, X, FileText,
+  ArrowUpRight, ArrowDownLeft, Banknote, BarChart2, Check, Search,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { formatGHS, formatDate } from "@/lib/constants";
+import { usePermission } from "@/hooks/use-role";
+import { mockProviders } from "@/lib/mock-data";
+import {
+  mockPrefundRequests, mockReconciliationEntries, mockPayoutBatches, mockFeeLedger, mockFinancialReports,
+} from "@/lib/treasury-mock-data";
+import type { PrefundRequest, PayoutBatch, ReconciliationEntry } from "@/lib/treasury-mock-data";
+import { mockChartData } from "@/lib/mock-data";
+
+// ── Tabs ────────────────────────────────────────────────────────────────────
+type Tab = "overview" | "prefunding" | "reconciliation" | "payouts" | "fee_ledger" | "reports";
+
+const TABS: { id: Tab; label: string }[] = [
+  { id: "overview", label: "Overview" },
+  { id: "prefunding", label: "NSP Prefunding" },
+  { id: "reconciliation", label: "Reconciliation" },
+  { id: "payouts", label: "Payout Batches" },
+  { id: "fee_ledger", label: "Fee Ledger" },
+  { id: "reports", label: "Reports" },
+];
+
+// ── Status helpers ──────────────────────────────────────────────────────────
+const prefundStatusCfg: Record<PrefundRequest["status"], { label: string; color: string; icon: React.ElementType }> = {
+  pending:   { label: "Pending",   color: "bg-amber-50 text-amber-700 border-amber-200",   icon: Clock       },
+  approved:  { label: "Approved",  color: "bg-blue-50 text-blue-700 border-blue-200",      icon: CheckCircle },
+  rejected:  { label: "Rejected",  color: "bg-red-50 text-red-700 border-red-200",         icon: XCircle     },
+  completed: { label: "Completed", color: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: Check   },
+};
+
+const batchStatusCfg: Record<PayoutBatch["status"], { label: string; color: string; icon: React.ElementType }> = {
+  pending_approval: { label: "Pending Approval", color: "bg-amber-50 text-amber-700 border-amber-200",   icon: Clock       },
+  approved:         { label: "Approved",          color: "bg-blue-50 text-blue-700 border-blue-200",      icon: CheckCircle },
+  processing:       { label: "Processing",        color: "bg-purple-50 text-purple-700 border-purple-200", icon: RefreshCw  },
+  completed:        { label: "Completed",         color: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: Check  },
+  failed:           { label: "Failed",            color: "bg-red-50 text-red-700 border-red-200",         icon: XCircle     },
+  rejected:         { label: "Rejected",          color: "bg-muted text-muted-foreground border-border",  icon: XCircle     },
+};
+
+const reconcStatusCfg: Record<ReconciliationEntry["status"], { label: string; color: string; icon: React.ElementType }> = {
+  balanced:    { label: "Balanced",    color: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: CheckCircle },
+  discrepancy: { label: "Discrepancy", color: "bg-red-50 text-red-700 border-red-200",            icon: AlertTriangle },
+  pending:     { label: "Pending",     color: "bg-amber-50 text-amber-700 border-amber-200",      icon: Clock       },
+};
+
+const reportTypeCfg = {
+  reconciliation: { color: "bg-[#263b8e]/10 text-[#263b8e]", label: "Reconciliation" },
+  fee_ledger:     { color: "bg-[#64c6c3]/10 text-[#1a6e6c]", label: "Fee Ledger"     },
+  payout:         { color: "bg-[#fedfb8]/40 text-amber-700", label: "Payouts"        },
+  volume:         { color: "bg-[#bcbbee]/40 text-purple-700", label: "Volume"        },
+  nsp_balance:    { color: "bg-emerald-50 text-emerald-700",  label: "NSP Balance"   },
+};
+
+// ── KPI Card ────────────────────────────────────────────────────────────────
+function KpiCard({ label, value, sub, color, icon: Icon, trend }: {
+  label: string; value: string; sub: string; color: string; icon: React.ElementType; trend?: "up" | "down" | "neutral";
+}) {
+  return (
+    <div className="bg-card border border-border rounded-2xl p-5 flex flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <div className="size-10 rounded-xl flex items-center justify-center" style={{ background: `${color}18` }}>
+          <Icon className="size-4" style={{ color }} />
+        </div>
+        {trend && (
+          <span className={cn("text-[11px] font-medium flex items-center gap-0.5",
+            trend === "up" ? "text-emerald-600" : trend === "down" ? "text-red-500" : "text-muted-foreground")}>
+            {trend === "up" ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
+            vs yesterday
+          </span>
+        )}
+      </div>
+      <div>
+        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
+        <p className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
+        <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
+      </div>
+    </div>
+  );
+}
+
+// ── NSP Balance Bar ─────────────────────────────────────────────────────────
+function NspBalanceBar({ balance, threshold }: { balance: number; threshold: number }) {
+  const pct = Math.min((balance / (threshold * 4)) * 100, 100);
+  const thresholdPct = Math.min((threshold / (threshold * 4)) * 100, 100);
+  const isWarning = balance < threshold * 1.5;
+  const isCritical = balance < threshold;
+  return (
+    <div className="mt-2">
+      <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+        <div
+          className={cn("h-full rounded-full transition-all", isCritical ? "bg-red-500" : isWarning ? "bg-amber-400" : "bg-[#64c6c3]")}
+          style={{ width: `${pct}%` }}
+        />
+        {/* Threshold marker */}
+        <div
+          className="absolute top-0 bottom-0 w-0.5 bg-foreground/30"
+          style={{ left: `${thresholdPct}%` }}
+        />
+      </div>
+      <div className="flex items-center justify-between mt-1">
+        <span className="text-[10px] text-muted-foreground">{formatGHS(balance)}</span>
+        <span className="text-[10px] text-muted-foreground">Threshold: {formatGHS(threshold)}</span>
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ──────────────────────────────────────────────────────────
+export default function TreasuryPage() {
+  const canApprove = usePermission("treasury.approve");
+  const canView    = usePermission("treasury.view");
+
+  const [tab, setTab] = useState<Tab>("overview");
+  const [expandedReconc, setExpandedReconc] = useState<string | null>(null);
+  const [approvalModal, setApprovalModal] = useState<{ type: "prefund" | "payout"; id: string; action: "approve" | "reject" } | null>(null);
+  const [showPrefundModal, setShowPrefundModal] = useState(false);
+  const [ledgerSearch, setLedgerSearch] = useState("");
+  const [approvalNote, setApprovalNote] = useState("");
+
+  if (!canView) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center p-8">
+        <DollarSign className="size-12 text-muted-foreground/30 mb-3" />
+        <p className="text-lg font-semibold text-muted-foreground">Access Restricted</p>
+        <p className="text-sm text-muted-foreground/70 mt-1">Treasury & Finance is available to Finance and Super Admin roles only.</p>
+      </div>
+    );
+  }
+
+  const totalNSPBalance = mockProviders.reduce((s, p) => s + p.nspBalance, 0);
+  const pendingPrefunds = mockPrefundRequests.filter((p) => p.status === "pending").length;
+  const pendingBatches  = mockPayoutBatches.filter((b) => b.status === "pending_approval").length;
+  const totalFees       = mockFeeLedger.reduce((s, e) => s + e.feeAmount, 0);
+  const discrepancies   = mockReconciliationEntries.filter((r) => r.status === "discrepancy").length;
+
+  const filteredLedger  = mockFeeLedger.filter((e) =>
+    !ledgerSearch || e.merchantName.toLowerCase().includes(ledgerSearch.toLowerCase()) || e.ref.toLowerCase().includes(ledgerSearch.toLowerCase())
+  );
+
+  return (
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Header */}
+      <div className="px-6 py-5 border-b border-border bg-card/50 shrink-0">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+              Treasury & Finance
+            </h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              NSP balance monitoring · Reconciliation · Payouts · Fee Ledger
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {canApprove && pendingPrefunds > 0 && (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-xs font-medium">
+                <Clock className="size-3" />
+                {pendingPrefunds} prefund{pendingPrefunds > 1 ? "s" : ""} pending
+              </span>
+            )}
+            {canApprove && pendingBatches > 0 && (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-xs font-medium">
+                <Clock className="size-3" />
+                {pendingBatches} batch{pendingBatches > 1 ? "es" : ""} pending
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Tab bar */}
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
+          {TABS.map((t) => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={cn("px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all",
+                tab === t.id ? "bg-card shadow-sm border border-border text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted/40")}>
+              {t.label}
+              {t.id === "prefunding" && pendingPrefunds > 0 && (
+                <span className="ml-1.5 px-1.5 py-0.5 bg-amber-500 text-white rounded-full text-[9px] font-bold">{pendingPrefunds}</span>
+              )}
+              {t.id === "payouts" && pendingBatches > 0 && (
+                <span className="ml-1.5 px-1.5 py-0.5 bg-amber-500 text-white rounded-full text-[9px] font-bold">{pendingBatches}</span>
+              )}
+              {t.id === "reconciliation" && discrepancies > 0 && (
+                <span className="ml-1.5 px-1.5 py-0.5 bg-red-500 text-white rounded-full text-[9px] font-bold">{discrepancies}</span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-6">
+        {/* ── OVERVIEW ── */}
+        {tab === "overview" && (
+          <div className="space-y-6">
+            {/* KPI row */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <KpiCard label="Total NSP Balance" value={formatGHS(totalNSPBalance)} sub="Across 4 providers" color="#64c6c3" icon={Banknote} trend="up" />
+              <KpiCard label="Today's Volume" value={formatGHS(4_940_000)} sub="MTN · VOD · AT · GIP" color="#263b8e" icon={TrendingUp} trend="up" />
+              <KpiCard label="Total Fees (30d)" value={formatGHS(totalFees)} sub="Platform + NSP share" color="#fedfb8" icon={DollarSign} trend="neutral" />
+              <KpiCard label="Discrepancies" value={String(discrepancies)} sub="Active reconciliation flags" color={discrepancies > 0 ? "#ef4444" : "#64c6c3"} icon={AlertTriangle} />
+            </div>
+
+            {/* NSP Balance cards */}
+            <div>
+              <h2 className="text-sm font-semibold mb-3" style={{ fontFamily: "var(--font-heading)" }}>NSP Balances</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {mockProviders.map((p) => {
+                  const isCritical = p.nspStatus === "critical";
+                  const isWarning  = p.nspStatus === "warning";
+                  return (
+                    <div key={p.id} className={cn("bg-card border rounded-2xl p-4", isCritical ? "border-red-200" : isWarning ? "border-amber-200" : "border-border")}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold text-muted-foreground font-mono">{p.shortCode}</span>
+                        <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full font-medium",
+                          isCritical ? "bg-red-50 text-red-700" : isWarning ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700")}>
+                          {p.nspStatus}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate mb-0.5">{p.name}</p>
+                      <NspBalanceBar balance={p.nspBalance} threshold={p.nspThreshold} />
+                      {(isCritical || isWarning) && canApprove && (
+                        <button
+                          onClick={() => { setShowPrefundModal(true); }}
+                          className="mt-2.5 w-full py-1.5 rounded-lg text-[11px] font-medium border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-all">
+                          Request Prefund
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 7-day volume chart */}
+            <div className="bg-card border border-border rounded-2xl p-5">
+              <h2 className="text-sm font-semibold mb-4" style={{ fontFamily: "var(--font-heading)" }}>7-Day Transaction Volume</h2>
+              <ResponsiveContainer width="100%" height={200}>
+                <AreaChart data={mockChartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="volGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#263b8e" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#263b8e" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
+                  <YAxis tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(1)}M`} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
+                  <Tooltip formatter={(v) => typeof v === "number" ? formatGHS(v) : v} contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }} />
+                  <Area type="monotone" dataKey="volume" stroke="#263b8e" strokeWidth={2} fill="url(#volGrad)" name="Volume" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Fee split bar */}
+            <div className="bg-card border border-border rounded-2xl p-5">
+              <h2 className="text-sm font-semibold mb-4" style={{ fontFamily: "var(--font-heading)" }}>Daily Fee Split (NSP vs Platform)</h2>
+              <ResponsiveContainer width="100%" height={160}>
+                <BarChart data={mockChartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }} barSize={12}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }} />
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11 }} />
+                  <Bar dataKey="successful" name="NSP Share" fill="#64c6c3" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="failed" name="Platform Share" fill="#263b8e" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* ── NSP PREFUNDING ── */}
+        {tab === "prefunding" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">Track and approve NSP prefunding requests.</p>
+              {canApprove && (
+                <button onClick={() => setShowPrefundModal(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all">
+                  <Plus className="size-4" /> New Request
+                </button>
+              )}
+            </div>
+
+            {/* Prefund request cards */}
+            <div className="space-y-3">
+              {mockPrefundRequests.map((req) => {
+                const cfg = prefundStatusCfg[req.status];
+                const Icon = cfg.icon;
+                const isPending = req.status === "pending";
+                return (
+                  <div key={req.id} className={cn("bg-card border rounded-2xl p-5", isPending && canApprove ? "border-amber-200/60 shadow-sm" : "border-border")}>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-3">
+                        <div className="size-9 rounded-xl bg-[#263b8e]/10 flex items-center justify-center shrink-0">
+                          <Banknote className="size-4 text-[#263b8e]" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <p className="font-semibold text-sm">{req.provider}</p>
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
+                              <Icon className="size-2.5" />{cfg.label}
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Requested by <span className="text-foreground font-medium">{req.requestedBy}</span> · {formatDate(req.requestedAt)}
+                          </p>
+                          {req.approvedBy && (
+                            <p className="text-xs text-muted-foreground">
+                              {req.status === "rejected" ? "Rejected" : "Approved"} by <span className="text-foreground font-medium">{req.approvedBy}</span>
+                              {req.approvedAt ? ` · ${formatDate(req.approvedAt)}` : ""}
+                            </p>
+                          )}
+                          {req.notes && (
+                            <p className="text-xs text-muted-foreground mt-1.5 italic">"{req.notes}"</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-lg font-bold text-[#263b8e]" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(req.amount)}</p>
+                        {isPending && canApprove && (
+                          <div className="flex items-center gap-2 mt-2.5">
+                            <button
+                              onClick={() => setApprovalModal({ type: "prefund", id: req.id, action: "reject" })}
+                              className="px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-xs font-medium hover:bg-red-50 transition-all">
+                              Reject
+                            </button>
+                            <button
+                              onClick={() => setApprovalModal({ type: "prefund", id: req.id, action: "approve" })}
+                              className="px-3 py-1.5 rounded-lg bg-[#263b8e] hover:bg-[#1e2f72] text-white text-xs font-medium transition-all">
+                              Approve
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── RECONCILIATION ── */}
+        {tab === "reconciliation" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">Daily provider reconciliation. Discrepancies are flagged for investigation.</p>
+              <button className="flex items-center gap-1.5 px-3 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all">
+                <Download className="size-3.5" /> Export
+              </button>
+            </div>
+
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-muted/30">
+                    {["Date", "Provider", "Collections", "Payouts", "Fees", "Status", ""].map((h) => (
+                      <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {mockReconciliationEntries.map((entry) => {
+                    const cfg = reconcStatusCfg[entry.status];
+                    const Icon = cfg.icon;
+                    const isExpanded = expandedReconc === entry.id;
+                    const collDiff = entry.actualCollections - entry.expectedCollections;
+                    return (
+                      <>
+                        <tr key={entry.id} className={cn("border-b border-border/50 last:border-0 transition-colors",
+                          entry.status === "discrepancy" ? "bg-red-50/30" : "hover:bg-muted/20")}>
+                          <td className="pl-5 pr-4 py-3.5 text-sm font-medium">{entry.date}</td>
+                          <td className="px-4 py-3.5">
+                            <span className="px-2 py-0.5 text-[11px] font-bold rounded font-mono bg-muted/60">{entry.provider}</span>
+                          </td>
+                          <td className="px-4 py-3.5">
+                            <p className="text-sm font-medium">{formatGHS(entry.actualCollections)}</p>
+                            {collDiff !== 0 && (
+                              <p className={cn("text-[10px] font-medium", collDiff < 0 ? "text-red-500" : "text-emerald-500")}>
+                                {collDiff < 0 ? "−" : "+"}{formatGHS(Math.abs(collDiff))}
+                              </p>
+                            )}
+                          </td>
+                          <td className="px-4 py-3.5 text-sm">{formatGHS(entry.actualPayouts)}</td>
+                          <td className="px-4 py-3.5 text-sm">{formatGHS(entry.actualFees)}</td>
+                          <td className="px-4 py-3.5">
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
+                              <Icon className="size-2.5" />{cfg.label}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3.5">
+                            {entry.status === "discrepancy" && (
+                              <button onClick={() => setExpandedReconc(isExpanded ? null : entry.id)}
+                                className="flex items-center gap-1 text-xs text-[#263b8e] hover:underline">
+                                Details {isExpanded ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                        {isExpanded && entry.status === "discrepancy" && (
+                          <tr key={`${entry.id}-exp`} className="bg-red-50/50 border-b border-red-100">
+                            <td colSpan={7} className="px-5 py-4">
+                              <div className="flex items-start gap-3">
+                                <AlertTriangle className="size-4 text-red-500 shrink-0 mt-0.5" />
+                                <div className="space-y-1">
+                                  <p className="text-sm font-semibold text-red-700">
+                                    Discrepancy: {entry.discrepancyAmount !== undefined ? formatGHS(entry.discrepancyAmount) : "—"}
+                                  </p>
+                                  <p className="text-sm text-red-600">{entry.discrepancyCause}</p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <p className="text-xs text-muted-foreground">Expected: {formatGHS(entry.expectedCollections)}</p>
+                                    <span className="text-muted-foreground">·</span>
+                                    <p className="text-xs text-muted-foreground">Actual: {formatGHS(entry.actualCollections)}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ── PAYOUT BATCHES ── */}
+        {tab === "payouts" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">Review and approve merchant payout batches.</p>
+            </div>
+
+            <div className="space-y-3">
+              {mockPayoutBatches.map((batch) => {
+                const cfg = batchStatusCfg[batch.status];
+                const Icon = cfg.icon;
+                const isPending = batch.status === "pending_approval";
+                return (
+                  <div key={batch.id} className={cn("bg-card border rounded-2xl p-5", isPending && canApprove ? "border-amber-200/60 shadow-sm" : "border-border")}>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-3">
+                        <div className="size-9 rounded-xl bg-[#64c6c3]/10 flex items-center justify-center shrink-0">
+                          <ArrowUpRight className="size-4 text-[#1a6e6c]" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                            <p className="font-semibold text-sm font-mono">{batch.batchRef}</p>
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
+                              <Icon className="size-2.5" />{cfg.label}
+                            </span>
+                            <span className="text-[10px] px-1.5 py-0.5 bg-muted rounded font-mono">{batch.provider}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{batch.merchantName}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {batch.payoutCount} payouts · Created {formatDate(batch.createdAt)}
+                          </p>
+                          {batch.failedCount && (
+                            <p className="text-xs text-red-600 font-medium mt-0.5">
+                              {batch.failedCount} failed payouts — requires review
+                            </p>
+                          )}
+                          {batch.approvedBy && (
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              Approved by {batch.approvedBy}{batch.approvedAt ? ` · ${formatDate(batch.approvedAt)}` : ""}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-lg font-bold text-[#263b8e]" style={{ fontFamily: "var(--font-heading)" }}>
+                          {formatGHS(batch.totalAmount)}
+                        </p>
+                        {isPending && canApprove && (
+                          <div className="flex items-center gap-2 mt-2.5">
+                            <button
+                              onClick={() => setApprovalModal({ type: "payout", id: batch.id, action: "reject" })}
+                              className="px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-xs font-medium hover:bg-red-50 transition-all">
+                              Reject
+                            </button>
+                            <button
+                              onClick={() => setApprovalModal({ type: "payout", id: batch.id, action: "approve" })}
+                              className="px-3 py-1.5 rounded-lg bg-[#263b8e] hover:bg-[#1e2f72] text-white text-xs font-medium transition-all">
+                              Approve
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── FEE LEDGER ── */}
+        {tab === "fee_ledger" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+                <input value={ledgerSearch} onChange={(e) => setLedgerSearch(e.target.value)}
+                  placeholder="Search merchant or ref…"
+                  className="w-full pl-9 pr-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 transition-all" />
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total fees shown</p>
+                  <p className="text-sm font-bold text-[#263b8e]">{formatGHS(filteredLedger.reduce((s, e) => s + e.feeAmount, 0))}</p>
+                </div>
+                <button className="flex items-center gap-1.5 px-3 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all">
+                  <Download className="size-3.5" /> Export
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-muted/30">
+                    {["Date", "Merchant", "Channel", "Type", "Tx Amount", "Rate", "Fee", "NSP Share", "Platform Share", "Ref"].map((h) => (
+                      <th key={h} className="text-left px-3 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredLedger.map((entry) => (
+                    <tr key={entry.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
+                      <td className="pl-5 pr-3 py-3 text-xs text-muted-foreground whitespace-nowrap">{formatDate(entry.date)}</td>
+                      <td className="px-3 py-3 text-xs font-medium max-w-[140px] truncate">{entry.merchantName}</td>
+                      <td className="px-3 py-3 text-xs">{entry.channel}</td>
+                      <td className="px-3 py-3">
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium",
+                          entry.transactionType === "collection" ? "bg-[#64c6c3]/10 text-[#1a6e6c]" : "bg-[#fedfb8]/40 text-amber-700")}>
+                          {entry.transactionType === "collection" ? <ArrowDownLeft className="size-2.5" /> : <ArrowUpRight className="size-2.5" />}
+                          {entry.transactionType}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3 text-xs font-medium">{formatGHS(entry.transactionAmount)}</td>
+                      <td className="px-3 py-3 text-xs font-mono text-[#263b8e] font-bold">{entry.feeRate}</td>
+                      <td className="px-3 py-3 text-xs font-semibold">{formatGHS(entry.feeAmount)}</td>
+                      <td className="px-3 py-3 text-xs text-muted-foreground">{formatGHS(entry.nspShare)}</td>
+                      <td className="px-3 py-3 text-xs text-muted-foreground">{formatGHS(entry.platformShare)}</td>
+                      <td className="px-3 py-3 text-xs font-mono text-muted-foreground">{entry.ref}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ── REPORTS ── */}
+        {tab === "reports" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">Generate and download financial reports.</p>
+              {canApprove && (
+                <button className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all">
+                  <Plus className="size-4" /> Generate Report
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {mockFinancialReports.map((report) => {
+                const typeCfg = reportTypeCfg[report.type];
+                return (
+                  <div key={report.id} className="bg-card border border-border rounded-2xl p-5 flex items-start gap-4 hover:shadow-sm transition-all">
+                    <div className={cn("size-10 rounded-xl flex items-center justify-center shrink-0", typeCfg.color)}>
+                      <FileText className="size-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="font-semibold text-sm">{report.name}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{report.description}</p>
+                        </div>
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-muted/50 transition-all shrink-0">
+                          <Download className="size-3" /> {report.size}
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-3 mt-2.5">
+                        <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium", typeCfg.color)}>{typeCfg.label}</span>
+                        <span className="text-[10px] text-muted-foreground">{report.period}</span>
+                        <span className="text-[10px] text-muted-foreground">{formatDate(report.generatedAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Quick-generate row */}
+            <div className="bg-muted/30 border border-border rounded-2xl p-5">
+              <p className="text-sm font-semibold mb-3" style={{ fontFamily: "var(--font-heading)" }}>Quick Generate</p>
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
+                {(["reconciliation", "fee_ledger", "payout", "volume", "nsp_balance"] as const).map((t) => {
+                  const cfg = reportTypeCfg[t];
+                  return (
+                    <button key={t}
+                      className={cn("flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border border-border text-xs font-medium transition-all hover:shadow-sm", cfg.color, "bg-card hover:bg-muted/30")}>
+                      <BarChart2 className="size-4" />
+                      {cfg.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Approval modal ── */}
+      <AnimatePresence>
+        {approvalModal && (
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+            onClick={() => { setApprovalModal(null); setApprovalNote(""); }}>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl"
+              onClick={(e) => e.stopPropagation()}>
+              <div className={cn("size-11 rounded-xl flex items-center justify-center mb-4 border",
+                approvalModal.action === "approve" ? "bg-[#263b8e]/10 border-[#263b8e]/20" : "bg-red-50 border-red-200")}>
+                {approvalModal.action === "approve" ? <CheckCircle className="size-5 text-[#263b8e]" /> : <XCircle className="size-5 text-red-500" />}
+              </div>
+              <h2 className="font-bold text-lg mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+                {approvalModal.action === "approve" ? "Approve" : "Reject"} {approvalModal.type === "prefund" ? "Prefund Request" : "Payout Batch"}
+              </h2>
+              <p className="text-sm text-muted-foreground mb-5">
+                {approvalModal.action === "approve"
+                  ? "This action will be logged with your identity."
+                  : "A rejection note is required. The requester will be notified."}
+              </p>
+              <div className="mb-5">
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
+                  Note {approvalModal.action === "reject" && <span className="text-destructive">*</span>}
+                </label>
+                <textarea rows={2} value={approvalNote} onChange={(e) => setApprovalNote(e.target.value)}
+                  placeholder={approvalModal.action === "approve" ? "Optional note…" : "Reason for rejection…"}
+                  className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-[#64c6c3]/60 transition-all" />
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => { setApprovalModal(null); setApprovalNote(""); }}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all">
+                  Cancel
+                </button>
+                <button
+                  disabled={approvalModal.action === "reject" && !approvalNote.trim()}
+                  onClick={() => { setApprovalModal(null); setApprovalNote(""); }}
+                  className={cn("flex-1 px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed",
+                    approvalModal.action === "approve" ? "bg-[#263b8e] hover:bg-[#1e2f72]" : "bg-destructive hover:opacity-90")}>
+                  {approvalModal.action === "approve" ? "Confirm Approval" : "Confirm Rejection"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── New Prefund Request modal ── */}
+      <AnimatePresence>
+        {showPrefundModal && (
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+            onClick={() => setShowPrefundModal(false)}>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl"
+              onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h2 className="font-bold text-lg" style={{ fontFamily: "var(--font-heading)" }}>Request NSP Prefund</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">This will be submitted for Finance approval.</p>
+                </div>
+                <button onClick={() => setShowPrefundModal(false)} className="p-1.5 rounded-lg hover:bg-muted/60"><X className="size-4" /></button>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Provider</label>
+                  <select className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 transition-all">
+                    {mockProviders.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name} — {formatGHS(p.nspBalance)} current</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Amount (GHS)</label>
+                  <input type="number" placeholder="e.g. 500000"
+                    className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 transition-all" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Justification</label>
+                  <textarea rows={3} placeholder="Why is this prefund needed?"
+                    className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-[#64c6c3]/60 transition-all" />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-5">
+                <button onClick={() => setShowPrefundModal(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all">Cancel</button>
+                <button onClick={() => setShowPrefundModal(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-[#263b8e] hover:bg-[#1e2f72] text-white text-sm font-medium transition-all">Submit Request</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}

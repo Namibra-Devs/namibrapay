@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion, type Variants } from "motion/react";
 import { Code2, Shield, Zap, BarChart3, ArrowRight } from "lucide-react";
 
 const container: Variants = {

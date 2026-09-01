@@ -1,0 +1,248 @@
+import type { Role } from "./constants";
+
+export type Merchant = {
+  id: string;
+  name: string;
+  registrationNumber: string;
+  status: "active" | "suspended" | "pending" | "deactivated";
+  onboardingDate: string;
+  totalVolume: number;
+  subMerchantCount: number;
+  complianceStatus: "verified" | "pending" | "flagged" | "rejected";
+  email: string;
+  industry: string;
+};
+
+export type Transaction = {
+  id: string;
+  merchantName: string;
+  amount: number;
+  status: "successful" | "failed" | "pending" | "processing";
+  provider: string;
+  type: "collection" | "payout";
+  customerRef: string;
+  createdAt: string;
+};
+
+export type Alert = {
+  id: string;
+  type: "nsp_threshold" | "provider_outage" | "compliance_hold" | "payout_failed" | "security";
+  title: string;
+  description: string;
+  severity: "low" | "medium" | "high" | "critical";
+  createdAt: string;
+  isRead: boolean;
+};
+
+export type Provider = {
+  id: string;
+  name: string;
+  shortCode: string;
+  status: "operational" | "degraded" | "down";
+  lastSuccessful: string;
+  avgLatencyMs: number;
+  nspBalance: number;
+  nspThreshold: number;
+  nspStatus: "healthy" | "warning" | "critical";
+  uptime: number;
+};
+
+export const mockProviders: Provider[] = [
+  {
+    id: "p1",
+    name: "MTN Mobile Money",
+    shortCode: "MTN",
+    status: "operational",
+    lastSuccessful: new Date(Date.now() - 45000).toISOString(),
+    avgLatencyMs: 342,
+    nspBalance: 2_840_000,
+    nspThreshold: 500_000,
+    nspStatus: "healthy",
+    uptime: 99.8,
+  },
+  {
+    id: "p2",
+    name: "Vodafone Cash",
+    shortCode: "VOD",
+    status: "degraded",
+    lastSuccessful: new Date(Date.now() - 180000).toISOString(),
+    avgLatencyMs: 1240,
+    nspBalance: 620_000,
+    nspThreshold: 500_000,
+    nspStatus: "warning",
+    uptime: 97.2,
+  },
+  {
+    id: "p3",
+    name: "AirtelTigo Money",
+    shortCode: "AT",
+    status: "operational",
+    lastSuccessful: new Date(Date.now() - 30000).toISOString(),
+    avgLatencyMs: 289,
+    nspBalance: 1_100_000,
+    nspThreshold: 300_000,
+    nspStatus: "healthy",
+    uptime: 99.5,
+  },
+  {
+    id: "p4",
+    name: "GhIPSS / GIP",
+    shortCode: "GIP",
+    status: "down",
+    lastSuccessful: new Date(Date.now() - 7200000).toISOString(),
+    avgLatencyMs: 0,
+    nspBalance: 380_000,
+    nspThreshold: 400_000,
+    nspStatus: "critical",
+    uptime: 91.3,
+  },
+];
+
+export const mockMerchants: Merchant[] = [
+  {
+    id: "m1",
+    name: "Kwame Organics Ltd",
+    registrationNumber: "CS004152023",
+    status: "active",
+    onboardingDate: "2024-03-15",
+    totalVolume: 4_820_000,
+    subMerchantCount: 12,
+    complianceStatus: "verified",
+    email: "ops@kwameorganics.com",
+    industry: "Retail",
+  },
+  {
+    id: "m2",
+    name: "Accra Tech Hub",
+    registrationNumber: "CS006782024",
+    status: "active",
+    onboardingDate: "2024-07-22",
+    totalVolume: 1_240_000,
+    subMerchantCount: 3,
+    complianceStatus: "verified",
+    email: "finance@accratechhub.com",
+    industry: "Technology",
+  },
+  {
+    id: "m3",
+    name: "SumaFoods Ghana",
+    registrationNumber: "CS001112022",
+    status: "suspended",
+    onboardingDate: "2022-11-05",
+    totalVolume: 890_000,
+    subMerchantCount: 0,
+    complianceStatus: "flagged",
+    email: "ceo@sumafoods.gh",
+    industry: "Food & Beverage",
+  },
+  {
+    id: "m4",
+    name: "Nnipa Health Services",
+    registrationNumber: "CS009032023",
+    status: "pending",
+    onboardingDate: "2025-01-10",
+    totalVolume: 0,
+    subMerchantCount: 0,
+    complianceStatus: "pending",
+    email: "admin@nnipa.health",
+    industry: "Healthcare",
+  },
+  {
+    id: "m5",
+    name: "GreenBuild Solutions",
+    registrationNumber: "CS003302021",
+    status: "active",
+    onboardingDate: "2021-09-01",
+    totalVolume: 9_340_000,
+    subMerchantCount: 28,
+    complianceStatus: "verified",
+    email: "payments@greenbuild.gh",
+    industry: "Construction",
+  },
+  {
+    id: "m6",
+    name: "Takoradi Logistics",
+    registrationNumber: "CS007412024",
+    status: "deactivated",
+    onboardingDate: "2024-02-18",
+    totalVolume: 210_000,
+    subMerchantCount: 1,
+    complianceStatus: "rejected",
+    email: "info@takolog.com",
+    industry: "Logistics",
+  },
+];
+
+export const mockAlerts: Alert[] = [
+  {
+    id: "a1",
+    type: "provider_outage",
+    title: "GhIPSS / GIP Provider Down",
+    description: "No successful transactions in the last 2 hours. Engineering notified.",
+    severity: "critical",
+    createdAt: new Date(Date.now() - 7200000).toISOString(),
+    isRead: false,
+  },
+  {
+    id: "a2",
+    type: "nsp_threshold",
+    title: "Vodafone Cash NSP Balance Warning",
+    description: "Balance GHS 620,000 is approaching threshold of GHS 500,000.",
+    severity: "high",
+    createdAt: new Date(Date.now() - 3600000).toISOString(),
+    isRead: false,
+  },
+  {
+    id: "a3",
+    type: "compliance_hold",
+    title: "SumaFoods Ghana — Compliance Hold",
+    description: "Account suspended pending AML investigation. KYC Officer assigned.",
+    severity: "high",
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    isRead: true,
+  },
+  {
+    id: "a4",
+    type: "payout_failed",
+    title: "Payout Batch #PB-2024-0891 Failed",
+    description: "3 of 47 payouts failed. Finance review required.",
+    severity: "medium",
+    createdAt: new Date(Date.now() - 10800000).toISOString(),
+    isRead: false,
+  },
+  {
+    id: "a5",
+    type: "security",
+    title: "Unusual Login Activity Detected",
+    description: "Multiple failed login attempts from IP 41.189.xxx.xxx.",
+    severity: "medium",
+    createdAt: new Date(Date.now() - 21600000).toISOString(),
+    isRead: true,
+  },
+];
+
+export const mockChartData = Array.from({ length: 7 }, (_, i) => {
+  const date = new Date();
+  date.setDate(date.getDate() - (6 - i));
+  return {
+    date: date.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }),
+    successful: Math.floor(Math.random() * 8000 + 4000),
+    failed: Math.floor(Math.random() * 400 + 100),
+    volume: Math.floor(Math.random() * 3000000 + 1000000),
+  };
+});
+
+export const mockTransactions: Transaction[] = Array.from({ length: 20 }, (_, i) => ({
+  id: `TXN-${String(i + 1).padStart(6, "0")}`,
+  merchantName: mockMerchants[i % mockMerchants.length]!.name,
+  amount: Math.floor(Math.random() * 5000 + 50),
+  status: (["successful", "successful", "successful", "failed", "pending"][
+    Math.floor(Math.random() * 5)
+  ] ?? "successful") as Transaction["status"],
+  provider: ["MTN", "VOD", "AT", "GIP"][Math.floor(Math.random() * 4)] ?? "MTN",
+  type: Math.random() > 0.3 ? "collection" : "payout",
+  customerRef: `REF-${Math.random().toString(36).slice(2, 10).toUpperCase()}`,
+  createdAt: new Date(Date.now() - Math.floor(Math.random() * 86400000)).toISOString(),
+}));
+
+export const currentUserRole: Role = "super_admin";

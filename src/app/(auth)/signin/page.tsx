@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Logo from "@/components/ui/Logo";
 import { FieldError } from "@/components/ui/FieldError";
 import { toast } from "@/components/ui/Toast";
