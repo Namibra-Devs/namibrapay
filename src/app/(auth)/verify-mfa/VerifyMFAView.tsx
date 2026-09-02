@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import { Loader2 } from "lucide-react";
-import Logo from "@/components/ui/Logo";
-import { toast } from "@/components/ui/Toast";
+import Logo from "@/components/ui/logo";
+import { useToast } from "@/components/ui/toast";
 import { verifyOtp, resendOtp, getErrorMessage } from "@/lib/auth-api";
 import { TOKEN_KEY } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,7 @@ export default function VerifyMFAView() {
   const params = useSearchParams();
   const [session, setSession] = useState(params.get("session") ?? "");
   const hint = params.get("hint") ?? "your email address";
+  const { showToast } = useToast();
 
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [submitting, setSubmitting] = useState(false);
@@ -95,45 +96,32 @@ export default function VerifyMFAView() {
   const handleVerify = useCallback(async () => {
     if (!isComplete || submitting || isExpired) return;
     setSubmitting(true);
-    const id = toast.loading("Verifying code…", {
-      description: "Just a moment.",
-    });
     try {
       const res = await verifyOtp(session, otp);
       localStorage.setItem(TOKEN_KEY, res.token);
-      toast.success("Identity confirmed!", {
-        description: `Welcome back, ${res.user.firstName}.`,
-        id,
-      });
+      showToast("success", "Identity confirmed!", `Welcome back, ${res.user.firstName}.`);
       await new Promise((r) => setTimeout(r, 1400));
       router.push("/dashboard");
     } catch (err) {
-      toast.error("Invalid code", { description: getErrorMessage(err), id });
+      showToast("error", "Invalid code", getErrorMessage(err));
       setDigits(Array(OTP_LENGTH).fill(""));
       setSubmitting(false);
       focusAt(0);
     }
-  }, [isComplete, submitting, isExpired, session, otp, router]);
+  }, [isComplete, submitting, isExpired, session, otp, router, showToast]);
 
   async function handleResend() {
     if (resending) return;
     setResending(true);
-    const id = toast.loading("Resending code…", { description: "Hang tight." });
     try {
       const res = await resendOtp(session);
       setSession(res.session);
       setDigits(Array(OTP_LENGTH).fill(""));
       setSecondsLeft(EXPIRY_SECONDS);
-      toast.success("Code resent!", {
-        description: "Check your inbox and spam folder.",
-        id,
-      });
+      showToast("success", "Code resent!", "Check your inbox and spam folder.");
       focusAt(0);
     } catch (err) {
-      toast.error("Failed to resend", {
-        description: getErrorMessage(err),
-        id,
-      });
+      showToast("error", "Failed to resend", getErrorMessage(err));
     } finally {
       setResending(false);
     }

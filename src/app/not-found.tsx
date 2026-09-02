@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowLeft } from "lucide-react";
-import Logo from "@/components/ui/Logo";
+import Logo from "@/components/ui/logo";
 
 export default function NotFound() {
   return (

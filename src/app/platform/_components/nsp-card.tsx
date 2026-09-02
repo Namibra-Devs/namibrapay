@@ -60,7 +60,7 @@ export function NspBalanceCard({ provider }: Props) {
       {/* Footer */}
       <div className="flex items-center justify-between text-[11px] text-muted-foreground">
         <span>Latency: <strong>{provider.avgLatencyMs > 0 ? `${provider.avgLatencyMs}ms` : "—"}</strong></span>
-        <span>Last OK: <strong>{formatDate(provider.lastSuccessful).split(",")[1]?.trim() ?? "—"}</strong></span>
+        <span suppressHydrationWarning>Last OK: <strong>{formatDate(provider.lastSuccessful).split(",")[1]?.trim() ?? "—"}</strong></span>
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ import {
   User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useRole } from "@/hooks/use-role";
+import { useRole, usePermission, ROLE_PERMISSIONS } from "@/hooks/use-role";
 import { ROLE_LABELS, ROLE_COLORS } from "@/lib/constants";
 import { useState } from "react";
 import { mockAlerts } from "@/lib/mock-data";
@@ -39,6 +39,11 @@ export default function PlatformSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const unreadAlerts = mockAlerts.filter((a) => !a.isRead).length;
+
+  // Filter nav items based on role permissions
+  const visibleNavItems = navItems.filter(
+    (item) => !item.permission || ROLE_PERMISSIONS[role]?.includes(item.permission)
+  );
 
   return (
     <aside
@@ -65,7 +70,7 @@ export default function PlatformSidebar() {
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
-        {navItems.map(({ to, label, icon: Icon }) => {
+        {visibleNavItems.map(({ to, label, icon: Icon }) => {
           const isActive = to === "/platform"
             ? pathname === "/platform" || pathname === "/platform/"
             : pathname.startsWith(to);

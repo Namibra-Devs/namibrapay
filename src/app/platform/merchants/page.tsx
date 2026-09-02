@@ -13,6 +13,9 @@ import { formatGHS, formatDate } from "@/lib/constants";
 import { mockMerchants } from "@/lib/mock-data";
 import type { Merchant } from "@/lib/mock-data";
 import { usePermission } from "@/hooks/use-role";
+import { Modal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
+import { FormField, Input, Select } from "@/components/ui/form-field";
 
 // ── Extended merchant detail data ──────────────────────────────────────────
 type FeeSchedule = { label: string; rate: string; cap: string };
@@ -98,9 +101,22 @@ export default function MerchantsPage() {
   const [detailTab, setDetailTab] = useState<"overview" | "fees" | "team" | "notes">("overview");
   const [actionModal, setActionModal] = useState<{ merchant: Merchant; type: ActionType } | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showFeeModal, setShowFeeModal] = useState(false);
   const [impersonating, setImpersonating] = useState<Merchant | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [actionReason, setActionReason] = useState("");
+  const { showToast } = useToast();
+
+  // Fee configuration state
+  const [feeConfig, setFeeConfig] = useState({
+    collectionRate: "1.50",
+    collectionFloor: "0.50",
+    collectionCap: "60.00",
+    payoutRate: "1.00",
+    payoutFloor: "0.30",
+    payoutCap: "40.00",
+    feeBearer: "merchant" as "merchant" | "payer",
+  });
 
   const filtered = useMemo(() => {
     return mockMerchants.filter((m) => {
@@ -487,7 +503,10 @@ export default function MerchantsPage() {
                     </table>
                   </div>
                   {canManage && (
-                    <button className="flex items-center gap-2 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all">
+                    <button
+                      onClick={() => setShowFeeModal(true)}
+                      className="flex items-center gap-2 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                    >
                       Edit Fee Schedule
                     </button>
                   )}
@@ -611,7 +630,16 @@ export default function MerchantsPage() {
                       <button
                         disabled={isDestructive && !actionReason.trim()}
                         onClick={() => {
-                          if (actionModal.type === "impersonate") setImpersonating(actionModal.merchant);
+                          if (actionModal.type === "impersonate") {
+                            setImpersonating(actionModal.merchant);
+                            showToast("info", "Impersonation Started", `Viewing as ${actionModal.merchant.name}`);
+                          } else if (actionModal.type === "suspend") {
+                            showToast("warning", "Merchant Suspended", `${actionModal.merchant.name} has been suspended`);
+                          } else if (actionModal.type === "reactivate") {
+                            showToast("success", "Merchant Reactivated", `${actionModal.merchant.name} is now active`);
+                          } else if (actionModal.type === "deactivate") {
+                            showToast("error", "Merchant Deactivated", `${actionModal.merchant.name} has been permanently deactivated`);
+                          }
                           setActionModal(null);
                           setActionReason("");
                         }}
@@ -670,6 +698,164 @@ export default function MerchantsPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* ── Fee Configuration Modal ── */}
+      <Modal
+        isOpen={showFeeModal}
+        onClose={() => setShowFeeModal(false)}
+        title="Configure Fee Schedule"
+        description={selected ? `Set custom fee rates for ${selected.name}` : ""}
+        size="lg"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-900 mb-1">Changes Require Confirmation</p>
+              <p className="text-sm text-amber-700">
+                Fee schedule changes are logged in the audit trail and take effect immediately. Merchants will be notified via email.
+              </p>
+            </div>
+          </div>
+
+          {/* Collections Section */}
+          <div>
+            <h3 className="text-sm font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              Collection Fees
+            </h3>
+            <div className="grid grid-cols-3 gap-4">
+              <FormField label="Rate (%)" required>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={feeConfig.collectionRate}
+                  onChange={(e) => setFeeConfig({ ...feeConfig, collectionRate: e.target.value })}
+                  placeholder="1.50"
+                />
+              </FormField>
+              <FormField label="Floor (GHS)" required description="Minimum fee">
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={feeConfig.collectionFloor}
+                  onChange={(e) => setFeeConfig({ ...feeConfig, collectionFloor: e.target.value })}
+                  placeholder="0.50"
+                />
+              </FormField>
+              <FormField label="Cap (GHS)" required description="Maximum fee">
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={feeConfig.collectionCap}
+                  onChange={(e) => setFeeConfig({ ...feeConfig, collectionCap: e.target.value })}
+                  placeholder="60.00"
+                />
+              </FormField>
+            </div>
+          </div>
+
+          {/* Payouts Section */}
+          <div>
+            <h3 className="text-sm font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              Payout Fees
+            </h3>
+            <div className="grid grid-cols-3 gap-4">
+              <FormField label="Rate (%)" required>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={feeConfig.payoutRate}
+                  onChange={(e) => setFeeConfig({ ...feeConfig, payoutRate: e.target.value })}
+                  placeholder="1.00"
+                />
+              </FormField>
+              <FormField label="Floor (GHS)" required description="Minimum fee">
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={feeConfig.payoutFloor}
+                  onChange={(e) => setFeeConfig({ ...feeConfig, payoutFloor: e.target.value })}
+                  placeholder="0.30"
+                />
+              </FormField>
+              <FormField label="Cap (GHS)" required description="Maximum fee">
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={feeConfig.payoutCap}
+                  onChange={(e) => setFeeConfig({ ...feeConfig, payoutCap: e.target.value })}
+                  placeholder="40.00"
+                />
+              </FormField>
+            </div>
+          </div>
+
+          {/* Fee Bearer */}
+          <FormField label="Fee Bearer" required description="Who absorbs transaction fees by default">
+            <Select
+              value={feeConfig.feeBearer}
+              onChange={(e) => setFeeConfig({ ...feeConfig, feeBearer: e.target.value as "merchant" | "payer" })}
+            >
+              <option value="merchant">Merchant absorbs fees (deducted from settlement)</option>
+              <option value="payer">Payer bears fees (added to checkout amount)</option>
+            </Select>
+          </FormField>
+
+          {/* Fee Examples */}
+          <div>
+            <h3 className="text-sm font-bold mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+              Fee Examples
+            </h3>
+            <div className="grid grid-cols-3 gap-3">
+              {[100, 1000, 10000].map((amount) => {
+                const collectionFee = Math.max(
+                  Math.min((amount * parseFloat(feeConfig.collectionRate)) / 100, parseFloat(feeConfig.collectionCap)),
+                  parseFloat(feeConfig.collectionFloor)
+                );
+                const payoutFee = Math.max(
+                  Math.min((amount * parseFloat(feeConfig.payoutRate)) / 100, parseFloat(feeConfig.payoutCap)),
+                  parseFloat(feeConfig.payoutFloor)
+                );
+                return (
+                  <div key={amount} className="p-3 bg-muted/30 rounded-xl">
+                    <p className="text-xs text-muted-foreground mb-2">GHS {amount.toLocaleString()}</p>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span>Collection:</span>
+                        <span className="font-semibold">GHS {collectionFee.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Payout:</span>
+                        <span className="font-semibold">GHS {payoutFee.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => setShowFeeModal(false)}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                showToast("success", "Fee Schedule Updated", `Changes saved for ${selected?.name}`);
+                setShowFeeModal(false);
+              }}
+              className="flex-1 px-4 py-2.5 bg-[#64c6c3] hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
+            >
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -5,33 +5,25 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { MailOpen, CheckCircle2, Loader2 } from "lucide-react";
-import Logo from "@/components/ui/Logo";
-import { toast } from "@/components/ui/Toast";
+import Logo from "@/components/ui/logo";
+import { useToast } from "@/components/ui/toast";
 import { resendVerificationEmail, getErrorMessage } from "@/lib/auth-api";
 
 export default function VerifyEmailView() {
   const email = useSearchParams().get("email") ?? "";
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
+  const { showToast } = useToast();
 
   async function handleResend() {
     if (resending || !email) return;
     setResending(true);
-    const id = toast.loading("Resending verification email…", {
-      description: "Hang tight.",
-    });
     try {
       await resendVerificationEmail(email);
-      toast.success("Email sent!", {
-        description: "Check your inbox and spam folder.",
-        id,
-      });
+      showToast("success", "Email sent!", "Check your inbox and spam folder.");
       setResent(true);
     } catch (err) {
-      toast.error("Failed to resend", {
-        description: getErrorMessage(err),
-        id,
-      });
+      showToast("error", "Failed to resend", getErrorMessage(err));
     } finally {
       setResending(false);
     }

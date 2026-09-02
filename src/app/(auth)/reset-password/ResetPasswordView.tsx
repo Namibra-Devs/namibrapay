@@ -7,9 +7,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "motion/react";
 import { Eye, EyeOff, Loader2, XCircle } from "lucide-react";
-import Logo from "@/components/ui/Logo";
-import { FieldError } from "@/components/ui/FieldError";
-import { toast } from "@/components/ui/Toast";
+import Logo from "@/components/ui/logo";
+import { FieldError } from "@/components/ui/fielderror";
+import { useToast } from "@/components/ui/toast";
 import { resetPassword, getErrorMessage } from "@/lib/auth-api";
 import { resetPasswordSchema, type ResetPasswordValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
@@ -32,20 +32,16 @@ export default function ResetPasswordView() {
     defaultValues: { password: "", passwordConfirm: "" },
   });
 
+  const { showToast } = useToast();
+
   const onSubmit = async (data: ResetPasswordValues) => {
-    const id = toast.loading("Updating password…", {
-      description: "Just a moment.",
-    });
     try {
       await resetPassword(token, data.password);
-      toast.success("Password updated!", {
-        description: "Sign in with your new password.",
-        id,
-      });
+      showToast("success", "Password updated!", "Sign in with your new password.");
       await new Promise((r) => setTimeout(r, 1400));
       router.push("/signin");
     } catch (err) {
-      toast.error("Reset failed", { description: getErrorMessage(err), id });
+      showToast("error", "Reset failed", getErrorMessage(err));
     }
   };
 

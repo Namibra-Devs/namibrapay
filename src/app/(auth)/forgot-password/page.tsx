@@ -6,9 +6,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "motion/react";
 import { MailOpen, Loader2 } from "lucide-react";
-import Logo from "@/components/ui/Logo";
-import { FieldError } from "@/components/ui/FieldError";
-import { toast } from "@/components/ui/Toast";
+import Logo from "@/components/ui/logo";
+import { FieldError } from "@/components/ui/fielderror";
+import { useToast } from "@/components/ui/toast";
 import { forgotPassword, getErrorMessage } from "@/lib/auth-api";
 import { forgotPasswordSchema, type ForgotPasswordValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,7 @@ const inputBase =
 export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
   const [sentEmail, setSentEmail] = useState("");
+  const { showToast } = useToast();
 
   const {
     register,
@@ -30,19 +31,13 @@ export default function ForgotPasswordPage() {
   });
 
   const onSubmit = async (data: ForgotPasswordValues) => {
-    const id = toast.loading("Sending reset link…", {
-      description: "Just a moment.",
-    });
     try {
       await forgotPassword(data.email);
-      toast.success("Reset link sent!", {
-        description: "Check your inbox and spam folder.",
-        id,
-      });
+      showToast("success", "Reset link sent!", "Check your inbox and spam folder.");
       setSentEmail(data.email);
       setSent(true);
     } catch (err) {
-      toast.error("Failed to send", { description: getErrorMessage(err), id });
+      showToast("error", "Failed to send", getErrorMessage(err));
     }
   };
 

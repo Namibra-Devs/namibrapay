@@ -7,9 +7,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
-import Logo from "@/components/ui/Logo";
-import { FieldError } from "@/components/ui/FieldError";
-import { toast } from "@/components/ui/Toast";
+import Logo from "@/components/ui/logo";
+import { FieldError } from "@/components/ui/fielderror";
+import { useToast } from "@/components/ui/toast";
 import { signIn, getErrorMessage } from "@/lib/auth-api";
 import { TOKEN_KEY } from "@/lib/api";
 import { signInSchema, type SignInValues } from "@/lib/schemas/auth";
@@ -26,6 +26,7 @@ const inputBase =
 export default function SignInPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const { showToast } = useToast();
 
   const {
     register,
@@ -37,17 +38,11 @@ export default function SignInPage() {
   });
 
   const onSubmit = async (data: SignInValues) => {
-    const id = toast.loading("Signing in…", {
-      description: "Verifying your credentials.",
-    });
     try {
       const res = await signIn(data);
 
       if ("requiresMFA" in res) {
-        toast.info("Verification code sent", {
-          description: "Check your email for the 6-digit code.",
-          id,
-        });
+        showToast("info", "Verification code sent", "Check your email for the 6-digit code.");
         const hint = res.hint ?? maskEmail(data.email);
         await new Promise((r) => setTimeout(r, 800));
         router.push(
@@ -57,15 +52,11 @@ export default function SignInPage() {
       }
 
       localStorage.setItem(TOKEN_KEY, res.token);
-      toast.success("Welcome back!", {
-        description: `Good to see you, ${res.user.firstName}.`,
-        id,
-      });
-      // Keep isSubmitting true (button stays disabled) through the navigation delay
+      showToast("success", "Welcome back!", `Good to see you, ${res.user.firstName}.`);
       await new Promise((r) => setTimeout(r, 1400));
       router.push("/dashboard");
     } catch (err) {
-      toast.error("Sign in failed", { description: getErrorMessage(err), id });
+      showToast("error", "Sign in failed", getErrorMessage(err));
     }
   };
 

@@ -8,7 +8,7 @@ import {
 import {
   DollarSign, AlertTriangle, CheckCircle, Clock, XCircle, TrendingUp, TrendingDown,
   RefreshCw, Download, Plus, ChevronDown, ChevronUp, X, FileText,
-  ArrowUpRight, ArrowDownLeft, Banknote, BarChart2, Check, Search,
+  ArrowUpRight, ArrowDownLeft, Banknote, BarChart2, Check, Search, Settings, Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatGHS, formatDate } from "@/lib/constants";
@@ -19,6 +19,9 @@ import {
 } from "@/lib/treasury-mock-data";
 import type { PrefundRequest, PayoutBatch, ReconciliationEntry } from "@/lib/treasury-mock-data";
 import { mockChartData } from "@/lib/mock-data";
+import { Modal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
+import { FormField, Input, Textarea } from "@/components/ui/form-field";
 
 // ── Tabs ────────────────────────────────────────────────────────────────────
 type Tab = "overview" | "prefunding" | "reconciliation" | "payouts" | "fee_ledger" | "reports";
@@ -126,8 +129,22 @@ export default function TreasuryPage() {
   const [expandedReconc, setExpandedReconc] = useState<string | null>(null);
   const [approvalModal, setApprovalModal] = useState<{ type: "prefund" | "payout"; id: string; action: "approve" | "reject" } | null>(null);
   const [showPrefundModal, setShowPrefundModal] = useState(false);
+  const [showThresholdModal, setShowThresholdModal] = useState(false);
+  const [showFlagModal, setShowFlagModal] = useState<ReconciliationEntry | null>(null);
   const [ledgerSearch, setLedgerSearch] = useState("");
   const [approvalNote, setApprovalNote] = useState("");
+  const { showToast } = useToast();
+
+  // Threshold configuration state
+  const [thresholds, setThresholds] = useState({
+    mtn: { warning: 150000, critical: 100000 },
+    vodafone: { warning: 120000, critical: 80000 },
+    airteltigo: { warning: 100000, critical: 60000 },
+    gip: { warning: 80000, critical: 50000 },
+  });
+
+  // Discrepancy flag state
+  const [flagNote, setFlagNote] = useState("");
 
   if (!canView) {
     return (
@@ -214,7 +231,17 @@ export default function TreasuryPage() {
 
             {/* NSP Balance cards */}
             <div>
-              <h2 className="text-sm font-semibold mb-3" style={{ fontFamily: "var(--font-heading)" }}>NSP Balances</h2>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-semibold" style={{ fontFamily: "var(--font-heading)" }}>NSP Balances</h2>
+                {canApprove && (
+                  <button
+                    onClick={() => setShowThresholdModal(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-muted/50 transition-all"
+                  >
+                    <Settings className="size-3" /> Configure Thresholds
+                  </button>
+                )}
+              </div>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {mockProviders.map((p) => {
                   const isCritical = p.nspStatus === "critical";
@@ -413,19 +440,29 @@ export default function TreasuryPage() {
                         {isExpanded && entry.status === "discrepancy" && (
                           <tr key={`${entry.id}-exp`} className="bg-red-50/50 border-b border-red-100">
                             <td colSpan={7} className="px-5 py-4">
-                              <div className="flex items-start gap-3">
-                                <AlertTriangle className="size-4 text-red-500 shrink-0 mt-0.5" />
-                                <div className="space-y-1">
-                                  <p className="text-sm font-semibold text-red-700">
-                                    Discrepancy: {entry.discrepancyAmount !== undefined ? formatGHS(entry.discrepancyAmount) : "—"}
-                                  </p>
-                                  <p className="text-sm text-red-600">{entry.discrepancyCause}</p>
-                                  <div className="flex items-center gap-2 mt-2">
-                                    <p className="text-xs text-muted-foreground">Expected: {formatGHS(entry.expectedCollections)}</p>
-                                    <span className="text-muted-foreground">·</span>
-                                    <p className="text-xs text-muted-foreground">Actual: {formatGHS(entry.actualCollections)}</p>
+                              <div className="flex items-start justify-between gap-4">
+                                <div className="flex items-start gap-3">
+                                  <AlertTriangle className="size-4 text-red-500 shrink-0 mt-0.5" />
+                                  <div className="space-y-1">
+                                    <p className="text-sm font-semibold text-red-700">
+                                      Discrepancy: {entry.discrepancyAmount !== undefined ? formatGHS(entry.discrepancyAmount) : "—"}
+                                    </p>
+                                    <p className="text-sm text-red-600">{entry.discrepancyCause}</p>
+                                    <div className="flex items-center gap-2 mt-2">
+                                      <p className="text-xs text-muted-foreground">Expected: {formatGHS(entry.expectedCollections)}</p>
+                                      <span className="text-muted-foreground">·</span>
+                                      <p className="text-xs text-muted-foreground">Actual: {formatGHS(entry.actualCollections)}</p>
+                                    </div>
                                   </div>
                                 </div>
+                                {canApprove && (
+                                  <button
+                                    onClick={() => setShowFlagModal(entry)}
+                                    className="flex items-center gap-2 px-3 py-2 rounded-lg border border-red-300 bg-red-50 text-red-700 text-xs font-medium hover:bg-red-100 transition-all shrink-0"
+                                  >
+                                    <Flag className="size-3.5" /> Flag for Investigation
+                                  </button>
+                                )}
                               </div>
                             </td>
                           </tr>
@@ -662,7 +699,17 @@ export default function TreasuryPage() {
                 </button>
                 <button
                   disabled={approvalModal.action === "reject" && !approvalNote.trim()}
-                  onClick={() => { setApprovalModal(null); setApprovalNote(""); }}
+                  onClick={() => {
+                    const isApprove = approvalModal.action === "approve";
+                    const type = approvalModal.type === "prefund" ? "Prefund Request" : "Payout Batch";
+                    if (isApprove) {
+                      showToast("success", `${type} Approved`, "The request has been approved and will be processed.");
+                    } else {
+                      showToast("warning", `${type} Rejected`, "The requester has been notified.");
+                    }
+                    setApprovalModal(null);
+                    setApprovalNote("");
+                  }}
                   className={cn("flex-1 px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed",
                     approvalModal.action === "approve" ? "bg-[#263b8e] hover:bg-[#1e2f72]" : "bg-destructive hover:opacity-90")}>
                   {approvalModal.action === "approve" ? "Confirm Approval" : "Confirm Rejection"}
@@ -711,13 +758,182 @@ export default function TreasuryPage() {
               <div className="flex gap-3 mt-5">
                 <button onClick={() => setShowPrefundModal(false)}
                   className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all">Cancel</button>
-                <button onClick={() => setShowPrefundModal(false)}
+                <button onClick={() => {
+                  showToast("success", "Prefund Request Submitted", "Your request has been submitted for approval.");
+                  setShowPrefundModal(false);
+                }}
                   className="flex-1 px-4 py-2.5 rounded-xl bg-[#263b8e] hover:bg-[#1e2f72] text-white text-sm font-medium transition-all">Submit Request</button>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+
+      {/* ── NSP Threshold Configuration Modal ── */}
+      <Modal
+        isOpen={showThresholdModal}
+        onClose={() => setShowThresholdModal(false)}
+        title="Configure NSP Alert Thresholds"
+        description="Set warning and critical balance levels for each provider"
+        size="lg"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+            <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-blue-900 mb-1">Automated Alerts</p>
+              <p className="text-sm text-blue-700">
+                When balances drop below these thresholds, the system will send email/SMS alerts to Finance team members.
+              </p>
+            </div>
+          </div>
+
+          {/* Provider Thresholds */}
+          <div className="space-y-4">
+            {Object.entries(thresholds).map(([provider, values]) => {
+              const providerName = provider.toUpperCase();
+              return (
+                <div key={provider} className="border border-border rounded-xl p-4">
+                  <h3 className="text-sm font-bold mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+                    {providerName}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField label="Warning Level (GHS)" required description="Amber alert">
+                      <Input
+                        type="number"
+                        step="1000"
+                        value={values.warning}
+                        onChange={(e) => setThresholds({
+                          ...thresholds,
+                          [provider]: { ...values, warning: parseInt(e.target.value) }
+                        })}
+                        placeholder="150000"
+                      />
+                    </FormField>
+                    <FormField label="Critical Level (GHS)" required description="Red alert">
+                      <Input
+                        type="number"
+                        step="1000"
+                        value={values.critical}
+                        onChange={(e) => setThresholds({
+                          ...thresholds,
+                          [provider]: { ...values, critical: parseInt(e.target.value) }
+                        })}
+                        placeholder="100000"
+                      />
+                    </FormField>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => setShowThresholdModal(false)}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                showToast("success", "Thresholds Updated", "NSP alert thresholds have been saved.");
+                setShowThresholdModal(false);
+              }}
+              className="flex-1 px-4 py-2.5 bg-[#64c6c3] hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
+            >
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ── Flag Discrepancy Modal ── */}
+      <Modal
+        isOpen={showFlagModal !== null}
+        onClose={() => {
+          setShowFlagModal(null);
+          setFlagNote("");
+        }}
+        title="Flag Reconciliation Discrepancy"
+        description={showFlagModal ? `${showFlagModal.provider} - ${showFlagModal.date}` : ""}
+        size="md"
+      >
+        <div className="space-y-6">
+          {showFlagModal && (
+            <>
+              {/* Discrepancy Summary */}
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className="size-5 text-red-600" />
+                  <p className="text-sm font-semibold text-red-900">
+                    Discrepancy: {formatGHS(showFlagModal.discrepancyAmount || 0)}
+                  </p>
+                </div>
+                <p className="text-sm text-red-700">{showFlagModal.discrepancyCause}</p>
+                <div className="grid grid-cols-2 gap-3 mt-3 text-xs">
+                  <div>
+                    <span className="text-red-600">Expected:</span>
+                    <p className="font-semibold text-red-900">{formatGHS(showFlagModal.expectedCollections)}</p>
+                  </div>
+                  <div>
+                    <span className="text-red-600">Actual:</span>
+                    <p className="font-semibold text-red-900">{formatGHS(showFlagModal.actualCollections)}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Investigation Note */}
+              <FormField
+                label="Investigation Notes"
+                required
+                description="Document the issue and planned resolution steps"
+              >
+                <Textarea
+                  rows={4}
+                  value={flagNote}
+                  onChange={(e) => setFlagNote(e.target.value)}
+                  placeholder="Describe the discrepancy cause, investigation steps, and expected resolution timeline..."
+                />
+              </FormField>
+
+              {/* Info */}
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                <Info className="size-5 text-amber-600 shrink-0 mt-0.5" />
+                <p className="text-sm text-amber-700">
+                  This will create a tracked investigation case. You'll need to coordinate with the provider's back-office team within their dispute window.
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-3 pt-4 border-t border-border">
+                <button
+                  onClick={() => {
+                    setShowFlagModal(null);
+                    setFlagNote("");
+                  }}
+                  className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  disabled={!flagNote.trim()}
+                  onClick={() => {
+                    showToast("warning", "Discrepancy Flagged", "Investigation case created and assigned to your team.");
+                    setShowFlagModal(null);
+                    setFlagNote("");
+                  }}
+                  className="flex-1 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Flag for Investigation
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 }

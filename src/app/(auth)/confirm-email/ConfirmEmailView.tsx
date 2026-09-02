@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { CheckCircle2, XCircle } from "lucide-react";
-import Logo from "@/components/ui/Logo";
-import { toast } from "@/components/ui/Toast";
+import Logo from "@/components/ui/logo";
+import { useToast } from "@/components/ui/toast";
 import { confirmEmail, getErrorMessage } from "@/lib/auth-api";
 
 type Status = "verifying" | "success" | "error";
@@ -17,6 +17,7 @@ export default function ConfirmEmailView() {
   const [status, setStatus] = useState<Status>("verifying");
   const [errorMsg, setErrorMsg] = useState("");
   const attempted = useRef(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (attempted.current) return;
@@ -35,9 +36,7 @@ export default function ConfirmEmailView() {
         await confirmEmail(token);
         if (!active) return;
         setStatus("success");
-        toast.success("Email verified!", {
-          description: "Your account is ready. Sign in to continue.",
-        });
+        showToast("success", "Email verified!", "Your account is ready. Sign in to continue.");
         await new Promise((r) => setTimeout(r, 2000));
         if (active) router.push("/signin");
       } catch (err) {

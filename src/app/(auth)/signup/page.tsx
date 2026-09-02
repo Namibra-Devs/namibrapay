@@ -7,10 +7,10 @@ import { useForm, type Path, type PathValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
-import Logo from "@/components/ui/Logo";
-import Select, { type SelectOption } from "@/components/ui/Select";
-import { FieldError } from "@/components/ui/FieldError";
-import { toast } from "@/components/ui/Toast";
+import Logo from "@/components/ui/logo";
+import Select, { type SelectOption } from "@/components/ui/select";
+import { FieldError } from "@/components/ui/fielderror";
+import { useToast } from "@/components/ui/toast";
 import { signUp, getErrorMessage } from "@/lib/auth-api";
 import { signUpSchema, type SignUpValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
@@ -70,6 +70,7 @@ function fieldCls(hasError: boolean) {
 export default function SignUpPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const { showToast } = useToast();
 
   const {
     register,
@@ -97,9 +98,6 @@ export default function SignUpPage() {
   }
 
   const onSubmit = async (data: SignUpValues) => {
-    const id = toast.loading("Creating your account…", {
-      description: "This only takes a moment.",
-    });
     try {
       await signUp({
         country: data.country,
@@ -113,14 +111,11 @@ export default function SignUpPage() {
         isDeveloper: data.isDeveloper === "yes",
       });
 
-      toast.success("Account created!", {
-        description: "A verification email is on its way — check your inbox.",
-        id,
-      });
+      showToast("success", "Account created!", "A verification email is on its way — check your inbox.");
       await new Promise((r) => setTimeout(r, 1400));
       router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
     } catch (err) {
-      toast.error("Sign up failed", { description: getErrorMessage(err), id });
+      showToast("error", "Sign up failed", getErrorMessage(err));
     }
   };
 
