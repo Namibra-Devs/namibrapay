@@ -702,6 +702,189 @@ export default function SupportPage() {
               })}
             </div>
 
+            {/* ── Enhanced SLA Breakdown by Severity (PD-044) ── */}
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h2 className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                    SLA Performance by Severity
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Detailed tracking of response and resolution times vs contractual SLA targets
+                  </p>
+                </div>
+                <Activity className="size-8 text-[#64c6c3]" />
+              </div>
+
+              {/* Severity Breakdown */}
+              <div className="space-y-6">
+                {(() => {
+                  const severityBreakdown = [
+                    {
+                      severity: "Critical",
+                      icon: AlertCircle,
+                      color: "red",
+                      slaResponseTarget: 1,
+                      slaResolutionTarget: 4,
+                      tickets: [
+                        { id: "T-1047", merchant: "PayFast Ghana", issue: "Payment gateway timeout", elapsedResponse: 0.5, elapsedResolution: 2.8 },
+                        { id: "T-1051", merchant: "QuickPay Solutions", issue: "Failed disbursements", elapsedResponse: 1.2, elapsedResolution: 3.5 },
+                      ],
+                    },
+                    {
+                      severity: "High",
+                      icon: AlertTriangle,
+                      color: "orange",
+                      slaResponseTarget: 2,
+                      slaResolutionTarget: 8,
+                      tickets: [
+                        { id: "T-1045", merchant: "EduPay Platform", issue: "Delayed notifications", elapsedResponse: 1.8, elapsedResolution: 6.2 },
+                        { id: "T-1048", merchant: "MediCare Payments", issue: "Reconciliation mismatch", elapsedResponse: 2.5, elapsedResolution: 9.1 },
+                        { id: "T-1050", merchant: "TransPort Express", issue: "Webhook failures", elapsedResponse: 1.3, elapsedResolution: 5.8 },
+                      ],
+                    },
+                    {
+                      severity: "Medium",
+                      icon: Info,
+                      color: "blue",
+                      slaResponseTarget: 4,
+                      slaResolutionTarget: 24,
+                      tickets: [
+                        { id: "T-1042", merchant: "AgriTech Hub", issue: "Dashboard loading slow", elapsedResponse: 3.2, elapsedResolution: 18.5 },
+                        { id: "T-1046", merchant: "UtilityBill Pro", issue: "Report export error", elapsedResponse: 5.1, elapsedResolution: 26.3 },
+                      ],
+                    },
+                  ];
+
+                  return severityBreakdown.map((item) => {
+                    const Icon = item.icon;
+                    const activeTickets = item.tickets.length;
+                    const breachedResponse = item.tickets.filter(t => t.elapsedResponse > item.slaResponseTarget).length;
+                    const breachedResolution = item.tickets.filter(t => t.elapsedResolution > item.slaResolutionTarget).length;
+
+                    return (
+                      <div key={item.severity} className="border border-border rounded-xl p-5 space-y-4">
+                        {/* Severity Header */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className={cn(
+                              "size-10 rounded-xl flex items-center justify-center",
+                              item.color === "red" ? "bg-red-50" :
+                              item.color === "orange" ? "bg-orange-50" : "bg-blue-50"
+                            )}>
+                              <Icon className={cn(
+                                "size-5",
+                                item.color === "red" ? "text-red-600" :
+                                item.color === "orange" ? "text-orange-600" : "text-blue-600"
+                              )} />
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-bold">{item.severity} Priority</h3>
+                              <p className="text-xs text-muted-foreground">
+                                SLA: {item.slaResponseTarget}h response / {item.slaResolutionTarget}h resolution
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                              {activeTickets}
+                            </p>
+                            <p className="text-xs text-muted-foreground">active tickets</p>
+                          </div>
+                        </div>
+
+                        {/* Ticket Breakdown */}
+                        {activeTickets > 0 && (
+                          <div className="space-y-3">
+                            {item.tickets.map((ticket) => {
+                              const responseBreached = ticket.elapsedResponse > item.slaResponseTarget;
+                              const resolutionBreached = ticket.elapsedResolution > item.slaResolutionTarget;
+                              const responsePercent = Math.min((ticket.elapsedResponse / item.slaResponseTarget) * 100, 100);
+                              const resolutionPercent = Math.min((ticket.elapsedResolution / item.slaResolutionTarget) * 100, 100);
+
+                              return (
+                                <div key={ticket.id} className={cn(
+                                  "bg-muted/30 rounded-lg p-4 border",
+                                  (responseBreached || resolutionBreached) ? "border-red-200 bg-red-50/30" : "border-border"
+                                )}>
+                                  <div className="flex items-start justify-between mb-3">
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="text-xs font-mono font-semibold text-muted-foreground">{ticket.id}</span>
+                                        <span className="text-xs text-muted-foreground">•</span>
+                                        <span className="text-xs font-medium">{ticket.merchant}</span>
+                                      </div>
+                                      <p className="text-sm">{ticket.issue}</p>
+                                    </div>
+                                    {(responseBreached || resolutionBreached) && (
+                                      <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-red-100 text-red-700 font-medium border border-red-200">
+                                        <XCircle className="size-3" /> SLA BREACHED
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  {/* Progress Bars */}
+                                  <div className="space-y-2">
+                                    {/* Response Time */}
+                                    <div>
+                                      <div className="flex items-center justify-between text-xs mb-1">
+                                        <span className="text-muted-foreground">Response Time</span>
+                                        <span className={cn("font-semibold", responseBreached && "text-red-600")}>
+                                          {ticket.elapsedResponse.toFixed(1)}h / {item.slaResponseTarget}h
+                                        </span>
+                                      </div>
+                                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                        <div
+                                          className={cn("h-full rounded-full transition-all",
+                                            responseBreached ? "bg-red-500" :
+                                            responsePercent > 80 ? "bg-amber-500" : "bg-emerald-500"
+                                          )}
+                                          style={{ width: `${responsePercent}%` }}
+                                        />
+                                      </div>
+                                    </div>
+
+                                    {/* Resolution Time */}
+                                    <div>
+                                      <div className="flex items-center justify-between text-xs mb-1">
+                                        <span className="text-muted-foreground">Resolution Time</span>
+                                        <span className={cn("font-semibold", resolutionBreached && "text-red-600")}>
+                                          {ticket.elapsedResolution.toFixed(1)}h / {item.slaResolutionTarget}h
+                                        </span>
+                                      </div>
+                                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                        <div
+                                          className={cn("h-full rounded-full transition-all",
+                                            resolutionBreached ? "bg-red-500" :
+                                            resolutionPercent > 80 ? "bg-amber-500" : "bg-emerald-500"
+                                          )}
+                                          style={{ width: `${resolutionPercent}%` }}
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Summary */}
+                        {(breachedResponse > 0 || breachedResolution > 0) && (
+                          <div className="pt-3 border-t border-border flex items-center gap-2 text-xs">
+                            <XCircle className="size-4 text-red-600" />
+                            <span className="text-red-600 font-medium">
+                              {breachedResponse} response breach{breachedResponse !== 1 ? 'es' : ''}, {breachedResolution} resolution breach{breachedResolution !== 1 ? 'es' : ''}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            </div>
+
             {/* Detailed SLA Table */}
             <div>
               <h2 className="text-base font-semibold mb-4" style={{ fontFamily: "var(--font-heading)" }}>

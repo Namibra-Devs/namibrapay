@@ -826,6 +826,106 @@ export default function CompliancePage() {
               </button>
             </div>
 
+            {/* ── Per-Provider Compliance Matrix (PD-033) ── */}
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h3 className="text-lg font-bold mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+                    Provider Approval Matrix
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Merchant approval status across all network service providers
+                  </p>
+                </div>
+                <ShieldCheck className="size-8 text-emerald-500" />
+              </div>
+
+              {/* Matrix Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Merchant</th>
+                      <th className="text-center py-3 px-4 font-semibold text-muted-foreground">MTN</th>
+                      <th className="text-center py-3 px-4 font-semibold text-muted-foreground">Vodafone</th>
+                      <th className="text-center py-3 px-4 font-semibold text-muted-foreground">AirtelTigo</th>
+                      <th className="text-center py-3 px-4 font-semibold text-muted-foreground">Gip</th>
+                      <th className="text-right py-3 px-4 font-semibold text-muted-foreground">Approved</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(() => {
+                      // Generate matrix data
+                      const merchants = [
+                        { id: "m1", name: "PayFast Ghana", mtn: "approved", vodafone: "approved", airteltigo: "approved", gip: "approved" },
+                        { id: "m2", name: "QuickPay Solutions", mtn: "approved", vodafone: "approved", airteltigo: "pending", gip: "approved" },
+                        { id: "m3", name: "EduPay Platform", mtn: "approved", vodafone: "pending", airteltigo: "rejected", gip: "pending" },
+                        { id: "m4", name: "MediCare Payments", mtn: "approved", vodafone: "approved", airteltigo: "approved", gip: "not_submitted" },
+                        { id: "m5", name: "TransPort Express", mtn: "pending", vodafone: "approved", airteltigo: "approved", gip: "approved" },
+                        { id: "m6", name: "AgriTech Hub", mtn: "rejected", vodafone: "approved", airteltigo: "pending", gip: "approved" },
+                        { id: "m7", name: "UtilityBill Pro", mtn: "approved", vodafone: "approved", airteltigo: "approved", gip: "pending" },
+                      ];
+
+                      const statusIcon = (status: string) => {
+                        switch (status) {
+                          case "approved": return <CheckCircle className="size-5 text-emerald-600" />;
+                          case "pending": return <Clock className="size-5 text-amber-600" />;
+                          case "rejected": return <XCircle className="size-5 text-red-600" />;
+                          case "not_submitted": return <span className="text-muted-foreground">—</span>;
+                          default: return null;
+                        }
+                      };
+
+                      return merchants.map((merchant) => {
+                        const approvedCount = [merchant.mtn, merchant.vodafone, merchant.airteltigo, merchant.gip]
+                          .filter(s => s === "approved").length;
+                        
+                        return (
+                          <tr key={merchant.id} className="border-b border-border hover:bg-muted/30 transition-colors">
+                            <td className="py-3 px-4 font-medium">{merchant.name}</td>
+                            <td className="py-3 px-4 text-center">{statusIcon(merchant.mtn)}</td>
+                            <td className="py-3 px-4 text-center">{statusIcon(merchant.vodafone)}</td>
+                            <td className="py-3 px-4 text-center">{statusIcon(merchant.airteltigo)}</td>
+                            <td className="py-3 px-4 text-center">{statusIcon(merchant.gip)}</td>
+                            <td className="py-3 px-4 text-right">
+                              <span className={cn(
+                                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
+                                approvedCount === 4 ? "bg-emerald-50 text-emerald-700" :
+                                approvedCount >= 2 ? "bg-amber-50 text-amber-700" :
+                                "bg-red-50 text-red-700"
+                              )}>
+                                {approvedCount}/4
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      });
+                    })()}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Legend */}
+              <div className="mt-6 pt-6 border-t border-border flex items-center gap-6 text-xs">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="size-4 text-emerald-600" />
+                  <span className="text-muted-foreground">Approved</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="size-4 text-amber-600" />
+                  <span className="text-muted-foreground">Pending Review</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <XCircle className="size-4 text-red-600" />
+                  <span className="text-muted-foreground">Rejected</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">—</span>
+                  <span className="text-muted-foreground">Not Submitted</span>
+                </div>
+              </div>
+            </div>
+
             {/* Other Reports */}
             <div className="grid grid-cols-2 gap-4">
               {[

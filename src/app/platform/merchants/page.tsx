@@ -103,6 +103,14 @@ export default function MerchantsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFeeModal, setShowFeeModal] = useState(false);
   const [impersonating, setImpersonating] = useState<Merchant | null>(null);
+  
+  // Create merchant form state
+  const [newMerchantName, setNewMerchantName] = useState("");
+  const [newMerchantRegNumber, setNewMerchantRegNumber] = useState("");
+  const [newMerchantEmail, setNewMerchantEmail] = useState("");
+  const [newMerchantPhone, setNewMerchantPhone] = useState("");
+  const [newMerchantAddress, setNewMerchantAddress] = useState("");
+  const [newMerchantIndustry, setNewMerchantIndustry] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [actionReason, setActionReason] = useState("");
   const { showToast } = useToast();
@@ -655,49 +663,170 @@ export default function MerchantsPage() {
         )}
       </AnimatePresence>
 
-      {/* ── Create merchant modal ── */}
-      <AnimatePresence>
-        {showCreateModal && (
-          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-            onClick={() => setShowCreateModal(false)}>
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card border border-border rounded-2xl p-6 w-full max-w-lg shadow-2xl"
-              onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <h2 className="font-bold text-lg" style={{ fontFamily: "var(--font-heading)" }}>Add Merchant</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">Onboard a new merchant. KYC must be completed separately.</p>
-                </div>
-                <button onClick={() => setShowCreateModal(false)} className="p-1.5 rounded-lg hover:bg-muted/60"><X className="size-4" /></button>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { label: "Business Name", placeholder: "Acme Corp Ltd", col: 2 },
-                  { label: "Registration Number", placeholder: "CS0012345678", col: 1 },
-                  { label: "Industry", placeholder: "e.g. Retail", col: 1 },
-                  { label: "Contact Email", placeholder: "ops@business.com", col: 2 },
-                ].map((f) => (
-                  <div key={f.label} className={f.col === 2 ? "col-span-2" : ""}>
-                    <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">{f.label}</label>
-                    <input placeholder={f.placeholder}
-                      className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 focus:ring-2 focus:ring-[#64c6c3]/10 transition-all" />
-                  </div>
-                ))}
-              </div>
-              <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mt-4 flex items-start gap-2">
-                <AlertTriangle className="size-3.5 text-amber-500 shrink-0 mt-0.5" />
-                <p className="text-xs text-amber-800">KYC verification must be completed by the Compliance team before the merchant can process payments.</p>
-              </div>
-              <div className="flex gap-3 mt-5">
-                <button onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all">Cancel</button>
-                <button onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-[#263b8e] hover:bg-[#1e2f72] text-white text-sm font-medium transition-all">Create & Send KYC</button>
-              </div>
-            </motion.div>
+      {/* ── Create Merchant Modal (PD-011) ── */}
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => {
+          setShowCreateModal(false);
+          setNewMerchantName("");
+          setNewMerchantRegNumber("");
+          setNewMerchantEmail("");
+          setNewMerchantPhone("");
+          setNewMerchantAddress("");
+          setNewMerchantIndustry("");
+        }}
+        title="Create Merchant Account"
+        description="Onboard a new merchant business. KYC approval required before activation."
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+            <Building2 className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-blue-900 mb-1">Two-Step Process</p>
+              <p className="text-sm text-blue-700">
+                Creating the account will generate login credentials. The merchant must complete KYC verification with Compliance before processing transactions.
+              </p>
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+
+          {/* Business Name */}
+          <FormField
+            label="Business Name"
+            required
+            description="Registered business name"
+          >
+            <Input
+              type="text"
+              value={newMerchantName}
+              onChange={(e) => setNewMerchantName(e.target.value)}
+              placeholder="e.g., Acme Payments Ltd"
+            />
+          </FormField>
+
+          {/* Registration Number */}
+          <FormField
+            label="Business Registration Number"
+            required
+            description="Company registration number"
+          >
+            <Input
+              type="text"
+              value={newMerchantRegNumber}
+              onChange={(e) => setNewMerchantRegNumber(e.target.value)}
+              placeholder="e.g., CS001234567890"
+            />
+          </FormField>
+
+          {/* Industry */}
+          <FormField
+            label="Industry"
+            required
+            description="Business sector"
+          >
+            <Select
+              value={newMerchantIndustry}
+              onChange={(e) => setNewMerchantIndustry(e.target.value)}
+            >
+              <option value="">Select industry...</option>
+              <option value="retail">Retail & E-commerce</option>
+              <option value="education">Education</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="hospitality">Hospitality</option>
+              <option value="transport">Transport & Logistics</option>
+              <option value="fintech">Financial Technology</option>
+              <option value="agriculture">Agriculture</option>
+              <option value="utilities">Utilities</option>
+              <option value="other">Other</option>
+            </Select>
+          </FormField>
+
+          {/* Contact Details */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              label="Owner Email"
+              required
+              description="Primary contact"
+            >
+              <Input
+                type="email"
+                value={newMerchantEmail}
+                onChange={(e) => setNewMerchantEmail(e.target.value)}
+                placeholder="owner@business.com"
+              />
+            </FormField>
+            <FormField
+              label="Phone Number"
+              required
+              description="Contact number"
+            >
+              <Input
+                type="tel"
+                value={newMerchantPhone}
+                onChange={(e) => setNewMerchantPhone(e.target.value)}
+                placeholder="0244123456"
+              />
+            </FormField>
+          </div>
+
+          {/* Business Address */}
+          <FormField
+            label="Business Address"
+            required
+            description="Physical location"
+          >
+            <Input
+              type="text"
+              value={newMerchantAddress}
+              onChange={(e) => setNewMerchantAddress(e.target.value)}
+              placeholder="123 High Street, Accra"
+            />
+          </FormField>
+
+          {/* Warning */}
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-700">
+              The merchant will receive an email invitation to set their password and complete onboarding. KYC documents must be reviewed by Compliance before the account goes live.
+            </p>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowCreateModal(false);
+                setNewMerchantName("");
+                setNewMerchantRegNumber("");
+                setNewMerchantEmail("");
+                setNewMerchantPhone("");
+                setNewMerchantAddress("");
+                setNewMerchantIndustry("");
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!newMerchantName.trim() || !newMerchantRegNumber.trim() || !newMerchantEmail.trim() || !newMerchantPhone.trim() || !newMerchantAddress.trim() || !newMerchantIndustry}
+              onClick={() => {
+                showToast("success", "Merchant Created", `${newMerchantName} has been created. Invitation email sent to ${newMerchantEmail}`);
+                setShowCreateModal(false);
+                setNewMerchantName("");
+                setNewMerchantRegNumber("");
+                setNewMerchantEmail("");
+                setNewMerchantPhone("");
+                setNewMerchantAddress("");
+                setNewMerchantIndustry("");
+              }}
+              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Create & Send Invite
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       {/* ── Fee Configuration Modal ── */}
       <Modal

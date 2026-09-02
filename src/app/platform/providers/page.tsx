@@ -58,6 +58,15 @@ export default function ProvidersPage() {
   const [approvalDecision, setApprovalDecision] = useState<"approve" | "reject" | null>(null);
   const [approvalNotes, setApprovalNotes] = useState("");
   
+  // Schedule Maintenance modal (PD-054)
+  const [showScheduleMaintenanceModal, setShowScheduleMaintenanceModal] = useState(false);
+  const [maintenanceProvider, setMaintenanceProvider] = useState("");
+  const [maintenanceReason, setMaintenanceReason] = useState("");
+  const [maintenanceStartDate, setMaintenanceStartDate] = useState("");
+  const [maintenanceStartTime, setMaintenanceStartTime] = useState("");
+  const [maintenanceDuration, setMaintenanceDuration] = useState("");
+  const [maintenanceNotifyMerchants, setMaintenanceNotifyMerchants] = useState(true);
+  
   const { showToast } = useToast();
 
   if (!canView) {
@@ -497,6 +506,19 @@ export default function ProvidersPage() {
         {/* ── MAINTENANCE TAB ── */}
         {tab === "maintenance" && (
           <div className="space-y-4">
+            {/* Header with Schedule button */}
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">Scheduled maintenance windows and provider downtimes</p>
+              {canEdit && (
+                <button
+                  onClick={() => setShowScheduleMaintenanceModal(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
+                >
+                  <Plus className="size-4" /> Schedule Maintenance
+                </button>
+              )}
+            </div>
+
             {mockMaintenanceWindows.map((maint) => {
               const statusColors = {
                 scheduled: "bg-blue-50 text-blue-700 border-blue-200",
@@ -953,6 +975,184 @@ export default function ProvidersPage() {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* ── Schedule Maintenance Modal (PD-054) ── */}
+      <Modal
+        isOpen={showScheduleMaintenanceModal}
+        onClose={() => {
+          setShowScheduleMaintenanceModal(false);
+          setMaintenanceProvider("");
+          setMaintenanceReason("");
+          setMaintenanceStartDate("");
+          setMaintenanceStartTime("");
+          setMaintenanceDuration("");
+          setMaintenanceNotifyMerchants(true);
+        }}
+        title="Schedule Maintenance Window"
+        description="Plan a maintenance window for a network service provider"
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-900 mb-1">Service Impact</p>
+              <p className="text-sm text-amber-700">
+                During maintenance, transactions for the selected provider will be unavailable. Merchants will be notified automatically if enabled.
+              </p>
+            </div>
+          </div>
+
+          {/* Provider Selection */}
+          <FormField
+            label="Provider"
+            required
+            description="Select network service provider"
+          >
+            <Select
+              value={maintenanceProvider}
+              onChange={(e) => setMaintenanceProvider(e.target.value)}
+            >
+              <option value="">Select provider...</option>
+              {mockProviderDetails.map(p => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </Select>
+          </FormField>
+
+          {/* Reason */}
+          <FormField
+            label="Maintenance Reason"
+            required
+            description="Briefly describe the maintenance activity"
+          >
+            <Textarea
+              value={maintenanceReason}
+              onChange={(e) => setMaintenanceReason(e.target.value)}
+              placeholder="e.g., Server upgrade, security patch, network optimization"
+              rows={3}
+            />
+          </FormField>
+
+          {/* Date and Time */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              label="Start Date"
+              required
+              description="Maintenance date"
+            >
+              <Input
+                type="date"
+                value={maintenanceStartDate}
+                onChange={(e) => setMaintenanceStartDate(e.target.value)}
+              />
+            </FormField>
+            <FormField
+              label="Start Time"
+              required
+              description="Local time (GMT)"
+            >
+              <Input
+                type="time"
+                value={maintenanceStartTime}
+                onChange={(e) => setMaintenanceStartTime(e.target.value)}
+              />
+            </FormField>
+          </div>
+
+          {/* Duration */}
+          <FormField
+            label="Duration (minutes)"
+            required
+            description="Expected maintenance window length"
+          >
+            <Select
+              value={maintenanceDuration}
+              onChange={(e) => setMaintenanceDuration(e.target.value)}
+            >
+              <option value="">Select duration...</option>
+              <option value="30">30 minutes</option>
+              <option value="60">1 hour</option>
+              <option value="120">2 hours</option>
+              <option value="180">3 hours</option>
+              <option value="240">4 hours</option>
+              <option value="360">6 hours</option>
+              <option value="480">8 hours</option>
+              <option value="720">12 hours</option>
+            </Select>
+          </FormField>
+
+          {/* Notification Toggle */}
+          <div className="bg-card border border-border rounded-xl p-4">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={maintenanceNotifyMerchants}
+                onChange={(e) => setMaintenanceNotifyMerchants(e.target.checked)}
+                className="mt-1 size-4 rounded border-border text-[#263b8e] focus:ring-2 focus:ring-[#263b8e]/20"
+              />
+              <div>
+                <p className="text-sm font-semibold">Notify Affected Merchants</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Send email notification to all merchants using this provider about the scheduled maintenance
+                </p>
+              </div>
+            </label>
+          </div>
+
+          {/* Preview */}
+          {maintenanceProvider && maintenanceStartDate && maintenanceStartTime && maintenanceDuration && (
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <p className="text-xs font-semibold text-blue-900 mb-2">Preview</p>
+              <p className="text-sm text-blue-800">
+                {mockProviderDetails.find(p => p.id === maintenanceProvider)?.name} will be unavailable from{" "}
+                <span className="font-semibold">{maintenanceStartDate} at {maintenanceStartTime}</span> for{" "}
+                <span className="font-semibold">{maintenanceDuration} minutes</span>.
+              </p>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowScheduleMaintenanceModal(false);
+                setMaintenanceProvider("");
+                setMaintenanceReason("");
+                setMaintenanceStartDate("");
+                setMaintenanceStartTime("");
+                setMaintenanceDuration("");
+                setMaintenanceNotifyMerchants(true);
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!maintenanceProvider || !maintenanceReason.trim() || !maintenanceStartDate || !maintenanceStartTime || !maintenanceDuration}
+              onClick={() => {
+                const providerName = mockProviderDetails.find(p => p.id === maintenanceProvider)?.name;
+                showToast(
+                  "success",
+                  "Maintenance Scheduled",
+                  `${providerName} maintenance window created. ${maintenanceNotifyMerchants ? "Notifications sent to affected merchants." : "No notifications sent."}`
+                );
+                setShowScheduleMaintenanceModal(false);
+                setMaintenanceProvider("");
+                setMaintenanceReason("");
+                setMaintenanceStartDate("");
+                setMaintenanceStartTime("");
+                setMaintenanceDuration("");
+                setMaintenanceNotifyMerchants(true);
+              }}
+              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Schedule Maintenance
+            </button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

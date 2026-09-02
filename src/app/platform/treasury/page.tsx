@@ -7,7 +7,7 @@ import {
 } from "recharts";
 import {
   DollarSign, AlertTriangle, CheckCircle, Clock, XCircle, TrendingUp, TrendingDown,
-  RefreshCw, Download, Plus, ChevronDown, ChevronUp, X, FileText,
+  RefreshCw, Download, Plus, ChevronDown, ChevronUp, X, FileText, Flag,
   ArrowUpRight, ArrowDownLeft, Banknote, BarChart2, Check, Search, Settings, Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -133,6 +133,14 @@ export default function TreasuryPage() {
   const [showFlagModal, setShowFlagModal] = useState<ReconciliationEntry | null>(null);
   const [ledgerSearch, setLedgerSearch] = useState("");
   const [approvalNote, setApprovalNote] = useState("");
+  
+  // Export modal state (PD-027)
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFormat, setExportFormat] = useState<"csv" | "pdf">("csv");
+  const [exportReportType, setExportReportType] = useState("");
+  const [exportDateFrom, setExportDateFrom] = useState("");
+  const [exportDateTo, setExportDateTo] = useState("");
+  
   const { showToast } = useToast();
 
   // Threshold configuration state
@@ -305,6 +313,235 @@ export default function TreasuryPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+
+            {/* ── Float Utilization Report (PD-026) ── */}
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h2 className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                    Float Utilization Report
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Prefunded float amounts, daily average utilization, and peak usage by provider
+                  </p>
+                </div>
+                <BarChart2 className="size-8 text-[#64c6c3]" />
+              </div>
+
+              {/* Provider Float Cards */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+                {(() => {
+                  const floatData = [
+                    {
+                      provider: "MTN Mobile Money",
+                      shortCode: "MTN",
+                      color: "#fbbf24",
+                      prefundedAmount: 500000,
+                      dailyAvgUtilization: 387500,
+                      peakUtilization: 465000,
+                      idleFloat: 35000,
+                      lastPrefund: new Date(Date.now() - 7 * 86400000),
+                    },
+                    {
+                      provider: "Vodafone Cash",
+                      shortCode: "VOD",
+                      color: "#ef4444",
+                      prefundedAmount: 400000,
+                      dailyAvgUtilization: 312000,
+                      peakUtilization: 385000,
+                      idleFloat: 15000,
+                      lastPrefund: new Date(Date.now() - 5 * 86400000),
+                    },
+                    {
+                      provider: "AirtelTigo Money",
+                      shortCode: "AT",
+                      color: "#3b82f6",
+                      prefundedAmount: 300000,
+                      dailyAvgUtilization: 195000,
+                      peakUtilization: 267000,
+                      idleFloat: 33000,
+                      lastPrefund: new Date(Date.now() - 10 * 86400000),
+                    },
+                    {
+                      provider: "Gip",
+                      shortCode: "GIP",
+                      color: "#10b981",
+                      prefundedAmount: 250000,
+                      dailyAvgUtilization: 162500,
+                      peakUtilization: 218750,
+                      idleFloat: 31250,
+                      lastPrefund: new Date(Date.now() - 3 * 86400000),
+                    },
+                  ];
+
+                  return floatData.map((provider) => {
+                    const utilizationPercent = (provider.dailyAvgUtilization / provider.prefundedAmount) * 100;
+                    const peakPercent = (provider.peakUtilization / provider.prefundedAmount) * 100;
+                    const idlePercent = (provider.idleFloat / provider.prefundedAmount) * 100;
+
+                    return (
+                      <div key={provider.shortCode} className="border border-border rounded-xl p-5 space-y-4">
+                        {/* Header */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="size-10 rounded-xl flex items-center justify-center font-bold text-xs text-white"
+                              style={{ backgroundColor: provider.color }}
+                            >
+                              {provider.shortCode}
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-bold">{provider.provider}</h3>
+                              <p className="text-xs text-muted-foreground">
+                                Last prefund: {formatDate(provider.lastPrefund)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Prefunded Amount */}
+                        <div className="bg-muted/30 rounded-lg p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Prefunded Float Amount</p>
+                          <p className="text-2xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                            {formatGHS(provider.prefundedAmount)}
+                          </p>
+                        </div>
+
+                        {/* Metrics Grid */}
+                        <div className="grid grid-cols-3 gap-3 text-xs">
+                          <div>
+                            <p className="text-muted-foreground mb-1">Avg Daily</p>
+                            <p className="font-bold">{formatGHS(provider.dailyAvgUtilization)}</p>
+                            <p className="text-[10px] text-muted-foreground mt-0.5">
+                              {utilizationPercent.toFixed(0)}% used
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground mb-1">Peak Usage</p>
+                            <p className="font-bold">{formatGHS(provider.peakUtilization)}</p>
+                            <p className="text-[10px] text-muted-foreground mt-0.5">
+                              {peakPercent.toFixed(0)}% peak
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground mb-1">Idle Float</p>
+                            <p className="font-bold">{formatGHS(provider.idleFloat)}</p>
+                            <p className="text-[10px] text-muted-foreground mt-0.5">
+                              {idlePercent.toFixed(0)}% idle
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Utilization Bar */}
+                        <div>
+                          <div className="flex items-center justify-between text-xs mb-2">
+                            <span className="text-muted-foreground">Average Utilization</span>
+                            <span className="font-semibold">{utilizationPercent.toFixed(1)}%</span>
+                          </div>
+                          <div className="h-3 bg-muted rounded-full overflow-hidden relative">
+                            {/* Average utilization */}
+                            <div
+                              className="absolute inset-y-0 left-0 rounded-full transition-all"
+                              style={{
+                                width: `${utilizationPercent}%`,
+                                backgroundColor: provider.color,
+                                opacity: 0.6,
+                              }}
+                            />
+                            {/* Peak marker */}
+                            <div
+                              className="absolute inset-y-0 w-0.5 transition-all"
+                              style={{
+                                left: `${peakPercent}%`,
+                                backgroundColor: provider.color,
+                              }}
+                              title={`Peak: ${peakPercent.toFixed(1)}%`}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1">
+                            <span>0%</span>
+                            <span>Peak at {peakPercent.toFixed(0)}%</span>
+                            <span>100%</span>
+                          </div>
+                        </div>
+
+                        {/* Health Indicator */}
+                        {(() => {
+                          if (utilizationPercent > 90) {
+                            return (
+                              <div className="bg-red-50 border border-red-200 rounded-lg p-2 flex items-center gap-2">
+                                <AlertTriangle className="size-4 text-red-600 shrink-0" />
+                                <p className="text-xs text-red-700">
+                                  High utilization — consider increasing prefund
+                                </p>
+                              </div>
+                            );
+                          } else if (idlePercent > 30) {
+                            return (
+                              <div className="bg-amber-50 border border-amber-200 rounded-lg p-2 flex items-center gap-2">
+                                <Info className="size-4 text-amber-600 shrink-0" />
+                                <p className="text-xs text-amber-700">
+                                  High idle float — consider reducing prefund
+                                </p>
+                              </div>
+                            );
+                          } else {
+                            return (
+                              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2 flex items-center gap-2">
+                                <CheckCircle className="size-4 text-emerald-600 shrink-0" />
+                                <p className="text-xs text-emerald-700">
+                                  Optimal utilization range
+                                </p>
+                              </div>
+                            );
+                          }
+                        })()}
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+
+              {/* Summary Stats */}
+              <div className="pt-6 border-t border-border grid grid-cols-4 gap-4">
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-1">Total Prefunded</p>
+                  <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                    {formatGHS(1450000)}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-1">Avg Daily Usage</p>
+                  <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                    {formatGHS(1057000)}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-1">Total Peak</p>
+                  <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                    {formatGHS(1335750)}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-1">Total Idle</p>
+                  <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                    {formatGHS(114250)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Info Banner */}
+              <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+                <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-blue-900 mb-1">Float Optimization</p>
+                  <p className="text-sm text-blue-700">
+                    Optimal utilization is 60-85%. High utilization indicates potential shortages. High idle float suggests over-prefunding. 
+                    Review weekly and adjust prefund amounts accordingly.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -385,7 +622,10 @@ export default function TreasuryPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">Daily provider reconciliation. Discrepancies are flagged for investigation.</p>
-              <button className="flex items-center gap-1.5 px-3 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all">
+              <button 
+                onClick={() => setShowExportModal(true)}
+                className="flex items-center gap-1.5 px-3 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all"
+              >
                 <Download className="size-3.5" /> Export
               </button>
             </div>
@@ -561,7 +801,10 @@ export default function TreasuryPage() {
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total fees shown</p>
                   <p className="text-sm font-bold text-[#263b8e]">{formatGHS(filteredLedger.reduce((s, e) => s + e.feeAmount, 0))}</p>
                 </div>
-                <button className="flex items-center gap-1.5 px-3 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all">
+                <button 
+                  onClick={() => setShowExportModal(true)}
+                  className="flex items-center gap-1.5 px-3 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all"
+                >
                   <Download className="size-3.5" /> Export
                 </button>
               </div>
@@ -932,6 +1175,186 @@ export default function TreasuryPage() {
               </div>
             </>
           )}
+        </div>
+      </Modal>
+
+      {/* ── Export Modal (PD-027) ── */}
+      <Modal
+        isOpen={showExportModal}
+        onClose={() => {
+          setShowExportModal(false);
+          setExportFormat("csv");
+          setExportReportType("");
+          setExportDateFrom("");
+          setExportDateTo("");
+        }}
+        title="Export Financial Data"
+        description="Download reports in CSV or PDF format"
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+            <FileText className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-blue-900 mb-1">Data Export</p>
+              <p className="text-sm text-blue-700">
+                Export financial records for accounting, audits, or analysis. Large date ranges may take longer to generate.
+              </p>
+            </div>
+          </div>
+
+          {/* Format Selection */}
+          <FormField
+            label="Export Format"
+            required
+            description="Choose file format"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setExportFormat("csv")}
+                className={cn(
+                  "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
+                  exportFormat === "csv"
+                    ? "border-[#64c6c3] bg-[#64c6c3]/5"
+                    : "border-border hover:border-muted-foreground/30"
+                )}
+              >
+                <FileText className="size-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-semibold">CSV</p>
+                  <p className="text-xs text-muted-foreground">Spreadsheet format</p>
+                </div>
+                {exportFormat === "csv" && <Check className="size-4 text-[#64c6c3] ml-auto" />}
+              </button>
+              <button
+                onClick={() => setExportFormat("pdf")}
+                className={cn(
+                  "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
+                  exportFormat === "pdf"
+                    ? "border-[#263b8e] bg-[#263b8e]/5"
+                    : "border-border hover:border-muted-foreground/30"
+                )}
+              >
+                <FileText className="size-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-semibold">PDF</p>
+                  <p className="text-xs text-muted-foreground">Print-ready report</p>
+                </div>
+                {exportFormat === "pdf" && <Check className="size-4 text-[#263b8e] ml-auto" />}
+              </button>
+            </div>
+          </FormField>
+
+          {/* Report Type */}
+          <FormField
+            label="Report Type"
+            required
+            description="Select data to export"
+          >
+            <select
+              value={exportReportType}
+              onChange={(e) => setExportReportType(e.target.value)}
+              className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 focus:ring-2 focus:ring-[#64c6c3]/10 transition-all"
+            >
+              <option value="">Select report type...</option>
+              <option value="financial">Financial Summary Report</option>
+              <option value="fee_ledger">Fee Ledger (All Transactions)</option>
+              <option value="reconciliation">Reconciliation Records</option>
+              <option value="float_utilization">Float Utilization Report</option>
+              <option value="payout_history">Payout Batch History</option>
+              <option value="prefund_requests">NSP Prefunding Requests</option>
+            </select>
+          </FormField>
+
+          {/* Date Range */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              label="Start Date"
+              required
+              description="From date"
+            >
+              <Input
+                type="date"
+                value={exportDateFrom}
+                onChange={(e) => setExportDateFrom(e.target.value)}
+              />
+            </FormField>
+            <FormField
+              label="End Date"
+              required
+              description="To date"
+            >
+              <Input
+                type="date"
+                value={exportDateTo}
+                onChange={(e) => setExportDateTo(e.target.value)}
+              />
+            </FormField>
+          </div>
+
+          {/* Warning for large exports */}
+          {exportDateFrom && exportDateTo && (
+            (() => {
+              const daysDiff = Math.ceil(
+                (new Date(exportDateTo).getTime() - new Date(exportDateFrom).getTime()) / 86400000
+              );
+              if (daysDiff > 90) {
+                return (
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                    <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+                    <p className="text-sm text-amber-700">
+                      Large date range selected ({daysDiff} days). Export may take several minutes to generate.
+                    </p>
+                  </div>
+                );
+              }
+              return null;
+            })()
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowExportModal(false);
+                setExportFormat("csv");
+                setExportReportType("");
+                setExportDateFrom("");
+                setExportDateTo("");
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!exportReportType || !exportDateFrom || !exportDateTo}
+              onClick={() => {
+                const reportLabels: Record<string, string> = {
+                  financial: "Financial Summary",
+                  fee_ledger: "Fee Ledger",
+                  reconciliation: "Reconciliation",
+                  float_utilization: "Float Utilization",
+                  payout_history: "Payout History",
+                  prefund_requests: "Prefunding Requests",
+                };
+                showToast(
+                  "success",
+                  "Export Started",
+                  `${reportLabels[exportReportType]} (${exportFormat.toUpperCase()}) is being generated. Download will start shortly.`
+                );
+                setShowExportModal(false);
+                setExportFormat("csv");
+                setExportReportType("");
+                setExportDateFrom("");
+                setExportDateTo("");
+              }}
+              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <Download className="size-4" />
+              Generate Export
+            </button>
+          </div>
         </div>
       </Modal>
     </div>
