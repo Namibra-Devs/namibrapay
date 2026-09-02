@@ -118,10 +118,11 @@ export const mockReconciliationEntries: ReconciliationEntry[] = Array.from({ len
   const date = new Date();
   date.setDate(date.getDate() - (6 - i));
   const hasDisc = i === 2 || i === 5;
-  const exp = Math.floor(Math.random() * 2_000_000 + 800_000);
-  const act = hasDisc ? exp - Math.floor(Math.random() * 50_000 + 5_000) : exp;
-  const expP = Math.floor(Math.random() * 1_200_000 + 400_000);
-  const actP = hasDisc ? expP - Math.floor(Math.random() * 30_000 + 2_000) : expP;
+  // Use deterministic values based on index
+  const exp = 800_000 + (i * 234567) % 2_000_000;
+  const act = hasDisc ? exp - (5_000 + (i * 12345) % 50_000) : exp;
+  const expP = 400_000 + (i * 123456) % 1_200_000;
+  const actP = hasDisc ? expP - (2_000 + (i * 6789) % 30_000) : expP;
   const expF = Math.floor(exp * 0.015);
   const actF = Math.floor(act * 0.015);
   return {
@@ -203,7 +204,8 @@ export const mockPayoutBatches: PayoutBatch[] = [
 ];
 
 export const mockFeeLedger: FeeLedgerEntry[] = Array.from({ length: 20 }, (_, i) => {
-  const txAmt = Math.floor(Math.random() * 10_000 + 200);
+  // Use index-based deterministic values instead of Math.random()
+  const txAmt = 200 + (i * 487) % 10000; // Deterministic pseudo-random
   const rate = ([0.012, 0.013, 0.015] as const)[i % 3] ?? 0.015;
   const fee = Math.floor(txAmt * rate);
   return {
@@ -217,7 +219,7 @@ export const mockFeeLedger: FeeLedgerEntry[] = Array.from({ length: 20 }, (_, i)
     feeAmount: fee,
     nspShare: Math.floor(fee * 0.6),
     platformShare: Math.floor(fee * 0.4),
-    ref: `REF-${Math.random().toString(36).slice(2, 10).toUpperCase()}`,
+    ref: `REF-${i.toString(36).padStart(8, '0').toUpperCase()}`,
   };
 });
 

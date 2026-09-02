@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Menu, X } from "lucide-react";
-import Logo from "@/components/ui/Logo";
+import Logo from "@/components/ui/logo";
 import { cn } from "@/lib/utils";
 
 const navLinks = [

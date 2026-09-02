@@ -8,7 +8,6 @@ import {
   Calendar, Hash, Check, Ban, MessageSquare, Upload, ExternalLink, DollarSign,
   Lock, Unlock,
 } from "lucide-react";
-import { Modal, useToast, FormField, Textarea, ConfirmDialog } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { formatDate, formatGHS } from "@/lib/constants";
 import { usePermission } from "@/hooks/use-role";
