@@ -15,12 +15,8 @@ interface SelectProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  /** Extra classes on the root container div */
   className?: string;
-  /** Extra classes applied directly on the trigger button */
-  triggerClassName?: string;
-  /** Compact mode: no border/ring on trigger — designed to nest inside a field group */
-  compact?: boolean;
+  disabled?: boolean;
 }
 
 export default function Select({
@@ -29,8 +25,7 @@ export default function Select({
   onChange,
   placeholder = "Select…",
   className,
-  triggerClassName,
-  compact = false,
+  disabled = false,
 }: SelectProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -56,95 +51,77 @@ export default function Select({
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
-      {/* ── Trigger ── */}
+      {/* Trigger - matches Input styling exactly */}
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => !disabled && setOpen((v) => !v)}
+        disabled={disabled}
         aria-haspopup="listbox"
         aria-expanded={open}
         className={cn(
-          "flex items-center w-full text-left cursor-pointer transition-colors select-none",
-          compact
-            ? // Inline / grouped variant
-              "h-full bg-gray-50 pl-3 pr-8 py-3 text-sm text-gray-700 border-r border-gray-200"
-            : // Standalone field variant
-              cn(
-                "gap-2 border rounded-lg px-4 py-2 text-sm text-gray-900 bg-white focus:outline-none",
-                open
-                  ? "border-brand-teal ring-2 ring-brand-teal/30"
-                  : "border-gray-200 hover:border-gray-300"
-              ),
-          triggerClassName
+          "w-full flex items-center gap-2 px-3 py-2 bg-card border rounded-lg text-sm focus:outline-none transition-all",
+          disabled
+            ? "opacity-50 cursor-not-allowed border-border"
+            : open
+            ? "border-border ring-2 ring-brand-teal/20"
+            : "border-border hover:border-gray-300",
+          "text-left"
         )}
       >
-        <span className="flex-1 truncate">
-          {selected ? (
-            selected.label
-          ) : (
-            <span className="text-gray-400">{placeholder}</span>
-          )}
+        <span className={cn("flex-1 truncate", selected ? "text-foreground" : "text-gray-400")}>
+          {selected ? selected.label : placeholder}
         </span>
-
-        {/* Chevron — absolute in compact so it doesn't shift text */}
         <ChevronDown
-          size={compact ? 13 : 15}
           className={cn(
-            "shrink-0 text-gray-400 transition-transform duration-200",
-            compact
-              ? "absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none"
-              : "ml-auto",
+            "size-4 text-gray-400 transition-transform duration-200 shrink-0",
             open && "rotate-180"
           )}
         />
       </button>
 
-      {/* ── Dropdown ── */}
+      {/* Dropdown - matches role switcher styling */}
       <AnimatePresence>
         {open && (
-          <motion.ul
-            role="listbox"
-            initial={{ opacity: 0, y: -6, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.97 }}
-            transition={{ duration: 0.14, ease: "easeOut" }}
-            className={cn(
-              "absolute z-50 mt-1.5 max-h-60 overflow-y-auto",
-              "bg-white border border-gray-200 rounded-xl shadow-xl py-1",
-              // Compact: auto-width so it isn't constrained to the narrow trigger
-              compact ? "w-auto min-w-20" : "w-full"
-            )}
-          >
-            {options.map((option) => {
-              const isSelected = option.value === value;
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  role="option"
-                  aria-selected={isSelected}
-                  onClick={() => {
-                    onChange(option.value);
-                    setOpen(false);
-                  }}
-                  className={cn(
-                    "w-full flex items-center justify-between px-4 py-2.5 text-sm cursor-pointer transition-colors",
-                    isSelected
-                      ? "bg-brand-teal/5 text-brand-navy font-semibold"
-                      : "text-gray-700 hover:bg-gray-50"
-                  )}
-                >
-                  <span>{option.label}</span>
-                  {isSelected && (
-                    <Check
-                      size={14}
-                      strokeWidth={2.5}
-                      className="text-brand-teal shrink-0 ml-3"
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </motion.ul>
+          <>
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.97 }}
+              transition={{ duration: 0.14, ease: "easeOut" }}
+              className="absolute left-0 right-0 top-full mt-2 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50"
+            >
+              <div className="p-2 space-y-1 max-h-64 overflow-y-auto">
+                {options.map((option) => {
+                  const isSelected = option.value === value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => {
+                        onChange(option.value);
+                        setOpen(false);
+                      }}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left",
+                        isSelected
+                          ? "bg-brand-mint/20 text-[#1a7a5e]"
+                          : "hover:bg-muted/50"
+                      )}
+                    >
+                      <span className="flex-1">{option.label}</span>
+                      {isSelected && (
+                        <Check className="size-4 text-[#1a7a5e]" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>

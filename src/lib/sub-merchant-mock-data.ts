@@ -43,7 +43,8 @@ const NAMES = ["Esi Boateng", "Kwaku Mensah", "Akua Darko", "Kofi Asante", "Aben
 const STATUSES: SmTxStatus[] = ["success", "success", "success", "failed", "pending", "processing"];
 
 export const smTransactions: SmTransaction[] = Array.from({ length: 50 }, (_, i) => {
-  const gross = Math.round((500 + Math.random() * 3000) * 100) / 100;
+  // Deterministic amount generation using index (no Math.random)
+  const gross = Math.round((500 + ((i * 347) % 3000)) * 100) / 100;
   const fee = Math.round(gross * 0.015 * 100) / 100;
   const net = Math.round((gross - fee) * 100) / 100;
   const type: SmTxType = i % 7 === 0 ? "payout" : "collection";
@@ -62,14 +63,16 @@ export const smTransactions: SmTransaction[] = Array.from({ length: 50 }, (_, i)
   };
 });
 
-// 7-day chart data
+// 7-day chart data (deterministic - no Math.random)
 const today = new Date(2026, 8, 1);
 export const smChartData = Array.from({ length: 7 }, (_, i) => {
   const dt = new Date(today);
   dt.setDate(dt.getDate() - (6 - i));
+  // Deterministic values using index (simulating wave pattern)
+  const collections = Math.round(20000 + ((i * 8347) % 60000));
   return {
     date: dt.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }),
-    collections: Math.round(20000 + Math.random() * 60000),
+    collections,
   };
 });
 

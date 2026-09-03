@@ -191,16 +191,14 @@ export default function PhoneCodePicker({
         type="button"
         onClick={handleOpen}
         className={cn(
-          "flex items-center gap-1 w-full text-left cursor-pointer select-none transition-colors",
-          "border rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none",
-          open
-            ? "border-brand-teal ring-2 ring-brand-teal/30"
-            : "border-gray-200 hover:border-gray-300"
+          "flex items-center gap-2 w-full text-left cursor-pointer select-none transition-colors",
+          "border-0 bg-transparent px-3 py-2.5 text-sm focus:outline-none h-full",
+          "hover:bg-gray-50"
         )}
       >
-        <span className="flex-1 text-gray-900">{value}</span>
+        <span className="flex-1 text-gray-900 font-medium">{value}</span>
         <ChevronDown
-          size={13}
+          size={14}
           className={cn(
             "shrink-0 text-gray-400 transition-transform duration-200",
             open && "rotate-180"
@@ -218,27 +216,27 @@ export default function PhoneCodePicker({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -6, scale: 0.97 }}
                 transition={{ duration: 0.14, ease: "easeOut" }}
-                style={{ top: pos.top, left: pos.left, width: 260 }}
+                style={{ top: pos.top, left: pos.left, width: 280 }}
                 className="fixed z-500 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden"
               >
                 {/* Search */}
-                <div className="p-2 border-b border-gray-100">
-                  <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
+                <div className="p-3 border-b border-gray-100">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
+                    <Search size={14} className="text-gray-400 shrink-0" />
                     <input
                       ref={searchRef}
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      placeholder="Search Country"
+                      placeholder="Search country..."
                       className="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none"
                     />
-                    <Search size={13} className="text-gray-400 shrink-0" />
                   </div>
                 </div>
 
                 {/* List */}
-                <div className="max-h-52 overflow-y-auto">
+                <div className="max-h-64 overflow-y-auto">
                   {filtered.length === 0 ? (
-                    <p className="px-4 py-3 text-sm text-gray-400">
+                    <p className="px-4 py-6 text-sm text-gray-400 text-center">
                       No countries found
                     </p>
                   ) : (
@@ -251,19 +249,19 @@ export default function PhoneCodePicker({
                           setOpen(false);
                         }}
                         className={cn(
-                          "w-full flex items-center justify-between px-4 py-2.5 text-sm cursor-pointer transition-colors",
+                          "w-full flex items-center justify-between px-4 py-3 text-sm cursor-pointer transition-colors",
                           value === c.code
-                            ? "bg-brand-teal/5 text-brand-navy font-semibold"
+                            ? "bg-brand-mint/20 text-[#1a7a5e] font-semibold"
                             : "text-gray-700 hover:bg-gray-50"
                         )}
                       >
-                        <span>{c.name}</span>
+                        <span className="font-medium">{c.name}</span>
                         <span
                           className={cn(
-                            "text-sm tabular-nums",
+                            "text-sm tabular-nums font-medium",
                             value === c.code
-                              ? "text-brand-teal"
-                              : "text-gray-400"
+                              ? "text-[#1a7a5e]"
+                              : "text-gray-500"
                           )}
                         >
                           {c.code}

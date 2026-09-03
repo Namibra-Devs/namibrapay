@@ -16,12 +16,14 @@ export const SUB_MERCHANT_ROLE_COLORS: Record<SubMerchantRole, string> = {
 };
 
 const PERMISSIONS: Record<string, SubMerchantRole[]> = {
+  "dashboard.view": ["sub_admin", "sub_viewer"],
   "transactions.view": ["sub_admin", "sub_viewer"],
   "transactions.export": ["sub_admin", "sub_viewer"],
   "transactions.dispute": ["sub_admin"],
   "settlements.view": ["sub_admin", "sub_viewer"],
-  "team.view": ["sub_admin"],
+  "team.view": ["sub_admin", "sub_viewer"],
   "team.manage": ["sub_admin"],
+  "settings.view": ["sub_admin", "sub_viewer"],
   "settings.manage": ["sub_admin"],
 };
 
