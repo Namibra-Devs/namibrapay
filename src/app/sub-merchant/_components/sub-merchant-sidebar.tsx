@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -42,8 +43,14 @@ export default function SubMerchantSidebar() {
     >
       {/* Logo */}
       <div className={cn("flex items-center gap-2.5 px-4 py-5 border-b border-sidebar-border shrink-0", collapsed && "justify-center px-2")}>
-        <div className="size-8 rounded-lg bg-[#a3ffe2] flex items-center justify-center shrink-0">
-          <span className="text-[#1a7a5e] font-bold text-sm" style={{ fontFamily: "var(--font-heading)" }}>K</span>
+        <div className="size-8 flex items-center justify-center shrink-0">
+          <Image
+            src="/favicon.png"
+            alt="NamibraPay"
+            width={40}
+            height={40}
+            unoptimized
+          />
         </div>
         {!collapsed && (
           <div className="overflow-hidden">

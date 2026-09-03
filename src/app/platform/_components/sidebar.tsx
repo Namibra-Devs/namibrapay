@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -50,13 +51,19 @@ export default function PlatformSidebar() {
       className={cn(
         "hidden md:flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out z-40",
         "bg-sidebar border-r border-sidebar-border",
-        collapsed ? "w-[68px]" : "w-[240px]"
+        collapsed ? "w-17" : "w-60"
       )}
     >
       {/* Logo */}
       <div className={cn("flex items-center gap-2.5 px-4 py-5 border-b border-sidebar-border shrink-0", collapsed && "justify-center px-2")}>
-        <div className="size-8 rounded-lg bg-[#64c6c3] flex items-center justify-center shrink-0">
-          <span className="text-[#263b8e] font-bold text-sm" style={{ fontFamily: "var(--font-heading)" }}>N</span>
+        <div className="size-8 flex items-center justify-center shrink-0">
+          <Image
+            src="/favicon.png"
+            alt="NamibraPay"
+            width={40}
+            height={40}
+            unoptimized
+          />
         </div>
         {!collapsed && (
           <div className="overflow-hidden">
@@ -90,7 +97,7 @@ export default function PlatformSidebar() {
               <Icon className="size-4 shrink-0" />
               {!collapsed && <span className="truncate">{label}</span>}
               {!collapsed && label === "Overview" && unreadAlerts > 0 && (
-                <span className="ml-auto bg-[#ffb4b0]/30 text-[#c0392b] text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-[#ffb4b0]/50">
+                <span className="ml-auto bg-brand-pink/30 text-[#c0392b] text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-brand-pink/50">
                   {unreadAlerts}
                 </span>
               )}
@@ -113,12 +120,12 @@ export default function PlatformSidebar() {
           <div className="relative shrink-0">
             <Bell className="size-4" />
             {unreadAlerts > 0 && (
-              <span className="absolute -top-1 -right-1 size-2 rounded-full bg-[#ffb4b0]" />
+              <span className="absolute -top-1 -right-1 size-2 rounded-full bg-brand-pink" />
             )}
           </div>
           {!collapsed && <span>Alerts</span>}
           {!collapsed && unreadAlerts > 0 && (
-            <span className="ml-auto text-[10px] font-bold bg-[#ffb4b0]/20 text-[#c0392b] px-1.5 py-0.5 rounded-full">
+            <span className="ml-auto text-[10px] font-bold bg-brand-pink/20 text-[#c0392b] px-1.5 py-0.5 rounded-full">
               {unreadAlerts}
             </span>
           )}
@@ -129,8 +136,8 @@ export default function PlatformSidebar() {
           "flex items-center gap-2.5 px-3 py-2.5 rounded-lg",
           collapsed && "justify-center"
         )}>
-          <div className="size-7 rounded-full bg-[#64c6c3]/20 border border-[#64c6c3]/30 flex items-center justify-center shrink-0">
-            <User className="size-3.5 text-[#64c6c3]" />
+          <div className="size-7 rounded-full bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center shrink-0">
+            <User className="size-3.5 text-brand-teal" />
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
