@@ -109,7 +109,7 @@ export default function MerchantSidebar() {
 
         <div className={cn("flex items-center gap-2.5 px-3 py-2.5 rounded-lg", collapsed && "justify-center")}>
           <div className="size-7 rounded-full bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center shrink-0">
-            <UserCircle className="size-3.5 text-[#64c6c3]" />
+            <UserCircle className="size-3.5 text-brand-teal" />
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">

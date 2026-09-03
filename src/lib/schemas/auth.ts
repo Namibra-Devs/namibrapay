@@ -6,7 +6,7 @@ export const signInSchema = z.object({
   email: z
     .string()
     .min(1, "Email is required.")
-    .check(z.email({ error: "Enter a valid email address." })),
+    .email("Enter a valid email address."),
   password: z.string().min(1, "Password is required."),
 });
 
@@ -35,7 +35,7 @@ export const signUpSchema = z.object({
   email: z
     .string()
     .min(1, "Email is required.")
-    .check(z.email({ error: "Enter a valid email address." })),
+    .email("Enter a valid email address."),
 
   phoneCode: z.string().min(1),
 
@@ -53,7 +53,7 @@ export const signUpSchema = z.object({
   businessType: z.enum(["starter", "registered"]),
 
   isDeveloper: z.enum(["yes", "no"], {
-    error: "Please answer this question.",
+    errorMap: () => ({ message: "Please answer this question." }),
   }),
 });
 
@@ -65,7 +65,7 @@ export const forgotPasswordSchema = z.object({
   email: z
     .string()
     .min(1, "Email is required.")
-    .check(z.email({ error: "Enter a valid email address." })),
+    .email("Enter a valid email address."),
 });
 
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;

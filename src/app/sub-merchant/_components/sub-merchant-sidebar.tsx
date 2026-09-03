@@ -38,7 +38,7 @@ export default function SubMerchantSidebar() {
       className={cn(
         "hidden md:flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out z-40",
         "bg-sidebar border-r border-sidebar-border",
-        collapsed ? "w-[68px]" : "w-[240px]"
+        collapsed ? "w-17" : "w-60"
       )}
     >
       {/* Logo */}
@@ -104,7 +104,7 @@ export default function SubMerchantSidebar() {
         </button>
 
         <div className={cn("flex items-center gap-2.5 px-3 py-2.5 rounded-lg", collapsed && "justify-center")}>
-          <div className="size-7 rounded-full bg-[#a3ffe2]/20 border border-[#a3ffe2]/30 flex items-center justify-center shrink-0">
+          <div className="size-7 rounded-full bg-brand-mint/20 border border-brand-mint/30 flex items-center justify-center shrink-0">
             <UserCircle className="size-3.5 text-[#1a7a5e]" />
           </div>
           {!collapsed && (
