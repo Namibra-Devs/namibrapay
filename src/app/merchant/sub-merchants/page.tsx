@@ -10,6 +10,8 @@ import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Textarea, Select } from "@/components/ui/form-field";
+import PhoneInput from "@/components/ui/phone-input";
+import CustomSelect from "@/components/ui/select";
 
 const statusConfig = {
   pending: { badge: "bg-amber-50 text-amber-700 border-amber-200", dot: "bg-amber-400" },
@@ -42,7 +44,7 @@ export default function SubMerchantsPage() {
         </div>
         {can("submerchants.create") && (
           <button onClick={() => setShowCreate(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all shrink-0">
+            className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all shrink-0">
             <Plus className="size-4" />
             Add Sub-Merchant
           </button>
@@ -74,8 +76,8 @@ export default function SubMerchantsPage() {
             <div key={sm.id} className="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:border-ring/40 hover:shadow-md transition-all cursor-pointer group">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="size-10 rounded-xl bg-[#64c6c3]/10 border border-[#64c6c3]/20 flex items-center justify-center">
-                    <Building2 className="size-5 text-[#64c6c3]" />
+                  <div className="size-10 rounded-xl bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center">
+                    <Building2 className="size-5 text-brand-teal" />
                   </div>
                   <div>
                     <p className="font-semibold text-sm" style={{ fontFamily: "var(--font-heading)" }}>{sm.name}</p>
@@ -108,7 +110,7 @@ export default function SubMerchantsPage() {
 
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>Onboarded {formatDate(sm.onboardingDate + "T00:00:00Z").split(",")[0]}</span>
-                <div className="flex items-center gap-1 text-[#64c6c3] font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-1 text-brand-teal font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   <TrendingUp className="size-3" />
                   View details
                   <ChevronRight className="size-3" />
@@ -165,20 +167,21 @@ export default function SubMerchantsPage() {
             required
             description="Type of business or industry"
           >
-            <Select
+            <CustomSelect
               value={newSubMerchantCategory}
-              onChange={(e) => setNewSubMerchantCategory(e.target.value)}
-            >
-              <option value="">Select category...</option>
-              <option value="retail">Retail Store</option>
-              <option value="restaurant">Restaurant/Food Service</option>
-              <option value="services">Professional Services</option>
-              <option value="healthcare">Healthcare</option>
-              <option value="education">Education</option>
-              <option value="ecommerce">E-commerce</option>
-              <option value="transport">Transportation</option>
-              <option value="other">Other</option>
-            </Select>
+              onChange={setNewSubMerchantCategory}
+              options={[
+                { value: "retail", label: "Retail Store" },
+                { value: "restaurant", label: "Restaurant/Food Service" },
+                { value: "services", label: "Professional Services" },
+                { value: "healthcare", label: "Healthcare" },
+                { value: "education", label: "Education" },
+                { value: "ecommerce", label: "E-commerce" },
+                { value: "transport", label: "Transportation" },
+                { value: "other", label: "Other" },
+              ]}
+              placeholder="Select category..."
+            />
           </FormField>
 
           <FormField
@@ -199,11 +202,10 @@ export default function SubMerchantsPage() {
             required
             description="Phone number with country code"
           >
-            <Input
-              type="tel"
+            <PhoneInput
               value={newSubMerchantPhone}
-              onChange={(e) => setNewSubMerchantPhone(e.target.value)}
-              placeholder="+233 XX XXX XXXX"
+              onChange={setNewSubMerchantPhone}
+              placeholder="XX XXX XXXX"
             />
           </FormField>
 
@@ -276,7 +278,7 @@ export default function SubMerchantsPage() {
                 setNewSubMerchantFeeRate("");
                 setNewSubMerchantCategory("");
               }}
-              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Submit Application
             </button>

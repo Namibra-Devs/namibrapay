@@ -25,6 +25,7 @@ import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Select } from "@/components/ui/form-field";
+import CustomSelect from "@/components/ui/select";
 
 type Tab = "keys" | "webhooks" | "sandbox";
 
@@ -88,7 +89,7 @@ export default function ApiPage() {
             <div className="flex justify-end">
               <button 
                 onClick={() => setShowGenerateKeyModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
               >
                 <Plus className="size-4" />
                 Generate New Key
@@ -109,7 +110,7 @@ export default function ApiPage() {
                       <div className="flex items-center gap-2 mt-1">
                         <span className={cn("text-[10px] px-2 py-0.5 rounded-full border font-medium",
                           key.environment === "live"
-                            ? "bg-[#263b8e]/10 text-[#263b8e] border-[#263b8e]/20"
+                            ? "bg-brand-navy/10 text-brand-navy border-brand-navy/20"
                             : "bg-amber-50 text-amber-700 border-amber-200")}>
                           {key.environment}
                         </span>
@@ -186,7 +187,7 @@ export default function ApiPage() {
               <div className="flex flex-wrap gap-2">
                 {["collection.success", "collection.failed", "payout.completed", "payout.failed", "dispute.opened"].map((evt) => (
                   <label key={evt} className="flex items-center gap-2 px-3 py-1.5 bg-muted/40 border border-border rounded-lg cursor-pointer hover:bg-muted/60 transition-all">
-                    <input type="checkbox" defaultChecked={evt !== "dispute.opened"} className="accent-[#64c6c3] size-3" />
+                    <input type="checkbox" defaultChecked={evt !== "dispute.opened"} className="accent-brand-teal size-3" />
                     <code className="text-[11px]">{evt}</code>
                   </label>
                 ))}
@@ -221,7 +222,7 @@ export default function ApiPage() {
                         <td className="px-4 py-3 text-xs text-center">{log.retryCount}</td>
                         <td className="px-4 py-3">
                           {!log.success && can("api.manage") && (
-                            <button className="flex items-center gap-1 text-xs text-[#64c6c3] hover:underline">
+                            <button className="flex items-center gap-1 text-xs text-brand-teal hover:underline">
                               <RefreshCw className="size-3" />
                               Retry
                             </button>
@@ -341,13 +342,14 @@ export default function ApiPage() {
                 required
                 description="Select whether this key is for testing or live transactions"
               >
-                <Select
+                <CustomSelect
                   value={newKeyEnvironment}
-                  onChange={(e) => setNewKeyEnvironment(e.target.value as "live" | "test")}
-                >
-                  <option value="test">Test Environment (Sandbox)</option>
-                  <option value="live">Live Environment (Production)</option>
-                </Select>
+                  onChange={(val) => setNewKeyEnvironment(val as "live" | "test")}
+                  options={[
+                    { value: "test", label: "Test Environment (Sandbox)" },
+                    { value: "live", label: "Live Environment (Production)" },
+                  ]}
+                />
               </FormField>
 
               {newKeyEnvironment === "live" && (
@@ -381,7 +383,7 @@ export default function ApiPage() {
                     const secretKey = `sk_${newKeyEnvironment}_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
                     setGeneratedKey({ public: publicKey, secret: secretKey });
                   }}
-                  className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <Key className="size-4" />
                   Generate Key
@@ -448,7 +450,7 @@ export default function ApiPage() {
                   setNewKeyEnvironment("test");
                   setGeneratedKey(null);
                 }}
-                className="w-full px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
+                className="w-full px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
               >
                 Done
               </button>
@@ -510,7 +512,7 @@ export default function ApiPage() {
                   <input
                     type="checkbox"
                     defaultChecked={event !== "dispute.opened"}
-                    className="mt-0.5 accent-[#64c6c3] size-4"
+                    className="mt-0.5 accent-brand-teal size-4"
                   />
                   <div className="flex-1">
                     <p className="text-sm font-medium">{label}</p>
@@ -535,7 +537,7 @@ export default function ApiPage() {
                 showToast("success", "Webhook Updated", "Your webhook configuration has been saved.");
                 setShowWebhookModal(false);
               }}
-              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Save Configuration
             </button>

@@ -9,6 +9,7 @@ import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { cn } from "@/lib/utils";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
+import DatePicker from "@/components/ui/date-picker";
 import { FormField, Input } from "@/components/ui/form-field";
 
 const payoutStatusConfig = {
@@ -261,7 +262,7 @@ export default function SettlementsPage() {
                 className={cn(
                   "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
                   exportFormat === "csv"
-                    ? "border-[#64c6c3] bg-[#64c6c3]/5"
+                    ? "border-brand-teal bg-brand-teal/5"
                     : "border-border hover:border-muted-foreground/30"
                 )}
               >
@@ -270,14 +271,14 @@ export default function SettlementsPage() {
                   <p className="text-sm font-semibold">CSV</p>
                   <p className="text-xs text-muted-foreground">Spreadsheet format</p>
                 </div>
-                {exportFormat === "csv" && <Check className="size-4 text-[#64c6c3] ml-auto" />}
+                {exportFormat === "csv" && <Check className="size-4 text-brand-teal ml-auto" />}
               </button>
               <button
                 onClick={() => setExportFormat("pdf")}
                 className={cn(
                   "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
                   exportFormat === "pdf"
-                    ? "border-[#263b8e] bg-[#263b8e]/5"
+                    ? "border-brand-navy bg-brand-navy/5"
                     : "border-border hover:border-muted-foreground/30"
                 )}
               >
@@ -286,7 +287,7 @@ export default function SettlementsPage() {
                   <p className="text-sm font-semibold">PDF</p>
                   <p className="text-xs text-muted-foreground">Print-ready report</p>
                 </div>
-                {exportFormat === "pdf" && <Check className="size-4 text-[#263b8e] ml-auto" />}
+                {exportFormat === "pdf" && <Check className="size-4 text-brand-navy ml-auto" />}
               </button>
             </div>
           </FormField>
@@ -298,10 +299,11 @@ export default function SettlementsPage() {
               required
               description="From date"
             >
-              <Input
-                type="date"
+              <DatePicker
                 value={exportDateFrom}
-                onChange={(e) => setExportDateFrom(e.target.value)}
+                onChange={setExportDateFrom}
+                placeholder="Select start date"
+                max={exportDateTo || undefined}
               />
             </FormField>
             <FormField
@@ -309,10 +311,11 @@ export default function SettlementsPage() {
               required
               description="To date"
             >
-              <Input
-                type="date"
+              <DatePicker
                 value={exportDateTo}
-                onChange={(e) => setExportDateTo(e.target.value)}
+                onChange={setExportDateTo}
+                placeholder="Select end date"
+                min={exportDateFrom || undefined}
               />
             </FormField>
           </div>
@@ -343,7 +346,7 @@ export default function SettlementsPage() {
                 setExportDateFrom("");
                 setExportDateTo("");
               }}
-              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <Download className="size-4" />
               Generate Export

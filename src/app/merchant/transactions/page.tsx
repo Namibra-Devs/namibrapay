@@ -28,6 +28,7 @@ import { useMerchantRole } from "@/hooks/use-merchant-role";
 import TransactionDetail from "../_components/transaction-details-modal";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
+import DatePicker from "@/components/ui/date-picker";
 import { FormField, Input, Select } from "@/components/ui/form-field";
 
 const PAGE_SIZES = [10, 25, 50] as const;
@@ -86,13 +87,13 @@ export default function TransactionsPage() {
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
         className="flex flex-wrap items-center gap-3">
         {/* Search */}
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-50">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
           <input
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Search by reference or phone..."
-            className="w-full pl-9 pr-4 py-2.5 text-sm bg-card border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 focus:ring-2 focus:ring-[#64c6c3]/10 transition-all"
+            className="w-full pl-9 pr-4 py-2.5 text-sm bg-card border border-border rounded-xl outline-none focus:border-brand-teal/60 focus:ring-2 focus:ring-brand-teal/10 transition-all"
           />
           {search && (
             <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
@@ -106,13 +107,13 @@ export default function TransactionsPage() {
           onClick={() => setFiltersOpen(!filtersOpen)}
           className={cn(
             "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all",
-            filtersOpen ? "bg-[#64c6c3]/10 border-[#64c6c3]/40 text-[#1a6e6c]" : "bg-card border-border hover:border-ring/50"
+            filtersOpen ? "bg-brand-teal/10 border-brand-teal/40 text-[#1a6e6c]" : "bg-card border-border hover:border-ring/50"
           )}
         >
           <Filter className="size-3.5" />
           Filters
           {activeFilterCount > 0 && (
-            <span className="bg-[#64c6c3] text-white size-4 rounded-full text-[10px] font-bold flex items-center justify-center">
+            <span className="bg-brand-teal text-white size-4 rounded-full text-[10px] font-bold flex items-center justify-center">
               {activeFilterCount}
             </span>
           )}
@@ -141,7 +142,7 @@ export default function TransactionsPage() {
               {["all", "success", "failed", "pending", "processing", "reversed"].map((s) => (
                 <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
                   className={cn("px-3 py-1.5 rounded-lg text-xs font-medium border transition-all capitalize",
-                    statusFilter === s ? "bg-[#64c6c3]/10 border-[#64c6c3]/40 text-[#1a6e6c]" : "bg-card border-border hover:bg-muted/50")}>
+                    statusFilter === s ? "bg-brand-teal/10 border-brand-teal/40 text-[#1a6e6c]" : "bg-card border-border hover:bg-muted/50")}>
                   {s === "all" ? "All" : s}
                 </button>
               ))}
@@ -153,7 +154,7 @@ export default function TransactionsPage() {
               {["all", "collection", "payout"].map((t) => (
                 <button key={t} onClick={() => { setTypeFilter(t); setPage(1); }}
                   className={cn("px-3 py-1.5 rounded-lg text-xs font-medium border transition-all capitalize",
-                    typeFilter === t ? "bg-[#64c6c3]/10 border-[#64c6c3]/40 text-[#1a6e6c]" : "bg-card border-border hover:bg-muted/50")}>
+                    typeFilter === t ? "bg-brand-teal/10 border-brand-teal/40 text-[#1a6e6c]" : "bg-card border-border hover:bg-muted/50")}>
                   {t === "all" ? "All" : t}
                 </button>
               ))}
@@ -199,7 +200,7 @@ export default function TransactionsPage() {
                       <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{formatDate(txn.createdAt)}</td>
                       <td className="px-4 py-3">
                         <span className={cn("text-xs px-2 py-1 rounded-lg font-medium capitalize",
-                          txn.type === "collection" ? "bg-[#64c6c3]/10 text-[#1a6e6c]" : "bg-[#bcbbee]/10 text-[#5c3d9e]")}>
+                          txn.type === "collection" ? "bg-brand-teal/10 text-[#1a6e6c]" : "bg-brand-lavender/10 text-[#5c3d9e]")}>
                           {txn.type}
                         </span>
                       </td>
@@ -293,7 +294,7 @@ export default function TransactionsPage() {
                 className={cn(
                   "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
                   exportFormat === "csv"
-                    ? "border-[#64c6c3] bg-[#64c6c3]/5"
+                    ? "border-brand-teal bg-brand-teal/5"
                     : "border-border hover:border-muted-foreground/30"
                 )}
               >
@@ -302,14 +303,14 @@ export default function TransactionsPage() {
                   <p className="text-sm font-semibold">CSV</p>
                   <p className="text-xs text-muted-foreground">Spreadsheet format</p>
                 </div>
-                {exportFormat === "csv" && <Check className="size-4 text-[#64c6c3] ml-auto" />}
+                {exportFormat === "csv" && <Check className="size-4 text-brand-teal ml-auto" />}
               </button>
               <button
                 onClick={() => setExportFormat("pdf")}
                 className={cn(
                   "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
                   exportFormat === "pdf"
-                    ? "border-[#263b8e] bg-[#263b8e]/5"
+                    ? "border-brand-navy bg-brand-navy/5"
                     : "border-border hover:border-muted-foreground/30"
                 )}
               >
@@ -318,7 +319,7 @@ export default function TransactionsPage() {
                   <p className="text-sm font-semibold">PDF</p>
                   <p className="text-xs text-muted-foreground">Print-ready report</p>
                 </div>
-                {exportFormat === "pdf" && <Check className="size-4 text-[#263b8e] ml-auto" />}
+                {exportFormat === "pdf" && <Check className="size-4 text-brand-navy ml-auto" />}
               </button>
             </div>
           </FormField>
@@ -330,10 +331,11 @@ export default function TransactionsPage() {
               required
               description="From date"
             >
-              <Input
-                type="date"
+              <DatePicker
                 value={exportDateFrom}
-                onChange={(e) => setExportDateFrom(e.target.value)}
+                onChange={setExportDateFrom}
+                placeholder="Select start date"
+                max={exportDateTo || undefined}
               />
             </FormField>
             <FormField
@@ -341,10 +343,11 @@ export default function TransactionsPage() {
               required
               description="To date"
             >
-              <Input
-                type="date"
+              <DatePicker
                 value={exportDateTo}
-                onChange={(e) => setExportDateTo(e.target.value)}
+                onChange={setExportDateTo}
+                placeholder="Select end date"
+                min={exportDateFrom || undefined}
               />
             </FormField>
           </div>
@@ -411,7 +414,7 @@ export default function TransactionsPage() {
                 setExportDateFrom("");
                 setExportDateTo("");
               }}
-              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <Download className="size-4" />
               Generate Export

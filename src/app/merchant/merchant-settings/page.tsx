@@ -6,6 +6,7 @@ import { Building2, CreditCard, Bell, Shield, ToggleLeft, AlertTriangle, Check }
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/toast";
+import PhoneInput from "@/components/ui/phone-input";
 
 export default function MerchantSettingsPage() {
   const { can } = useMerchantRole();
@@ -53,35 +54,53 @@ export default function MerchantSettingsPage() {
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="bg-card border border-border rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="size-9 rounded-xl bg-[#263b8e]/10 flex items-center justify-center">
-              <Building2 className="size-4 text-[#263b8e]" />
+            <div className="size-9 rounded-xl bg-brand-navy/10 flex items-center justify-center">
+              <Building2 className="size-4 text-brand-navy" />
             </div>
             <h2 className="font-semibold text-base" style={{ fontFamily: "var(--font-heading)" }}>Business Profile</h2>
           </div>
           {[
-            { label: "Business Name", value: businessName, setValue: setBusinessName, editable: can("settings.manage") },
-            { label: "Registration Number", value: "CS004152023", setValue: null, editable: false },
-            { label: "Business Address", value: businessAddress, setValue: setBusinessAddress, editable: can("settings.manage") },
-            { label: "Contact Email", value: contactEmail, setValue: setContactEmail, editable: can("settings.manage") },
-            { label: "Contact Phone", value: contactPhone, setValue: setContactPhone, editable: can("settings.manage") },
+            { label: "Business Name", value: businessName, setValue: setBusinessName, editable: can("settings.manage"), type: "text" },
+            { label: "Registration Number", value: "CS004152023", setValue: null, editable: false, type: "text" },
+            { label: "Business Address", value: businessAddress, setValue: setBusinessAddress, editable: can("settings.manage"), type: "text" },
+            { label: "Contact Email", value: contactEmail, setValue: setContactEmail, editable: can("settings.manage"), type: "email" },
           ].map((field) => (
             <div key={field.label}>
               <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">{field.label}</label>
               <input
+                type={field.type}
                 value={field.value}
                 onChange={(e) => field.setValue?.(e.target.value)}
                 disabled={!field.editable}
                 className={cn("w-full px-3 py-2.5 text-sm border rounded-xl outline-none transition-all",
                   field.editable
-                    ? "bg-background border-border focus:border-[#64c6c3]/60 focus:ring-2 focus:ring-[#64c6c3]/10"
+                    ? "bg-background border-border focus:border-brand-teal/60 focus:ring-2 focus:ring-brand-teal/10"
                     : "bg-muted/30 border-border/50 text-muted-foreground cursor-not-allowed")}
               />
             </div>
           ))}
+          
+          {/* Contact Phone - Separate for PhoneInput */}
+          <div>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Contact Phone</label>
+            {can("settings.manage") ? (
+              <PhoneInput
+                value={contactPhone}
+                onChange={setContactPhone}
+                placeholder="XX XXX XXXX"
+              />
+            ) : (
+              <input
+                value={contactPhone}
+                disabled
+                className="w-full px-3 py-2.5 text-sm border rounded-xl outline-none transition-all bg-muted/30 border-border/50 text-muted-foreground cursor-not-allowed"
+              />
+            )}
+          </div>
           {can("settings.manage") && (
             <button 
               onClick={handleSaveProfile}
-              className="px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center gap-2"
+              className="px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center gap-2"
             >
               <Check className="size-4" />
               Save Changes
@@ -93,8 +112,8 @@ export default function MerchantSettingsPage() {
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
           className="bg-card border border-border rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="size-9 rounded-xl bg-[#64c6c3]/10 flex items-center justify-center">
-              <CreditCard className="size-4 text-[#64c6c3]" />
+            <div className="size-9 rounded-xl bg-brand-teal/10 flex items-center justify-center">
+              <CreditCard className="size-4 text-brand-teal" />
             </div>
             <h2 className="font-semibold text-base" style={{ fontFamily: "var(--font-heading)" }}>Payout Account</h2>
           </div>
@@ -112,7 +131,7 @@ export default function MerchantSettingsPage() {
                 <AlertTriangle className="size-4 text-amber-500 shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-800">Bank account changes require NamibraPay Compliance approval and take 2–5 business days to take effect.</p>
               </div>
-              <button className="px-4 py-2.5 border border-[#263b8e]/30 text-[#263b8e] rounded-xl text-sm font-medium hover:bg-[#263b8e]/5 transition-all">
+              <button className="px-4 py-2.5 border border-brand-navy/30 text-brand-navy rounded-xl text-sm font-medium hover:bg-brand-navy/5 transition-all">
                 Request Account Change
               </button>
             </div>
@@ -135,7 +154,7 @@ export default function MerchantSettingsPage() {
                       key={opt.key} 
                       className={cn(
                         "flex flex-col gap-1 p-3 rounded-xl border cursor-pointer transition-all hover:bg-muted/30",
-                        feeBearer === opt.key ? "border-[#64c6c3]/40 bg-[#64c6c3]/5" : "border-border"
+                        feeBearer === opt.key ? "border-brand-teal/40 bg-brand-teal/5" : "border-border"
                       )}
                     >
                       <div className="flex items-center gap-2">
@@ -144,7 +163,7 @@ export default function MerchantSettingsPage() {
                           name="fee_bearer" 
                           checked={feeBearer === opt.key}
                           onChange={() => setFeeBearer(opt.key)}
-                          className="accent-[#64c6c3] size-3" 
+                          className="accent-brand-teal size-3" 
                         />
                         <span className="text-xs font-semibold">{opt.label}</span>
                       </div>
@@ -154,7 +173,7 @@ export default function MerchantSettingsPage() {
                 </div>
                 <button 
                   onClick={handleSaveFeeBearer}
-                  className="w-full px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2"
+                  className="w-full px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2"
                 >
                   <Check className="size-4" />
                   Save Fee Preference
@@ -173,7 +192,7 @@ export default function MerchantSettingsPage() {
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="bg-card border border-border rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-3 mb-2">
-              <div className="size-9 rounded-xl bg-[#bcbbee]/10 flex items-center justify-center">
+              <div className="size-9 rounded-xl bg-brand-lavender/10 flex items-center justify-center">
                 <Bell className="size-4 text-[#5c3d9e]" />
               </div>
               <h2 className="font-semibold text-base" style={{ fontFamily: "var(--font-heading)" }}>Notifications</h2>
@@ -195,14 +214,14 @@ export default function MerchantSettingsPage() {
                     type="checkbox" 
                     checked={notificationPrefs[n.key]}
                     onChange={(e) => setNotificationPrefs(prev => ({ ...prev, [n.key]: e.target.checked }))}
-                    className="accent-[#64c6c3] size-4" 
+                    className="accent-brand-teal size-4" 
                   />
                 </div>
               ))}
             </div>
             <button 
               onClick={handleSaveNotifications}
-              className="w-full px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2"
+              className="w-full px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2"
             >
               <Check className="size-4" />
               Save Notification Preferences
@@ -214,7 +233,7 @@ export default function MerchantSettingsPage() {
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
           className="bg-card border border-border rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="size-9 rounded-xl bg-[#a3ffe2]/10 flex items-center justify-center">
+            <div className="size-9 rounded-xl bg-brand-mint/10 flex items-center justify-center">
               <Shield className="size-4 text-[#1a7a5e]" />
             </div>
             <h2 className="font-semibold text-base" style={{ fontFamily: "var(--font-heading)" }}>Security</h2>
