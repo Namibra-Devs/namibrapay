@@ -5,6 +5,14 @@ export async function signIn(payload: SignInPayload): Promise<SignInResponse> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   
+  // Mock: Check if account is pending approval
+  // In production, backend would return this status
+  const isPending = false; // Set to true to test pending flow
+  
+  if (isPending) {
+    throw new Error("ACCOUNT_PENDING: Your account is still under review. Please check your email for updates.");
+  }
+  
   // Mock response - returning successful auth (no MFA required)
   return {
     token: "mock-token",
@@ -14,7 +22,7 @@ export async function signIn(payload: SignInPayload): Promise<SignInResponse> {
       firstName: "Test",
       lastName: "User",
       businessName: "Test Business",
-      role: "owner",
+      role: "owner", // Default to merchant owner role
     },
   };
 }

@@ -88,7 +88,7 @@ export default function UseCases() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="text-gray-500 text-sm leading-relaxed max-w-[240px] md:mt-14"
+            className="text-gray-500 text-sm leading-relaxed max-w-60 md:mt-14"
           >
             Custom infrastructure tailored to the specific flow dynamics of your
             industry.

@@ -54,7 +54,18 @@ export default function SignInPage() {
       localStorage.setItem(TOKEN_KEY, res.token);
       showToast("success", "Welcome back!", `Good to see you, ${res.user.firstName}.`);
       await new Promise((r) => setTimeout(r, 1400));
-      router.push("/dashboard");
+      
+      // Route based on user role/tier
+      const role = res.user.role;
+      
+      if (role === "super_admin" || role === "finance" || role === "compliance" || role === "support" || role === "engineer") {
+        router.push("/platform");
+      } else if (role === "sub_merchant_admin" || role === "sub_merchant_viewer") {
+        router.push("/sub-merchant");
+      } else {
+        // Merchant roles (owner, admin, developer, finance, support)
+        router.push("/merchant");
+      }
     } catch (err) {
       showToast("error", "Sign in failed", getErrorMessage(err));
     }
@@ -100,10 +111,21 @@ export default function SignInPage() {
 
           {/* Password */}
           <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-xs text-brand-navy hover:text-brand-teal transition-colors font-medium"
+              >
+                Forgot?
+              </Link>
+            </div>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Password"
+                placeholder="Enter your password"
                 autoComplete="current-password"
                 disabled={isSubmitting}
                 {...register("password")}
@@ -148,25 +170,27 @@ export default function SignInPage() {
           </div>
         </form>
 
-        {/* Forgot password */}
-        <p className="mt-5 text-center text-sm">
+        {/* Sign up prompt */}
+        <p className="mt-6 text-center text-sm text-gray-600">
+          New to NamibraPay?{" "}
           <Link
-            href="/forgot-password"
-            className="text-brand-navy hover:text-brand-teal transition-colors font-medium"
+            href="/signup"
+            className="text-brand-teal font-semibold hover:text-brand-teal/80 transition-colors"
           >
-            Forgot your password?
+            Create an account
           </Link>
         </p>
       </div>
 
-      {/* Sign up prompt */}
-      <p className="mt-7 text-center text-white/60 text-sm">
-        New to NamibraPay?{" "}
-        <Link
-          href="/signup"
-          className="text-brand-teal font-semibold hover:underline transition-colors"
-        >
-          Sign up
+      {/* Privacy & Terms Note */}
+      <p className="mt-7 text-center text-xs text-white/60">
+        By signing in, you agree to our{" "}
+        <Link href="/terms" className="text-white/80 hover:text-brand-teal transition-colors font-medium">
+          Terms of Service
+        </Link>
+        {" "}and{" "}
+        <Link href="/privacy" className="text-white/80 hover:text-brand-teal transition-colors font-medium">
+          Privacy Policy
         </Link>
       </p>
     </motion.div>

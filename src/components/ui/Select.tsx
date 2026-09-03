@@ -16,7 +16,9 @@ interface SelectProps {
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  triggerClassName?: string;
   disabled?: boolean;
+  compact?: boolean;
 }
 
 export default function Select({
@@ -25,7 +27,9 @@ export default function Select({
   onChange,
   placeholder = "Select…",
   className,
+  triggerClassName,
   disabled = false,
+  compact = false,
 }: SelectProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -59,13 +63,15 @@ export default function Select({
         aria-haspopup="listbox"
         aria-expanded={open}
         className={cn(
-          "w-full flex items-center gap-2 px-3 py-2 bg-card border rounded-lg text-sm focus:outline-none transition-all",
+          "flex items-center gap-2 bg-card border text-sm focus:outline-none transition-all",
+          compact ? "px-3 py-3" : "w-full px-3 py-2 rounded-lg",
           disabled
             ? "opacity-50 cursor-not-allowed border-border"
             : open
             ? "border-border ring-2 ring-brand-teal/20"
             : "border-border hover:border-gray-300",
-          "text-left"
+          "text-left",
+          triggerClassName
         )}
       >
         <span className={cn("flex-1 truncate", selected ? "text-foreground" : "text-gray-400")}>
