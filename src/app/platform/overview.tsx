@@ -160,7 +160,7 @@ export default function PlatformOverview() {
               {unread.length} unread · {allAlerts.length} total
             </p>
           </div>
-          <div className="overflow-y-auto max-h-[380px] space-y-2 pr-0.5">
+          <div className="overflow-y-auto max-h-95 space-y-2 pr-0.5">
             <AlertsFeed alerts={allAlerts} />
           </div>
         </div>

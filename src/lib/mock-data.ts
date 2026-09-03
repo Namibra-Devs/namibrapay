@@ -53,7 +53,7 @@ export const mockProviders: Provider[] = [
     name: "MTN Mobile Money",
     shortCode: "MTN",
     status: "operational",
-    lastSuccessful: new Date(Date.now() - 45000).toISOString(),
+    lastSuccessful: "2026-09-03T12:30:00Z",
     avgLatencyMs: 342,
     nspBalance: 2_840_000,
     nspThreshold: 500_000,
@@ -65,7 +65,7 @@ export const mockProviders: Provider[] = [
     name: "Vodafone Cash",
     shortCode: "VOD",
     status: "degraded",
-    lastSuccessful: new Date(Date.now() - 180000).toISOString(),
+    lastSuccessful: "2026-09-03T12:27:00Z",
     avgLatencyMs: 1240,
     nspBalance: 620_000,
     nspThreshold: 500_000,
@@ -77,7 +77,7 @@ export const mockProviders: Provider[] = [
     name: "AirtelTigo Money",
     shortCode: "AT",
     status: "operational",
-    lastSuccessful: new Date(Date.now() - 30000).toISOString(),
+    lastSuccessful: "2026-09-03T12:31:00Z",
     avgLatencyMs: 289,
     nspBalance: 1_100_000,
     nspThreshold: 300_000,
@@ -89,7 +89,7 @@ export const mockProviders: Provider[] = [
     name: "GhIPSS / GIP",
     shortCode: "GIP",
     status: "down",
-    lastSuccessful: new Date(Date.now() - 7200000).toISOString(),
+    lastSuccessful: "2026-09-03T10:30:00Z",
     avgLatencyMs: 0,
     nspBalance: 380_000,
     nspThreshold: 400_000,
@@ -180,7 +180,7 @@ export const mockAlerts: Alert[] = [
     title: "GhIPSS / GIP Provider Down",
     description: "No successful transactions in the last 2 hours. Engineering notified.",
     severity: "critical",
-    createdAt: new Date(Date.now() - 7200000).toISOString(),
+    createdAt: "2026-09-03T10:30:00Z",
     isRead: false,
   },
   {
@@ -189,7 +189,7 @@ export const mockAlerts: Alert[] = [
     title: "Vodafone Cash NSP Balance Warning",
     description: "Balance GHS 620,000 is approaching threshold of GHS 500,000.",
     severity: "high",
-    createdAt: new Date(Date.now() - 3600000).toISOString(),
+    createdAt: "2026-09-03T11:30:00Z",
     isRead: false,
   },
   {
@@ -198,7 +198,7 @@ export const mockAlerts: Alert[] = [
     title: "SumaFoods Ghana — Compliance Hold",
     description: "Account suspended pending AML investigation. KYC Officer assigned.",
     severity: "high",
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    createdAt: "2026-09-02T12:30:00Z",
     isRead: true,
   },
   {
@@ -207,7 +207,7 @@ export const mockAlerts: Alert[] = [
     title: "Payout Batch #PB-2024-0891 Failed",
     description: "3 of 47 payouts failed. Finance review required.",
     severity: "medium",
-    createdAt: new Date(Date.now() - 10800000).toISOString(),
+    createdAt: "2026-09-03T09:30:00Z",
     isRead: false,
   },
   {
@@ -216,7 +216,7 @@ export const mockAlerts: Alert[] = [
     title: "Unusual Login Activity Detected",
     description: "Multiple failed login attempts from IP 41.189.xxx.xxx.",
     severity: "medium",
-    createdAt: new Date(Date.now() - 21600000).toISOString(),
+    createdAt: "2026-09-03T06:30:00Z",
     isRead: true,
   },
 ];
@@ -242,7 +242,7 @@ export const mockTransactions: Transaction[] = Array.from({ length: 20 }, (_, i)
   provider: ["MTN", "VOD", "AT", "GIP"][Math.floor(Math.random() * 4)] ?? "MTN",
   type: Math.random() > 0.3 ? "collection" : "payout",
   customerRef: `REF-${Math.random().toString(36).slice(2, 10).toUpperCase()}`,
-  createdAt: new Date(Date.now() - Math.floor(Math.random() * 86400000)).toISOString(),
+  createdAt: `2026-09-0${2 + Math.floor(Math.random() * 2)}T${String(Math.floor(Math.random() * 24)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}:00Z`,
 }));
 
 export const currentUserRole: Role = "super_admin";

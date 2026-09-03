@@ -22,6 +22,8 @@ import { mockChartData } from "@/lib/mock-data";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Textarea } from "@/components/ui/form-field";
+import DatePicker from "@/components/ui/date-picker";
+import CustomSelect from "@/components/ui/select";
 
 // ── Tabs ────────────────────────────────────────────────────────────────────
 type Tab = "overview" | "prefunding" | "reconciliation" | "payouts" | "fee_ledger" | "reports";
@@ -59,9 +61,9 @@ const reconcStatusCfg: Record<ReconciliationEntry["status"], { label: string; co
 };
 
 const reportTypeCfg = {
-  reconciliation: { color: "bg-[#263b8e]/10 text-[#263b8e]", label: "Reconciliation" },
-  fee_ledger:     { color: "bg-[#64c6c3]/10 text-[#1a6e6c]", label: "Fee Ledger"     },
-  payout:         { color: "bg-[#fedfb8]/40 text-amber-700", label: "Payouts"        },
+  reconciliation: { color: "bg-brand-navy/10 text-brand-navy", label: "Reconciliation" },
+  fee_ledger:     { color: "bg-brand-teal/10 text-[#1a6e6c]", label: "Fee Ledger"     },
+  payout:         { color: "bg-brand-peach/40 text-amber-700", label: "Payouts"        },
   volume:         { color: "bg-[#bcbbee]/40 text-purple-700", label: "Volume"        },
   nsp_balance:    { color: "bg-emerald-50 text-emerald-700",  label: "NSP Balance"   },
 };
@@ -103,7 +105,7 @@ function NspBalanceBar({ balance, threshold }: { balance: number; threshold: num
     <div className="mt-2">
       <div className="relative h-2 bg-muted rounded-full overflow-hidden">
         <div
-          className={cn("h-full rounded-full transition-all", isCritical ? "bg-red-500" : isWarning ? "bg-amber-400" : "bg-[#64c6c3]")}
+          className={cn("h-full rounded-full transition-all", isCritical ? "bg-red-500" : isWarning ? "bg-amber-400" : "bg-brand-teal")}
           style={{ width: `${pct}%` }}
         />
         {/* Threshold marker */}
@@ -140,6 +142,15 @@ export default function TreasuryPage() {
   const [exportReportType, setExportReportType] = useState("");
   const [exportDateFrom, setExportDateFrom] = useState("");
   const [exportDateTo, setExportDateTo] = useState("");
+  const [prefundProviderId, setPrefundProviderId] = useState("");
+  
+  // Report generation modal state
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportType, setReportType] = useState<string>("");
+  const [reportName, setReportName] = useState("");
+  const [reportDateFrom, setReportDateFrom] = useState("");
+  const [reportDateTo, setReportDateTo] = useState("");
+  const [reportFormat, setReportFormat] = useState<"pdf" | "csv">("pdf");
   
   const { showToast } = useToast();
 
@@ -325,7 +336,7 @@ export default function TreasuryPage() {
                     Prefunded float amounts, daily average utilization, and peak usage by provider
                   </p>
                 </div>
-                <BarChart2 className="size-8 text-[#64c6c3]" />
+                <BarChart2 className="size-8 text-brand-teal" />
               </div>
 
               {/* Provider Float Cards */}
@@ -374,7 +385,9 @@ export default function TreasuryPage() {
                     },
                   ];
 
-                  return floatData.map((provider) => {
+                  return (
+                    <>
+                      {floatData.map((provider) => {
                     const utilizationPercent = (provider.dailyAvgUtilization / provider.prefundedAmount) * 100;
                     const peakPercent = (provider.peakUtilization / provider.prefundedAmount) * 100;
                     const idlePercent = (provider.idleFloat / provider.prefundedAmount) * 100;
@@ -498,7 +511,9 @@ export default function TreasuryPage() {
                         })()}
                       </div>
                     );
-                  });
+                  })}
+                    </>
+                  );
                 })()}
               </div>
 
@@ -552,7 +567,7 @@ export default function TreasuryPage() {
               <p className="text-sm text-muted-foreground">Track and approve NSP prefunding requests.</p>
               {canApprove && (
                 <button onClick={() => setShowPrefundModal(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all">
+                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all">
                   <Plus className="size-4" /> New Request
                 </button>
               )}
@@ -568,8 +583,8 @@ export default function TreasuryPage() {
                   <div key={req.id} className={cn("bg-card border rounded-2xl p-5", isPending && canApprove ? "border-amber-200/60 shadow-sm" : "border-border")}>
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-3">
-                        <div className="size-9 rounded-xl bg-[#263b8e]/10 flex items-center justify-center shrink-0">
-                          <Banknote className="size-4 text-[#263b8e]" />
+                        <div className="size-9 rounded-xl bg-brand-navy/10 flex items-center justify-center shrink-0">
+                          <Banknote className="size-4 text-brand-navy" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2 mb-0.5">
@@ -593,7 +608,7 @@ export default function TreasuryPage() {
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-lg font-bold text-[#263b8e]" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(req.amount)}</p>
+                        <p className="text-lg font-bold text-brand-navy" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(req.amount)}</p>
                         {isPending && canApprove && (
                           <div className="flex items-center gap-2 mt-2.5">
                             <button
@@ -603,7 +618,7 @@ export default function TreasuryPage() {
                             </button>
                             <button
                               onClick={() => setApprovalModal({ type: "prefund", id: req.id, action: "approve" })}
-                              className="px-3 py-1.5 rounded-lg bg-[#263b8e] hover:bg-[#1e2f72] text-white text-xs font-medium transition-all">
+                              className="px-3 py-1.5 rounded-lg bg-brand-navy hover:bg-[#1e2f72] text-white text-xs font-medium transition-all">
                               Approve
                             </button>
                           </div>
@@ -671,7 +686,7 @@ export default function TreasuryPage() {
                           <td className="px-4 py-3.5">
                             {entry.status === "discrepancy" && (
                               <button onClick={() => setExpandedReconc(isExpanded ? null : entry.id)}
-                                className="flex items-center gap-1 text-xs text-[#263b8e] hover:underline">
+                                className="flex items-center gap-1 text-xs text-brand-navy hover:underline">
                                 Details {isExpanded ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
                               </button>
                             )}
@@ -732,7 +747,7 @@ export default function TreasuryPage() {
                   <div key={batch.id} className={cn("bg-card border rounded-2xl p-5", isPending && canApprove ? "border-amber-200/60 shadow-sm" : "border-border")}>
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-3">
-                        <div className="size-9 rounded-xl bg-[#64c6c3]/10 flex items-center justify-center shrink-0">
+                        <div className="size-9 rounded-xl bg-brand-teal/10 flex items-center justify-center shrink-0">
                           <ArrowUpRight className="size-4 text-[#1a6e6c]" />
                         </div>
                         <div>
@@ -760,7 +775,7 @@ export default function TreasuryPage() {
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-lg font-bold text-[#263b8e]" style={{ fontFamily: "var(--font-heading)" }}>
+                        <p className="text-lg font-bold text-brand-navy" style={{ fontFamily: "var(--font-heading)" }}>
                           {formatGHS(batch.totalAmount)}
                         </p>
                         {isPending && canApprove && (
@@ -772,7 +787,7 @@ export default function TreasuryPage() {
                             </button>
                             <button
                               onClick={() => setApprovalModal({ type: "payout", id: batch.id, action: "approve" })}
-                              className="px-3 py-1.5 rounded-lg bg-[#263b8e] hover:bg-[#1e2f72] text-white text-xs font-medium transition-all">
+                              className="px-3 py-1.5 rounded-lg bg-brand-navy hover:bg-[#1e2f72] text-white text-xs font-medium transition-all">
                               Approve
                             </button>
                           </div>
@@ -794,12 +809,12 @@ export default function TreasuryPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
                 <input value={ledgerSearch} onChange={(e) => setLedgerSearch(e.target.value)}
                   placeholder="Search merchant or ref…"
-                  className="w-full pl-9 pr-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 transition-all" />
+                  className="w-full pl-9 pr-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-teal/60 transition-all" />
               </div>
               <div className="flex items-center gap-3">
                 <div className="text-right">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total fees shown</p>
-                  <p className="text-sm font-bold text-[#263b8e]">{formatGHS(filteredLedger.reduce((s, e) => s + e.feeAmount, 0))}</p>
+                  <p className="text-sm font-bold text-brand-navy">{formatGHS(filteredLedger.reduce((s, e) => s + e.feeAmount, 0))}</p>
                 </div>
                 <button 
                   onClick={() => setShowExportModal(true)}
@@ -823,17 +838,17 @@ export default function TreasuryPage() {
                   {filteredLedger.map((entry) => (
                     <tr key={entry.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
                       <td className="pl-5 pr-3 py-3 text-xs text-muted-foreground whitespace-nowrap">{formatDate(entry.date)}</td>
-                      <td className="px-3 py-3 text-xs font-medium max-w-[140px] truncate">{entry.merchantName}</td>
+                      <td className="px-3 py-3 text-xs font-medium max-w-35 truncate">{entry.merchantName}</td>
                       <td className="px-3 py-3 text-xs">{entry.channel}</td>
                       <td className="px-3 py-3">
                         <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium",
-                          entry.transactionType === "collection" ? "bg-[#64c6c3]/10 text-[#1a6e6c]" : "bg-[#fedfb8]/40 text-amber-700")}>
+                          entry.transactionType === "collection" ? "bg-brand-teal/10 text-[#1a6e6c]" : "bg-brand-peach/40 text-amber-700")}>
                           {entry.transactionType === "collection" ? <ArrowDownLeft className="size-2.5" /> : <ArrowUpRight className="size-2.5" />}
                           {entry.transactionType}
                         </span>
                       </td>
                       <td className="px-3 py-3 text-xs font-medium">{formatGHS(entry.transactionAmount)}</td>
-                      <td className="px-3 py-3 text-xs font-mono text-[#263b8e] font-bold">{entry.feeRate}</td>
+                      <td className="px-3 py-3 text-xs font-mono text-brand-navy font-bold">{entry.feeRate}</td>
                       <td className="px-3 py-3 text-xs font-semibold">{formatGHS(entry.feeAmount)}</td>
                       <td className="px-3 py-3 text-xs text-muted-foreground">{formatGHS(entry.nspShare)}</td>
                       <td className="px-3 py-3 text-xs text-muted-foreground">{formatGHS(entry.platformShare)}</td>
@@ -852,7 +867,10 @@ export default function TreasuryPage() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">Generate and download financial reports.</p>
               {canApprove && (
-                <button className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all">
+                <button 
+                  onClick={() => setShowReportModal(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
+                >
                   <Plus className="size-4" /> Generate Report
                 </button>
               )}
@@ -894,8 +912,15 @@ export default function TreasuryPage() {
                 {(["reconciliation", "fee_ledger", "payout", "volume", "nsp_balance"] as const).map((t) => {
                   const cfg = reportTypeCfg[t];
                   return (
-                    <button key={t}
-                      className={cn("flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border border-border text-xs font-medium transition-all hover:shadow-sm", cfg.color, "bg-card hover:bg-muted/30")}>
+                    <button 
+                      key={t}
+                      onClick={() => {
+                        setReportType(t);
+                        setReportName(`${cfg.label} Report`);
+                        setShowReportModal(true);
+                      }}
+                      className={cn("flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border border-border text-xs font-medium transition-all hover:shadow-sm", cfg.color, "bg-card hover:bg-muted/30")}
+                    >
                       <BarChart2 className="size-4" />
                       {cfg.label}
                     </button>
@@ -916,8 +941,8 @@ export default function TreasuryPage() {
               className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl"
               onClick={(e) => e.stopPropagation()}>
               <div className={cn("size-11 rounded-xl flex items-center justify-center mb-4 border",
-                approvalModal.action === "approve" ? "bg-[#263b8e]/10 border-[#263b8e]/20" : "bg-red-50 border-red-200")}>
-                {approvalModal.action === "approve" ? <CheckCircle className="size-5 text-[#263b8e]" /> : <XCircle className="size-5 text-red-500" />}
+                approvalModal.action === "approve" ? "bg-brand-navy/10 border-brand-navy/20" : "bg-red-50 border-red-200")}>
+                {approvalModal.action === "approve" ? <CheckCircle className="size-5 text-brand-navy" /> : <XCircle className="size-5 text-red-500" />}
               </div>
               <h2 className="font-bold text-lg mb-1" style={{ fontFamily: "var(--font-heading)" }}>
                 {approvalModal.action === "approve" ? "Approve" : "Reject"} {approvalModal.type === "prefund" ? "Prefund Request" : "Payout Batch"}
@@ -933,7 +958,7 @@ export default function TreasuryPage() {
                 </label>
                 <textarea rows={2} value={approvalNote} onChange={(e) => setApprovalNote(e.target.value)}
                   placeholder={approvalModal.action === "approve" ? "Optional note…" : "Reason for rejection…"}
-                  className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-[#64c6c3]/60 transition-all" />
+                  className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-brand-teal/60 transition-all" />
               </div>
               <div className="flex gap-3">
                 <button onClick={() => { setApprovalModal(null); setApprovalNote(""); }}
@@ -954,7 +979,7 @@ export default function TreasuryPage() {
                     setApprovalNote("");
                   }}
                   className={cn("flex-1 px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed",
-                    approvalModal.action === "approve" ? "bg-[#263b8e] hover:bg-[#1e2f72]" : "bg-destructive hover:opacity-90")}>
+                    approvalModal.action === "approve" ? "bg-brand-navy hover:bg-[#1e2f72]" : "bg-destructive hover:opacity-90")}>
                   {approvalModal.action === "approve" ? "Confirm Approval" : "Confirm Rejection"}
                 </button>
               </div>
@@ -981,21 +1006,25 @@ export default function TreasuryPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Provider</label>
-                  <select className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 transition-all">
-                    {mockProviders.map((p) => (
-                      <option key={p.id} value={p.id}>{p.name} — {formatGHS(p.nspBalance)} current</option>
-                    ))}
-                  </select>
+                  <CustomSelect
+                    value={prefundProviderId}
+                    onChange={setPrefundProviderId}
+                    options={mockProviders.map((p) => ({
+                      value: p.id,
+                      label: `${p.name} — ${formatGHS(p.nspBalance)} current`
+                    }))}
+                    placeholder="Select provider..."
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Amount (GHS)</label>
                   <input type="number" placeholder="e.g. 500000"
-                    className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 transition-all" />
+                    className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-teal/60 transition-all" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Justification</label>
                   <textarea rows={3} placeholder="Why is this prefund needed?"
-                    className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-[#64c6c3]/60 transition-all" />
+                    className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-brand-teal/60 transition-all" />
                 </div>
               </div>
               <div className="flex gap-3 mt-5">
@@ -1005,7 +1034,7 @@ export default function TreasuryPage() {
                   showToast("success", "Prefund Request Submitted", "Your request has been submitted for approval.");
                   setShowPrefundModal(false);
                 }}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-[#263b8e] hover:bg-[#1e2f72] text-white text-sm font-medium transition-all">Submit Request</button>
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-brand-navy hover:bg-[#1e2f72] text-white text-sm font-medium transition-all">Submit Request</button>
               </div>
             </motion.div>
           </div>
@@ -1085,7 +1114,7 @@ export default function TreasuryPage() {
                 showToast("success", "Thresholds Updated", "NSP alert thresholds have been saved.");
                 setShowThresholdModal(false);
               }}
-              className="flex-1 px-4 py-2.5 bg-[#64c6c3] hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
+              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
             >
               Save Changes
             </button>
@@ -1216,7 +1245,7 @@ export default function TreasuryPage() {
                 className={cn(
                   "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
                   exportFormat === "csv"
-                    ? "border-[#64c6c3] bg-[#64c6c3]/5"
+                    ? "border-brand-teal bg-brand-teal/5"
                     : "border-border hover:border-muted-foreground/30"
                 )}
               >
@@ -1225,14 +1254,14 @@ export default function TreasuryPage() {
                   <p className="text-sm font-semibold">CSV</p>
                   <p className="text-xs text-muted-foreground">Spreadsheet format</p>
                 </div>
-                {exportFormat === "csv" && <Check className="size-4 text-[#64c6c3] ml-auto" />}
+                {exportFormat === "csv" && <Check className="size-4 text-brand-teal ml-auto" />}
               </button>
               <button
                 onClick={() => setExportFormat("pdf")}
                 className={cn(
                   "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
                   exportFormat === "pdf"
-                    ? "border-[#263b8e] bg-[#263b8e]/5"
+                    ? "border-brand-navy bg-brand-navy/5"
                     : "border-border hover:border-muted-foreground/30"
                 )}
               >
@@ -1241,7 +1270,7 @@ export default function TreasuryPage() {
                   <p className="text-sm font-semibold">PDF</p>
                   <p className="text-xs text-muted-foreground">Print-ready report</p>
                 </div>
-                {exportFormat === "pdf" && <Check className="size-4 text-[#263b8e] ml-auto" />}
+                {exportFormat === "pdf" && <Check className="size-4 text-brand-navy ml-auto" />}
               </button>
             </div>
           </FormField>
@@ -1252,19 +1281,19 @@ export default function TreasuryPage() {
             required
             description="Select data to export"
           >
-            <select
+            <CustomSelect
               value={exportReportType}
-              onChange={(e) => setExportReportType(e.target.value)}
-              className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 focus:ring-2 focus:ring-[#64c6c3]/10 transition-all"
-            >
-              <option value="">Select report type...</option>
-              <option value="financial">Financial Summary Report</option>
-              <option value="fee_ledger">Fee Ledger (All Transactions)</option>
-              <option value="reconciliation">Reconciliation Records</option>
-              <option value="float_utilization">Float Utilization Report</option>
-              <option value="payout_history">Payout Batch History</option>
-              <option value="prefund_requests">NSP Prefunding Requests</option>
-            </select>
+              onChange={setExportReportType}
+              options={[
+                { value: "financial", label: "Financial Summary Report" },
+                { value: "fee_ledger", label: "Fee Ledger (All Transactions)" },
+                { value: "reconciliation", label: "Reconciliation Records" },
+                { value: "float_utilization", label: "Float Utilization Report" },
+                { value: "payout_history", label: "Payout Batch History" },
+                { value: "prefund_requests", label: "NSP Prefunding Requests" },
+              ]}
+              placeholder="Select report type..."
+            />
           </FormField>
 
           {/* Date Range */}
@@ -1274,10 +1303,11 @@ export default function TreasuryPage() {
               required
               description="From date"
             >
-              <Input
-                type="date"
+              <DatePicker
                 value={exportDateFrom}
-                onChange={(e) => setExportDateFrom(e.target.value)}
+                onChange={setExportDateFrom}
+                placeholder="Select start date"
+                max={exportDateTo || undefined}
               />
             </FormField>
             <FormField
@@ -1285,10 +1315,11 @@ export default function TreasuryPage() {
               required
               description="To date"
             >
-              <Input
-                type="date"
+              <DatePicker
                 value={exportDateTo}
-                onChange={(e) => setExportDateTo(e.target.value)}
+                onChange={setExportDateTo}
+                placeholder="Select end date"
+                min={exportDateFrom || undefined}
               />
             </FormField>
           </div>
@@ -1349,10 +1380,160 @@ export default function TreasuryPage() {
                 setExportDateFrom("");
                 setExportDateTo("");
               }}
-              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <Download className="size-4" />
               Generate Export
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ── Report Generation Modal ── */}
+      <Modal
+        isOpen={showReportModal}
+        onClose={() => {
+          setShowReportModal(false);
+          setReportType("");
+          setReportName("");
+          setReportDateFrom("");
+          setReportDateTo("");
+          setReportFormat("pdf");
+        }}
+        title="Generate Financial Report"
+        description="Create custom financial reports with specific parameters"
+        size="md"
+      >
+        <div className="space-y-4">
+          {/* Report Type */}
+          <FormField
+            label="Report Type"
+            required
+            description="Select the type of report to generate"
+          >
+            <CustomSelect
+              value={reportType}
+              onChange={setReportType}
+              options={[
+                { value: "reconciliation", label: "Reconciliation Report" },
+                { value: "fee_ledger", label: "Fee Ledger Report" },
+                { value: "payout", label: "Payout Report" },
+                { value: "volume", label: "Transaction Volume Report" },
+                { value: "nsp_balance", label: "NSP Balance Report" },
+                { value: "financial_summary", label: "Financial Summary Report" },
+                { value: "custom", label: "Custom Report" },
+              ]}
+              placeholder="Select report type..."
+            />
+          </FormField>
+
+          {/* Report Name */}
+          <FormField
+            label="Report Name"
+            required
+            description="Give this report a descriptive name"
+          >
+            <Input
+              value={reportName}
+              onChange={(e) => setReportName(e.target.value)}
+              placeholder="e.g., Monthly Reconciliation Report"
+            />
+          </FormField>
+
+          {/* Date Range */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              label="Start Date"
+              required
+              description="Report start date"
+            >
+              <DatePicker
+                value={reportDateFrom}
+                onChange={setReportDateFrom}
+                placeholder="Select start date"
+                max={reportDateTo || undefined}
+              />
+            </FormField>
+            <FormField
+              label="End Date"
+              required
+              description="Report end date"
+            >
+              <DatePicker
+                value={reportDateTo}
+                onChange={setReportDateTo}
+                placeholder="Select end date"
+                min={reportDateFrom || undefined}
+              />
+            </FormField>
+          </div>
+
+          {/* Format Selection */}
+          <FormField
+            label="Output Format"
+            required
+            description="Choose report format"
+          >
+            <CustomSelect
+              value={reportFormat}
+              onChange={(v) => setReportFormat(v as "pdf" | "csv")}
+              options={[
+                { value: "pdf", label: "PDF Document" },
+                { value: "csv", label: "CSV Spreadsheet" },
+              ]}
+              placeholder="Select format..."
+            />
+          </FormField>
+
+          {/* Info Note */}
+          {reportType && reportDateFrom && reportDateTo && (
+            <div className="bg-brand-navy/5 border border-brand-navy/20 rounded-xl p-4 flex items-start gap-3">
+              <Info className="size-5 text-brand-navy shrink-0 mt-0.5" />
+              <div className="text-sm text-brand-navy">
+                <p className="font-medium mb-1">Report Preview</p>
+                <p className="text-xs opacity-80">
+                  {reportName || "Unnamed Report"} • {reportTypeCfg[reportType as keyof typeof reportTypeCfg]?.label || reportType} • {reportFormat.toUpperCase()}
+                  <br />
+                  Period: {new Date(reportDateFrom).toLocaleDateString()} - {new Date(reportDateTo).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowReportModal(false);
+                setReportType("");
+                setReportName("");
+                setReportDateFrom("");
+                setReportDateTo("");
+                setReportFormat("pdf");
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!reportType || !reportName || !reportDateFrom || !reportDateTo}
+              onClick={() => {
+                showToast(
+                  "success",
+                  "Report Generation Started",
+                  `${reportName} is being generated as ${reportFormat.toUpperCase()}. It will appear in the reports list once complete.`
+                );
+                setShowReportModal(false);
+                setReportType("");
+                setReportName("");
+                setReportDateFrom("");
+                setReportDateTo("");
+                setReportFormat("pdf");
+              }}
+              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <FileText className="size-4" />
+              Generate Report
             </button>
           </div>
         </div>

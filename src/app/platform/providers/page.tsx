@@ -9,9 +9,11 @@ import {
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Textarea, Select } from "@/components/ui/form-field";
+import DatePicker from "@/components/ui/date-picker";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/constants";
 import { usePermission } from "@/hooks/use-role";
+import CustomSelect from "@/components/ui/select";
 import {
   mockProviderDetails,
   mockProviderCredentials,
@@ -151,7 +153,7 @@ export default function ProvidersPage() {
                     key={provider.id}
                     onClick={() => setSelectedProvider(provider)}
                     className={cn("bg-card border rounded-2xl p-5 text-left transition-all hover:shadow-md",
-                      selectedProvider.id === provider.id ? "border-[#64c6c3] shadow-sm" : "border-border",
+                      selectedProvider.id === provider.id ? "border-brand-teal shadow-sm" : "border-border",
                       isDown && "border-red-200")}
                   >
                     <div className="flex items-center justify-between mb-3">
@@ -311,7 +313,7 @@ export default function ProvidersPage() {
             {/* Add Rule Button */}
             {canEdit && (
               <div className="flex justify-end">
-                <button className="flex items-center gap-2 px-4 py-2.5 bg-[#64c6c3] hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all">
+                <button className="flex items-center gap-2 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all">
                   <GitBranch className="size-4" /> Add Routing Rule
                 </button>
               </div>
@@ -328,7 +330,7 @@ export default function ProvidersPage() {
                     isPending ? "border-amber-200 shadow-sm" : "border-border")}>
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div className="flex items-start gap-3 flex-1">
-                        <div className="size-9 rounded-xl bg-[#64c6c3]/20 flex items-center justify-center shrink-0">
+                        <div className="size-9 rounded-xl bg-brand-teal/20 flex items-center justify-center shrink-0">
                           <GitBranch className="size-4 text-[#1a6e6c]" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -512,7 +514,7 @@ export default function ProvidersPage() {
               {canEdit && (
                 <button
                   onClick={() => setShowScheduleMaintenanceModal(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
                 >
                   <Plus className="size-4" /> Schedule Maintenance
                 </button>
@@ -673,16 +675,17 @@ export default function ProvidersPage() {
             required
             description="Category of mobile money provider"
           >
-            <Select
+            <CustomSelect
               value={newProviderType}
-              onChange={(e) => setNewProviderType(e.target.value)}
-            >
-              <option value="">Select type...</option>
-              <option value="mobile_money">Mobile Money (MNO)</option>
-              <option value="aggregator">Payment Aggregator</option>
-              <option value="bank">Bank Gateway</option>
-              <option value="card">Card Processor</option>
-            </Select>
+              onChange={setNewProviderType}
+              options={[
+                { value: "mobile_money", label: "Mobile Money (MNO)" },
+                { value: "aggregator", label: "Payment Aggregator" },
+                { value: "bank", label: "Bank Gateway" },
+                { value: "card", label: "Card Processor" },
+              ]}
+              placeholder="Select type..."
+            />
           </FormField>
 
           {/* API Base URL */}
@@ -729,7 +732,7 @@ export default function ProvidersPage() {
                 setNewProviderType("");
                 setNewProviderApiUrl("");
               }}
-              className="flex-1 px-4 py-2.5 bg-[#64c6c3] hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Add Provider
             </button>
@@ -798,18 +801,19 @@ export default function ProvidersPage() {
               required
               description="Why is this credential being rotated?"
             >
-              <Select
-                value={rotationReason}
-                onChange={(e) => setRotationReason(e.target.value)}
-              >
-                <option value="">Select reason...</option>
-                <option value="scheduled">Scheduled rotation</option>
-                <option value="expiring">Expiring soon</option>
-                <option value="expired">Expired</option>
-                <option value="compromised">Security compromise suspected</option>
-                <option value="provider_request">Provider requested rotation</option>
-                <option value="other">Other</option>
-              </Select>
+            <CustomSelect
+              value={rotationReason}
+              onChange={setRotationReason}
+              options={[
+                { value: "scheduled", label: "Scheduled rotation" },
+                { value: "expiring", label: "Expiring soon" },
+                { value: "expired", label: "Expired" },
+                { value: "compromised", label: "Security compromise suspected" },
+                { value: "provider_request", label: "Provider requested rotation" },
+                { value: "other", label: "Other" },
+              ]}
+              placeholder="Select reason..."
+            />
             </FormField>
 
             {/* Rotation Notes */}
@@ -853,7 +857,7 @@ export default function ProvidersPage() {
                   setRotationReason("");
                   setRotationNotes("");
                 }}
-                className="flex-1 px-4 py-2.5 bg-[#bcbbee] hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RotateCw className="size-4 inline mr-1.5" /> Rotate Credential
               </button>
@@ -1011,15 +1015,12 @@ export default function ProvidersPage() {
             required
             description="Select network service provider"
           >
-            <Select
+            <CustomSelect
               value={maintenanceProvider}
-              onChange={(e) => setMaintenanceProvider(e.target.value)}
-            >
-              <option value="">Select provider...</option>
-              {mockProviderDetails.map(p => (
-                <option key={p.id} value={p.id}>{p.name}</option>
-              ))}
-            </Select>
+              onChange={setMaintenanceProvider}
+              options={mockProviderDetails.map(p => ({ value: p.id, label: p.name }))}
+              placeholder="Select provider..."
+            />
           </FormField>
 
           {/* Reason */}
@@ -1043,10 +1044,10 @@ export default function ProvidersPage() {
               required
               description="Maintenance date"
             >
-              <Input
-                type="date"
+              <DatePicker
                 value={maintenanceStartDate}
-                onChange={(e) => setMaintenanceStartDate(e.target.value)}
+                onChange={setMaintenanceStartDate}
+                placeholder="Select date"
               />
             </FormField>
             <FormField
@@ -1068,20 +1069,21 @@ export default function ProvidersPage() {
             required
             description="Expected maintenance window length"
           >
-            <Select
+            <CustomSelect
               value={maintenanceDuration}
-              onChange={(e) => setMaintenanceDuration(e.target.value)}
-            >
-              <option value="">Select duration...</option>
-              <option value="30">30 minutes</option>
-              <option value="60">1 hour</option>
-              <option value="120">2 hours</option>
-              <option value="180">3 hours</option>
-              <option value="240">4 hours</option>
-              <option value="360">6 hours</option>
-              <option value="480">8 hours</option>
-              <option value="720">12 hours</option>
-            </Select>
+              onChange={setMaintenanceDuration}
+              options={[
+                { value: "30", label: "30 minutes" },
+                { value: "60", label: "1 hour" },
+                { value: "120", label: "2 hours" },
+                { value: "180", label: "3 hours" },
+                { value: "240", label: "4 hours" },
+                { value: "360", label: "6 hours" },
+                { value: "480", label: "8 hours" },
+                { value: "720", label: "12 hours" },
+              ]}
+              placeholder="Select duration..."
+            />
           </FormField>
 
           {/* Notification Toggle */}
@@ -1091,7 +1093,7 @@ export default function ProvidersPage() {
                 type="checkbox"
                 checked={maintenanceNotifyMerchants}
                 onChange={(e) => setMaintenanceNotifyMerchants(e.target.checked)}
-                className="mt-1 size-4 rounded border-border text-[#263b8e] focus:ring-2 focus:ring-[#263b8e]/20"
+                className="mt-1 size-4 rounded border-border text-brand-navy focus:ring-2 focus:ring-brand-navy/20"
               />
               <div>
                 <p className="text-sm font-semibold">Notify Affected Merchants</p>
@@ -1147,7 +1149,7 @@ export default function ProvidersPage() {
                 setMaintenanceDuration("");
                 setMaintenanceNotifyMerchants(true);
               }}
-              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Schedule Maintenance
             </button>

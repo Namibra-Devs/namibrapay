@@ -12,6 +12,7 @@ import { FormField, Input, Select } from "@/components/ui/form-field";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 import { usePermission } from "@/hooks/use-role";
+import CustomSelect from "@/components/ui/select";
 
 // ── Tabs ────────────────────────────────────────────────────────────────────
 type Tab = "fees" | "limits" | "payouts" | "team" | "notifications" | "system";
@@ -109,7 +110,7 @@ export default function SettingsPage() {
               </button>
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#64c6c3] hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
               >
                 <Save className="size-4" /> Save Changes
               </button>
@@ -183,7 +184,7 @@ export default function SettingsPage() {
                         step="0.1"
                         min="0"
                         max="10"
-                        className="w-20 px-3 py-2 bg-card border border-border rounded-lg text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-[#64c6c3]/20 disabled:opacity-50"
+                        className="w-20 px-3 py-2 bg-card border border-border rounded-lg text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-brand-teal/20 disabled:opacity-50"
                       />
                       <span className="text-2xl font-bold text-muted-foreground">%</span>
                     </div>
@@ -209,7 +210,7 @@ export default function SettingsPage() {
                         step="0.1"
                         min="0"
                         max="10"
-                        className="w-20 px-3 py-2 bg-card border border-border rounded-lg text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-[#64c6c3]/20 disabled:opacity-50"
+                        className="w-20 px-3 py-2 bg-card border border-border rounded-lg text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-brand-teal/20 disabled:opacity-50"
                       />
                       <span className="text-2xl font-bold text-muted-foreground">%</span>
                     </div>
@@ -236,7 +237,7 @@ export default function SettingsPage() {
                         step="0.1"
                         min="0"
                         max="10"
-                        className="w-20 px-3 py-2 bg-card border border-border rounded-lg text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-[#64c6c3]/20 disabled:opacity-50"
+                        className="w-20 px-3 py-2 bg-card border border-border rounded-lg text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-brand-teal/20 disabled:opacity-50"
                       />
                     </div>
                     <p className="text-xs text-muted-foreground">Minimum fee per transaction</p>
@@ -304,7 +305,7 @@ export default function SettingsPage() {
                       step="1000"
                       min="1000"
                       max="100000"
-                      className="flex-1 px-4 py-3 bg-card border border-border rounded-xl text-xl font-bold focus:outline-none focus:ring-2 focus:ring-[#64c6c3]/20 disabled:opacity-50"
+                      className="flex-1 px-4 py-3 bg-card border border-border rounded-xl text-xl font-bold focus:outline-none focus:ring-2 focus:ring-brand-teal/20 disabled:opacity-50"
                     />
                   </div>
                 </div>
@@ -331,7 +332,7 @@ export default function SettingsPage() {
                       step="10000"
                       min="10000"
                       max="1000000"
-                      className="flex-1 px-4 py-3 bg-card border border-border rounded-xl text-xl font-bold focus:outline-none focus:ring-2 focus:ring-[#64c6c3]/20 disabled:opacity-50"
+                      className="flex-1 px-4 py-3 bg-card border border-border rounded-xl text-xl font-bold focus:outline-none focus:ring-2 focus:ring-brand-teal/20 disabled:opacity-50"
                     />
                   </div>
                 </div>
@@ -358,7 +359,7 @@ export default function SettingsPage() {
                       step="100000"
                       min="100000"
                       max="50000000"
-                      className="flex-1 px-4 py-3 bg-card border border-border rounded-xl text-xl font-bold focus:outline-none focus:ring-2 focus:ring-[#64c6c3]/20 disabled:opacity-50"
+                      className="flex-1 px-4 py-3 bg-card border border-border rounded-xl text-xl font-bold focus:outline-none focus:ring-2 focus:ring-brand-teal/20 disabled:opacity-50"
                     />
                   </div>
                 </div>
@@ -404,7 +405,7 @@ export default function SettingsPage() {
                 ].map((schedule) => (
                   <div key={schedule.day} className="flex items-center justify-between p-4 bg-muted/30 rounded-xl">
                     <div className="flex items-center gap-4">
-                      <div className="size-10 rounded-xl bg-[#64c6c3]/20 flex items-center justify-center">
+                      <div className="size-10 rounded-xl bg-brand-teal/20 flex items-center justify-center">
                         <Calendar className="size-5 text-[#1a6e6c]" />
                       </div>
                       <div>
@@ -439,7 +440,7 @@ export default function SettingsPage() {
                 {canEdit && (
                   <button 
                     onClick={() => setShowInviteModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#64c6c3] hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
                   >
                     <UserPlus className="size-4" /> Invite User
                   </button>
@@ -456,7 +457,7 @@ export default function SettingsPage() {
                 ].map((user) => (
                   <div key={user.email} className="flex items-center justify-between p-4 border border-border rounded-xl hover:bg-muted/20 transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className="size-10 rounded-full bg-[#64c6c3]/20 flex items-center justify-center">
+                      <div className="size-10 rounded-full bg-brand-teal/20 flex items-center justify-center">
                         <span className="font-bold text-[#1a6e6c]">{user.name.split(" ").map(n => n[0]).join("")}</span>
                       </div>
                       <div>
@@ -495,8 +496,8 @@ export default function SettingsPage() {
                 ].map((notif) => (
                   <div key={notif.title} className="flex items-center justify-between p-4 border border-border rounded-xl">
                     <div className="flex items-center gap-4">
-                      <div className="size-10 rounded-xl bg-[#263b8e]/10 flex items-center justify-center">
-                        <notif.icon className="size-5 text-[#263b8e]" />
+                      <div className="size-10 rounded-xl bg-brand-navy/10 flex items-center justify-center">
+                        <notif.icon className="size-5 text-brand-navy" />
                       </div>
                       <div>
                         <p className="font-semibold text-sm">{notif.title}</p>
@@ -505,7 +506,7 @@ export default function SettingsPage() {
                     </div>
                     <button
                       className={cn("relative w-12 h-6 rounded-full transition-colors",
-                        notif.enabled ? "bg-[#64c6c3]" : "bg-muted")}
+                        notif.enabled ? "bg-brand-teal" : "bg-muted")}
                       disabled={!canEdit}
                     >
                       <span className={cn("absolute top-0.5 size-5 bg-white rounded-full shadow-sm transition-transform",
@@ -578,7 +579,7 @@ export default function SettingsPage() {
             {/* Security */}
             <div className="bg-card border border-border rounded-2xl p-6">
               <div className="flex items-start gap-3">
-                <Lock className="size-5 text-[#263b8e] shrink-0 mt-0.5" />
+                <Lock className="size-5 text-brand-navy shrink-0 mt-0.5" />
                 <div>
                   <h3 className="text-sm font-semibold mb-2" style={{ fontFamily: "var(--font-heading)" }}>Security & Compliance</h3>
                   <p className="text-sm text-muted-foreground mb-4">
@@ -661,17 +662,18 @@ export default function SettingsPage() {
             required
             description="Determines access permissions and capabilities"
           >
-            <Select
+            <CustomSelect
               value={inviteRole}
-              onChange={(e) => setInviteRole(e.target.value)}
-            >
-              <option value="">Select role...</option>
-              <option value="super_admin">Super Admin (Full Access)</option>
-              <option value="finance_manager">Finance Manager (Treasury & Fees)</option>
-              <option value="compliance_manager">Compliance Manager (KYC & AML)</option>
-              <option value="support_lead">Support Lead (Tickets & Disputes)</option>
-              <option value="platform_engineer">Platform Engineer (Providers & Config)</option>
-            </Select>
+              onChange={setInviteRole}
+              options={[
+                { value: "super_admin", label: "Super Admin (Full Access)" },
+                { value: "finance_manager", label: "Finance Manager (Treasury & Fees)" },
+                { value: "compliance_manager", label: "Compliance Manager (KYC & AML)" },
+                { value: "support_lead", label: "Support Lead (Tickets & Disputes)" },
+                { value: "platform_engineer", label: "Platform Engineer (Providers & Config)" },
+              ]}
+              placeholder="Select role..."
+            />
           </FormField>
 
           {/* Role Permissions Info */}
@@ -740,7 +742,7 @@ export default function SettingsPage() {
                 setInviteRole("");
                 setInviteName("");
               }}
-              className="flex-1 px-4 py-2.5 bg-[#64c6c3] hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Send Invitation
             </button>

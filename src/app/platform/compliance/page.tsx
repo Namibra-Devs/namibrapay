@@ -72,7 +72,7 @@ function DocumentViewerModal({ doc, onClose }: { doc: KycDocument; onClose: () =
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="size-9 rounded-xl bg-[#bcbbee]/20 flex items-center justify-center">
+            <div className="size-9 rounded-xl bg-brand-lavender/20 flex items-center justify-center">
               <FileText className="size-4 text-[#5c3d9e]" />
             </div>
             <div>
@@ -96,7 +96,7 @@ function DocumentViewerModal({ doc, onClose }: { doc: KycDocument; onClose: () =
                   Full PDF viewer would render here in production
                 </p>
               </div>
-              <button className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium mx-auto transition-all">
+              <button className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium mx-auto transition-all">
                 <Download className="size-4" /> Download PDF
               </button>
             </div>
@@ -106,7 +106,7 @@ function DocumentViewerModal({ doc, onClose }: { doc: KycDocument; onClose: () =
                 <FileText className="size-24 text-muted-foreground/40 mx-auto mb-4" />
                 <p className="text-sm text-muted-foreground">Image preview: {doc.fileName}</p>
               </div>
-              <button className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium mx-auto transition-all">
+              <button className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium mx-auto transition-all">
                 <Download className="size-4" /> Download Image
               </button>
             </div>
@@ -232,7 +232,7 @@ export default function CompliancePage() {
         {tab === "kyc_queue" && (
           <>
             {/* Application List */}
-            <div className={cn("flex flex-col transition-all duration-300 border-r border-border", selectedApp ? "w-[420px] shrink-0" : "flex-1")}>
+            <div className={cn("flex flex-col transition-all duration-300 border-r border-border", selectedApp ? "w-105 shrink-0" : "flex-1")}>
               <div className="px-6 py-4 border-b border-border bg-card/30">
                 <div className="flex items-center gap-2 text-xs">
                   <button className="px-2.5 py-1 rounded-lg border transition-all bg-foreground text-background border-foreground">
@@ -259,13 +259,13 @@ export default function CompliancePage() {
                       key={app.id}
                       onClick={() => setSelectedApp(isSelected ? null : app)}
                       className={cn("w-full text-left px-6 py-4 hover:bg-muted/30 transition-colors",
-                        isSelected && "bg-[#bcbbee]/5 border-r-2 border-r-[#bcbbee]",
+                        isSelected && "bg-brand-lavender/5 border-r-2 border-r-brand-lavender",
                         isPending && !isSelected && "bg-amber-50/30")}
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                     >
                       <div className="flex items-start justify-between gap-3 mb-2">
                         <div className="flex items-start gap-3 min-w-0">
-                          <div className="size-9 rounded-xl bg-[#bcbbee]/20 border border-[#bcbbee]/20 flex items-center justify-center shrink-0 mt-0.5">
+                          <div className="size-9 rounded-xl bg-brand-lavender/20 border border-brand-lavender/20 flex items-center justify-center shrink-0 mt-0.5">
                             <Building2 className="size-4 text-[#5c3d9e]" />
                           </div>
                           <div className="min-w-0">
@@ -288,7 +288,7 @@ export default function CompliancePage() {
                           {app.documents.length} doc{app.documents.length > 1 ? "s" : ""}
                         </span>
                         {app.applicationType === "sub_merchant" && (
-                          <span className="px-1.5 py-0.5 bg-[#a3ffe2]/30 text-[#1a7a5e] rounded text-[10px] font-medium">Sub-merchant</span>
+                          <span className="px-1.5 py-0.5 bg-brand-mint/30 text-[#1a7a5e] rounded text-[10px] font-medium">Sub-merchant</span>
                         )}
                       </div>
                     </motion.button>
@@ -308,7 +308,7 @@ export default function CompliancePage() {
                   {/* Detail header */}
                   <div className="px-6 py-4 border-b border-border bg-card/50 flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3">
-                      <div className="size-10 rounded-xl bg-[#bcbbee]/20 flex items-center justify-center shrink-0">
+                      <div className="size-10 rounded-xl bg-brand-lavender/20 flex items-center justify-center shrink-0">
                         <Building2 className="size-5 text-[#5c3d9e]" />
                       </div>
                       <div>
@@ -323,7 +323,7 @@ export default function CompliancePage() {
                             </span>
                           ); })()}
                           {selectedApp.applicationType === "sub_merchant" && (
-                            <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border font-medium bg-[#a3ffe2]/20 text-[#1a7a5e] border-[#a3ffe2]/50">
+                            <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border font-medium bg-brand-mint/20 text-[#1a7a5e] border-brand-mint/50">
                               Sub-merchant
                             </span>
                           )}
@@ -633,7 +633,7 @@ export default function CompliancePage() {
                           <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-border text-xs font-medium hover:bg-muted/50 transition-all">
                             <Eye className="size-3.5" /> View Details
                           </button>
-                          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#263b8e] hover:bg-[#1e2f72] text-white text-xs font-medium transition-all">
+                          <button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-brand-navy hover:bg-[#1e2f72] text-white text-xs font-medium transition-all">
                             <MessageSquare className="size-3.5" /> Escalate
                           </button>
                         </div>
@@ -816,11 +816,11 @@ export default function CompliancePage() {
                     Generate complete KYC documentation package for a specific merchant (2-business-day contractual obligation)
                   </p>
                 </div>
-                <Download className="size-8 text-[#bcbbee]" />
+                <Download className="size-8 text-brand-lavender" />
               </div>
               <button
                 onClick={() => setShowExportModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#bcbbee] hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all"
               >
                 <Download className="size-4" /> Export Package
               </button>
@@ -989,7 +989,7 @@ export default function CompliancePage() {
                     : "Specify what additional information is needed..."
                   }
                   rows={4}
-                  className="w-full px-4 py-3 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#bcbbee]/60 transition-all resize-none"
+                  className="w-full px-4 py-3 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-lavender/60 transition-all resize-none"
                 />
                 <div className="flex items-center gap-2">
                   <button
@@ -1170,7 +1170,7 @@ export default function CompliancePage() {
                 setShowExportModal(false);
                 setExportMerchantId("");
               }}
-              className="flex-1 px-4 py-2.5 bg-[#bcbbee] hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Generate Export
             </button>

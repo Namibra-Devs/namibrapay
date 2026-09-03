@@ -16,6 +16,8 @@ import { usePermission } from "@/hooks/use-role";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Select } from "@/components/ui/form-field";
+import PhoneInput from "@/components/ui/phone-input";
+import CustomSelect from "@/components/ui/select";
 
 // ── Extended merchant detail data ──────────────────────────────────────────
 type FeeSchedule = { label: string; rate: string; cap: string };
@@ -84,7 +86,7 @@ const ACTION_CONFIG: Record<ActionType, { title: string; desc: string; confirm: 
     title: "Impersonate Merchant",
     desc: "You will view the merchant dashboard as the merchant owner. All actions you take will be logged with your identity. This session can be ended at any time.",
     confirm: "Start Impersonation",
-    color: "bg-[#263b8e] hover:bg-[#1e2f72]",
+    color: "bg-brand-navy hover:bg-[#1e2f72]",
   },
 };
 
@@ -173,7 +175,7 @@ export default function MerchantsPage() {
       </AnimatePresence>
 
       {/* ── Merchant list panel ── */}
-      <div className={cn("flex flex-col transition-all duration-300", selected ? "w-[420px] shrink-0 border-r border-border" : "flex-1")}>
+      <div className={cn("flex flex-col transition-all duration-300", selected ? "w-105 shrink-0 border-r border-border" : "flex-1")}>
         {/* Header */}
         <div className="px-6 py-5 border-b border-border bg-card/50">
           <div className="flex items-center justify-between gap-4 mb-4">
@@ -185,7 +187,7 @@ export default function MerchantsPage() {
             </div>
             {canManage && (
               <button onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all shrink-0">
+                className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all shrink-0">
                 <Plus className="size-4" />
                 {selected ? "Add" : "Add Merchant"}
               </button>
@@ -197,7 +199,7 @@ export default function MerchantsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
             <input value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name, reg no, email, industry…"
-              className="w-full pl-9 pr-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 transition-all" />
+              className="w-full pl-9 pr-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-teal/60 transition-all" />
           </div>
 
           {/* Filters */}
@@ -237,12 +239,12 @@ export default function MerchantsPage() {
               <motion.button key={merchant.id}
                 onClick={() => { setSelected(isSelected ? null : merchant); setDetailTab("overview"); }}
                 className={cn("w-full text-left px-6 py-4 hover:bg-muted/30 transition-colors group",
-                  isSelected && "bg-[#64c6c3]/5 border-r-2 border-r-[#64c6c3]")}
+                  isSelected && "bg-brand-teal/5 border-r-2 border-r-brand-teal")}
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="size-9 rounded-xl bg-[#263b8e]/10 border border-[#263b8e]/10 flex items-center justify-center shrink-0 mt-0.5">
-                      <Building2 className="size-4 text-[#263b8e]" />
+                    <div className="size-9 rounded-xl bg-brand-navy/10 border border-brand-navy/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <Building2 className="size-4 text-brand-navy" />
                     </div>
                     <div className="min-w-0">
                       <p className="font-semibold text-sm truncate">{merchant.name}</p>
@@ -291,8 +293,8 @@ export default function MerchantsPage() {
             {/* Detail header */}
             <div className="px-6 py-4 border-b border-border bg-card/50 flex items-start justify-between gap-4">
               <div className="flex items-start gap-3">
-                <div className="size-10 rounded-xl bg-[#263b8e]/10 flex items-center justify-center shrink-0">
-                  <Building2 className="size-5 text-[#263b8e]" />
+                <div className="size-10 rounded-xl bg-brand-navy/10 flex items-center justify-center shrink-0">
+                  <Building2 className="size-5 text-brand-navy" />
                 </div>
                 <div>
                   <h2 className="font-bold text-lg leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
@@ -318,7 +320,7 @@ export default function MerchantsPage() {
               <div className="flex items-center gap-2 shrink-0">
                 {canImpersonate && selected.status === "active" && (
                   <button onClick={() => setActionModal({ merchant: selected, type: "impersonate" })}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#263b8e]/30 text-[#263b8e] text-xs font-medium hover:bg-[#263b8e]/5 transition-all">
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-brand-navy/30 text-brand-navy text-xs font-medium hover:bg-brand-navy/5 transition-all">
                     <Eye className="size-3.5" /> Impersonate
                   </button>
                 )}
@@ -327,7 +329,7 @@ export default function MerchantsPage() {
                     <button className="p-2 rounded-xl border border-border hover:bg-muted/50 transition-all">
                       <MoreHorizontal className="size-4" />
                     </button>
-                    <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-xl shadow-xl z-20 p-1 min-w-[180px] opacity-0 group-hover/actions:opacity-100 transition-opacity pointer-events-none group-hover/actions:pointer-events-auto">
+                    <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-xl shadow-xl z-20 p-1 min-w-45 opacity-0 group-hover/actions:opacity-100 transition-opacity pointer-events-none group-hover/actions:pointer-events-auto">
                       {selected.status === "active" && (
                         <button onClick={() => setActionModal({ merchant: selected, type: "suspend" })}
                           className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-amber-700 hover:bg-amber-50 transition-all">
@@ -437,7 +439,7 @@ export default function MerchantsPage() {
                     })()}
                     {selected.complianceStatus === "flagged" && (
                       <div className="flex gap-2">
-                        <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-[#bcbbee]/40 text-[#5c3d9e] text-xs font-medium hover:bg-[#bcbbee]/10 transition-all">
+                        <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-brand-lavender/40 text-[#5c3d9e] text-xs font-medium hover:bg-brand-lavender/10 transition-all">
                           <UserCheck className="size-3.5" /> View KYC File
                         </button>
                         <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-border text-xs font-medium hover:bg-muted/50 transition-all">
@@ -472,7 +474,7 @@ export default function MerchantsPage() {
                         )}
                         {selected.status === "active" && canImpersonate && (
                           <button onClick={() => setActionModal({ merchant: selected, type: "impersonate" })}
-                            className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-[#263b8e]/20 text-[#263b8e] text-xs font-medium hover:bg-[#263b8e]/5 transition-all">
+                            className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-brand-navy/20 text-brand-navy text-xs font-medium hover:bg-brand-navy/5 transition-all">
                             <Eye className="size-3.5" /> Impersonate
                           </button>
                         )}
@@ -502,7 +504,7 @@ export default function MerchantsPage() {
                           <tr key={fee.label} className="border-b border-border/50 last:border-0">
                             <td className="px-4 py-3 text-sm font-medium">{fee.label}</td>
                             <td className="px-4 py-3">
-                              <span className="text-sm font-bold text-[#263b8e]">{fee.rate}</span>
+                              <span className="text-sm font-bold text-brand-navy">{fee.rate}</span>
                             </td>
                             <td className="px-4 py-3 text-sm text-muted-foreground">{fee.cap}</td>
                           </tr>
@@ -534,7 +536,7 @@ export default function MerchantsPage() {
                   ].map((member) => (
                     <div key={member.email} className="bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-full bg-[#64c6c3]/10 border border-[#64c6c3]/20 flex items-center justify-center">
+                        <div className="size-8 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center">
                           <span className="text-xs font-bold text-[#1a6e6c]">{member.name[0]}</span>
                         </div>
                         <div>
@@ -543,7 +545,7 @@ export default function MerchantsPage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-[11px] px-2 py-0.5 rounded-full border font-medium bg-[#64c6c3]/10 text-[#1a6e6c] border-[#64c6c3]/20">{member.role}</span>
+                        <span className="text-[11px] px-2 py-0.5 rounded-full border font-medium bg-brand-teal/10 text-[#1a6e6c] border-brand-teal/20">{member.role}</span>
                         <p className="text-[10px] text-muted-foreground mt-1">{formatDate(member.lastLogin)}</p>
                       </div>
                     </div>
@@ -558,8 +560,8 @@ export default function MerchantsPage() {
                     <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
                       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Add Internal Note</p>
                       <textarea rows={3} placeholder="Write an internal note about this merchant…"
-                        className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-[#64c6c3]/60 transition-all" />
-                      <button className="px-4 py-2 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-xs font-medium transition-all">
+                        className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-brand-teal/60 transition-all" />
+                      <button className="px-4 py-2 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs font-medium transition-all">
                         Save Note
                       </button>
                     </div>
@@ -569,7 +571,7 @@ export default function MerchantsPage() {
                       {notes.map((note) => (
                         <div key={note.id} className="bg-card border border-border rounded-2xl p-4">
                           <div className="flex items-center justify-between mb-2">
-                            <p className="text-xs font-semibold text-[#263b8e]">{note.author}</p>
+                            <p className="text-xs font-semibold text-brand-navy">{note.author}</p>
                             <p className="text-[10px] text-muted-foreground">{formatDate(note.date)}</p>
                           </div>
                           <p className="text-sm text-foreground/80">{note.text}</p>
@@ -606,12 +608,12 @@ export default function MerchantsPage() {
                       actionModal.type === "suspend" && "bg-amber-50 border-amber-200",
                       actionModal.type === "reactivate" && "bg-emerald-50 border-emerald-200",
                       actionModal.type === "deactivate" && "bg-red-50 border-red-200",
-                      actionModal.type === "impersonate" && "bg-[#263b8e]/10 border-[#263b8e]/20",
+                      actionModal.type === "impersonate" && "bg-brand-navy/10 border-brand-navy/20",
                     )}>
                       {actionModal.type === "suspend" && <Ban className="size-5 text-amber-600" />}
                       {actionModal.type === "reactivate" && <RefreshCw className="size-5 text-emerald-600" />}
                       {actionModal.type === "deactivate" && <Trash2 className="size-5 text-red-600" />}
-                      {actionModal.type === "impersonate" && <Eye className="size-5 text-[#263b8e]" />}
+                      {actionModal.type === "impersonate" && <Eye className="size-5 text-brand-navy" />}
                     </div>
                     <h2 className="font-bold text-lg mb-1" style={{ fontFamily: "var(--font-heading)" }}>{cfg.title}</h2>
                     <p className="text-sm text-muted-foreground mb-1">
@@ -626,7 +628,7 @@ export default function MerchantsPage() {
                         </label>
                         <textarea rows={2} value={actionReason} onChange={(e) => setActionReason(e.target.value)}
                           placeholder="Provide a reason for this action…"
-                          className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-[#64c6c3]/60 transition-all" />
+                          className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-brand-teal/60 transition-all" />
                       </div>
                     )}
 
@@ -725,21 +727,22 @@ export default function MerchantsPage() {
             required
             description="Business sector"
           >
-            <Select
+            <CustomSelect
               value={newMerchantIndustry}
-              onChange={(e) => setNewMerchantIndustry(e.target.value)}
-            >
-              <option value="">Select industry...</option>
-              <option value="retail">Retail & E-commerce</option>
-              <option value="education">Education</option>
-              <option value="healthcare">Healthcare</option>
-              <option value="hospitality">Hospitality</option>
-              <option value="transport">Transport & Logistics</option>
-              <option value="fintech">Financial Technology</option>
-              <option value="agriculture">Agriculture</option>
-              <option value="utilities">Utilities</option>
-              <option value="other">Other</option>
-            </Select>
+              onChange={setNewMerchantIndustry}
+              options={[
+                { value: "retail", label: "Retail & E-commerce" },
+                { value: "education", label: "Education" },
+                { value: "healthcare", label: "Healthcare" },
+                { value: "hospitality", label: "Hospitality" },
+                { value: "transport", label: "Transport & Logistics" },
+                { value: "fintech", label: "Financial Technology" },
+                { value: "agriculture", label: "Agriculture" },
+                { value: "utilities", label: "Utilities" },
+                { value: "other", label: "Other" },
+              ]}
+              placeholder="Select industry..."
+            />
           </FormField>
 
           {/* Contact Details */}
@@ -761,11 +764,10 @@ export default function MerchantsPage() {
               required
               description="Contact number"
             >
-              <Input
-                type="tel"
+              <PhoneInput
                 value={newMerchantPhone}
-                onChange={(e) => setNewMerchantPhone(e.target.value)}
-                placeholder="0244123456"
+                onChange={setNewMerchantPhone}
+                placeholder="XX XXX XXXX"
               />
             </FormField>
           </div>
@@ -820,7 +822,7 @@ export default function MerchantsPage() {
                 setNewMerchantAddress("");
                 setNewMerchantIndustry("");
               }}
-              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Create & Send Invite
             </button>
@@ -922,13 +924,14 @@ export default function MerchantsPage() {
 
           {/* Fee Bearer */}
           <FormField label="Fee Bearer" required description="Who absorbs transaction fees by default">
-            <Select
+            <CustomSelect
               value={feeConfig.feeBearer}
-              onChange={(e) => setFeeConfig({ ...feeConfig, feeBearer: e.target.value as "merchant" | "payer" })}
-            >
-              <option value="merchant">Merchant absorbs fees (deducted from settlement)</option>
-              <option value="payer">Payer bears fees (added to checkout amount)</option>
-            </Select>
+              onChange={(val) => setFeeConfig({ ...feeConfig, feeBearer: val as "merchant" | "payer" })}
+              options={[
+                { value: "merchant", label: "Merchant absorbs fees (deducted from settlement)" },
+                { value: "payer", label: "Payer bears fees (added to checkout amount)" },
+              ]}
+            />
           </FormField>
 
           {/* Fee Examples */}
@@ -978,7 +981,7 @@ export default function MerchantsPage() {
                 showToast("success", "Fee Schedule Updated", `Changes saved for ${selected?.name}`);
                 setShowFeeModal(false);
               }}
-              className="flex-1 px-4 py-2.5 bg-[#64c6c3] hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
+              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
             >
               Save Changes
             </button>

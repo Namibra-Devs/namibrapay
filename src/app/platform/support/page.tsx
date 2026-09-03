@@ -12,6 +12,7 @@ import {
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Textarea, Select } from "@/components/ui/form-field";
+import CustomSelect from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { formatDate, formatGHS } from "@/lib/constants";
 import { usePermission } from "@/hooks/use-role";
@@ -172,7 +173,7 @@ export default function SupportPage() {
         {tab === "tickets" && (
           <>
             {/* Ticket List */}
-            <div className={cn("flex flex-col transition-all duration-300 border-r border-border", selectedTicket ? "w-[420px] shrink-0" : "flex-1")}>
+            <div className={cn("flex flex-col transition-all duration-300 border-r border-border", selectedTicket ? "w-105 shrink-0" : "flex-1")}>
               <div className="px-6 py-4 border-b border-border bg-card/30">
                 <div className="flex items-center gap-2 text-xs">
                   <button className="px-2.5 py-1 rounded-lg border transition-all bg-foreground text-background border-foreground">
@@ -203,7 +204,7 @@ export default function SupportPage() {
                       key={ticket.id}
                       onClick={() => setSelectedTicket(isSelected ? null : ticket)}
                       className={cn("w-full text-left px-6 py-4 hover:bg-muted/30 transition-colors",
-                        isSelected && "bg-[#a3ffe2]/5 border-r-2 border-r-[#a3ffe2]",
+                        isSelected && "bg-brand-mint/5 border-r-2 border-r-brand-mint",
                         isUrgent && !isSelected && "bg-red-50/30",
                         ticket.slaBreached && !isSelected && "bg-orange-50/30")}
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -211,7 +212,7 @@ export default function SupportPage() {
                       <div className="flex items-start justify-between gap-3 mb-2">
                         <div className="flex items-start gap-3 min-w-0 flex-1">
                           <div className={cn("size-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5",
-                            isUrgent ? "bg-red-100" : "bg-[#a3ffe2]/20 border border-[#a3ffe2]/20")}>
+                            isUrgent ? "bg-red-100" : "bg-brand-mint/20 border border-brand-mint/20")}>
                             <Headphones className={cn("size-4", isUrgent ? "text-red-600" : "text-[#1a7a5e]")} />
                           </div>
                           <div className="min-w-0 flex-1">
@@ -347,7 +348,7 @@ export default function SupportPage() {
                         <div key={msg.id} className={cn("flex gap-3",
                           msg.authorType === "support" && "flex-row-reverse")}>
                           <div className={cn("size-8 rounded-full flex items-center justify-center shrink-0",
-                            msg.authorType === "support" ? "bg-[#a3ffe2]/20" : "bg-muted")}>
+                            msg.authorType === "support" ? "bg-brand-mint/20" : "bg-muted")}>
                             {msg.authorType === "support" ? (
                               <Headphones className="size-4 text-[#1a7a5e]" />
                             ) : (
@@ -358,7 +359,7 @@ export default function SupportPage() {
                             msg.authorType === "support" && "flex flex-col items-end")}>
                             <div className={cn("inline-block max-w-[85%] rounded-2xl p-4 border",
                               msg.authorType === "support" 
-                                ? "bg-[#a3ffe2]/10 border-[#a3ffe2]/30"
+                                ? "bg-brand-mint/10 border-brand-mint/30"
                                 : "bg-card border-border")}>
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="text-xs font-semibold">{msg.author}</span>
@@ -381,7 +382,7 @@ export default function SupportPage() {
                           onChange={(e) => setMessageText(e.target.value)}
                           placeholder="Type your response..."
                           rows={4}
-                          className="w-full px-4 py-3 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#a3ffe2]/60 transition-all resize-none mb-3"
+                          className="w-full px-4 py-3 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all resize-none mb-3"
                         />
                         <div className="flex items-center justify-between">
                           <button className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
@@ -416,26 +417,26 @@ export default function SupportPage() {
               <div className="grid grid-cols-3 gap-3 mb-3">
                 <input
                   placeholder="Transaction reference..."
-                  className="px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#a3ffe2]/60 transition-all"
+                  className="px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all"
                 />
                 <input
                   placeholder="Payer phone number..."
-                  className="px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#a3ffe2]/60 transition-all"
+                  className="px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all"
                 />
                 <input
                   placeholder="Amount (GHS)..."
                   type="number"
-                  className="px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#a3ffe2]/60 transition-all"
+                  className="px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all"
                 />
               </div>
               <div className="flex items-center gap-3">
-                <select className="flex-1 px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#a3ffe2]/60 transition-all">
+                <select className="flex-1 px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all">
                   <option>All Merchants</option>
                   <option>Kwame Organics Ltd</option>
                   <option>Accra Tech Hub</option>
                   <option>SumaFoods Ghana</option>
                 </select>
-                <select className="flex-1 px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#a3ffe2]/60 transition-all">
+                <select className="flex-1 px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all">
                   <option>All Statuses</option>
                   <option>Successful</option>
                   <option>Failed</option>
@@ -551,7 +552,7 @@ export default function SupportPage() {
                 </h2>
                 <button
                   onClick={() => setShowDisputeModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-[#bcbbee] hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all"
+                  className="flex items-center gap-2 px-4 py-2 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all"
                 >
                   <AlertTriangle className="size-4" /> Initiate Dispute
                 </button>
@@ -623,7 +624,7 @@ export default function SupportPage() {
                 </h2>
                 <button
                   onClick={() => setShowRefundModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-[#64c6c3] hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all"
+                  className="flex items-center gap-2 px-4 py-2 bg-brand-teal hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all"
                 >
                   <DollarSign className="size-4" /> Request Refund
                 </button>
@@ -713,7 +714,7 @@ export default function SupportPage() {
                     Detailed tracking of response and resolution times vs contractual SLA targets
                   </p>
                 </div>
-                <Activity className="size-8 text-[#64c6c3]" />
+                <Activity className="size-8 text-brand-teal" />
               </div>
 
               {/* Severity Breakdown */}
@@ -1137,7 +1138,7 @@ export default function SupportPage() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-muted-foreground mb-1 uppercase tracking-wider">Provider Transaction ID</p>
-                <p className="text-sm font-mono text-xs">{selectedTransaction.providerId}</p>
+                <p className="font-mono text-xs">{selectedTransaction.providerId}</p>
               </div>
             </div>
 
@@ -1195,7 +1196,7 @@ export default function SupportPage() {
                   setSelectedTransaction(null);
                   setShowDisputeModal(true);
                 }}
-                className="flex-1 px-4 py-2.5 bg-[#bcbbee] hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all"
+                className="flex-1 px-4 py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all"
               >
                 Initiate Dispute
               </button>
@@ -1249,18 +1250,19 @@ export default function SupportPage() {
             required
             description="Category of the dispute"
           >
-            <Select
+            <CustomSelect
               value={disputeReason}
-              onChange={(e) => setDisputeReason(e.target.value)}
-            >
-              <option value="">Select reason...</option>
-              <option value="payment_not_received">Payment not received by merchant</option>
-              <option value="duplicate_charge">Duplicate charge</option>
-              <option value="unauthorized">Unauthorized transaction</option>
-              <option value="wrong_amount">Wrong amount charged</option>
-              <option value="provider_error">Provider system error</option>
-              <option value="other">Other</option>
-            </Select>
+              onChange={setDisputeReason}
+              options={[
+                { value: "payment_not_received", label: "Payment not received by merchant" },
+                { value: "duplicate_charge", label: "Duplicate charge" },
+                { value: "unauthorized", label: "Unauthorized transaction" },
+                { value: "wrong_amount", label: "Wrong amount charged" },
+                { value: "provider_error", label: "Provider system error" },
+                { value: "other", label: "Other" },
+              ]}
+              placeholder="Select reason..."
+            />
           </FormField>
 
           {/* Investigation Notes */}
@@ -1307,7 +1309,7 @@ export default function SupportPage() {
                 setDisputeReason("");
                 setDisputeNotes("");
               }}
-              className="flex-1 px-4 py-2.5 bg-[#bcbbee] hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Create Dispute
             </button>
@@ -1376,18 +1378,19 @@ export default function SupportPage() {
             required
             description="Category of the refund"
           >
-            <Select
+            <CustomSelect
               value={refundReason}
-              onChange={(e) => setRefundReason(e.target.value)}
-            >
-              <option value="">Select reason...</option>
-              <option value="customer_request">Customer request</option>
-              <option value="service_issue">Service/product issue</option>
-              <option value="duplicate_payment">Duplicate payment</option>
-              <option value="merchant_error">Merchant error</option>
-              <option value="goodwill">Goodwill refund</option>
-              <option value="other">Other</option>
-            </Select>
+              onChange={setRefundReason}
+              options={[
+                { value: "customer_request", label: "Customer request" },
+                { value: "service_issue", label: "Service/product issue" },
+                { value: "duplicate_payment", label: "Duplicate payment" },
+                { value: "merchant_error", label: "Merchant error" },
+                { value: "goodwill", label: "Goodwill refund" },
+                { value: "other", label: "Other" },
+              ]}
+              placeholder="Select reason..."
+            />
           </FormField>
 
           {/* Additional Notes */}
@@ -1428,7 +1431,7 @@ export default function SupportPage() {
                 setRefundReason("");
                 setRefundNotes("");
               }}
-              className="flex-1 px-4 py-2.5 bg-[#64c6c3] hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Submit Request
             </button>

@@ -9,6 +9,11 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/constants";
 import { usePermission } from "@/hooks/use-role";
+import { Modal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
+import { FormField } from "@/components/ui/form-field";
+import DatePicker from "@/components/ui/date-picker";
+import CustomSelect from "@/components/ui/select";
 import {
   mockAuditEvents,
   getEventTypeColor,
@@ -24,6 +29,7 @@ import {
 // ── Main Component ──────────────────────────────────────────────────────────
 export default function AuditLogPage() {
   const canView = usePermission("audit.view");
+  const { showToast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEventType, setSelectedEventType] = useState<AuditEventType | "all">("all");
@@ -31,6 +37,12 @@ export default function AuditLogPage() {
   const [selectedSeverity, setSelectedSeverity] = useState<AuditSeverity | "all">("all");
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  
+  // Export modal state
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFormat, setExportFormat] = useState<"csv" | "pdf">("csv");
+  const [exportDateFrom, setExportDateFrom] = useState("");
+  const [exportDateTo, setExportDateTo] = useState("");
 
   if (!canView) {
     return (
@@ -101,7 +113,7 @@ export default function AuditLogPage() {
               placeholder="Search by action, resource, ID, or description..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#263b8e]/20"
+              className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
             />
           </div>
 
@@ -109,7 +121,7 @@ export default function AuditLogPage() {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={cn("flex items-center gap-2 px-4 py-2 border rounded-xl text-sm font-medium transition-all",
-              showFilters ? "bg-[#263b8e] text-white border-[#263b8e]" : "bg-card border-border hover:bg-muted/50")}
+              showFilters ? "bg-brand-navy text-white border-brand-navy" : "bg-card border-border hover:bg-muted/50")}
           >
             <Filter className="size-4" />
             Filters
@@ -121,7 +133,10 @@ export default function AuditLogPage() {
           </button>
 
           {/* Export */}
-          <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all">
+          <button 
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+          >
             <Download className="size-4" /> Export
           </button>
         </div>
@@ -136,7 +151,7 @@ export default function AuditLogPage() {
                 <select
                   value={selectedEventType}
                   onChange={(e) => setSelectedEventType(e.target.value as AuditEventType | "all")}
-                  className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#263b8e]/20"
+                  className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
                 >
                   <option value="all">All Types</option>
                   <option value="security_event">Security Event</option>
@@ -154,7 +169,7 @@ export default function AuditLogPage() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value as AuditCategory | "all")}
-                  className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#263b8e]/20"
+                  className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
                 >
                   <option value="all">All Categories</option>
                   <option value="authentication">Authentication</option>
@@ -174,7 +189,7 @@ export default function AuditLogPage() {
                 <select
                   value={selectedSeverity}
                   onChange={(e) => setSelectedSeverity(e.target.value as AuditSeverity | "all")}
-                  className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#263b8e]/20"
+                  className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
                 >
                   <option value="all">All Severities</option>
                   <option value="critical">Critical</option>
@@ -227,7 +242,7 @@ export default function AuditLogPage() {
                 key={event.id}
                 className={cn("bg-card border rounded-2xl overflow-hidden transition-all",
                   event.severity === "critical" ? "border-red-200 shadow-sm" : "border-border",
-                  isExpanded && "ring-2 ring-[#263b8e]/20")}
+                  isExpanded && "ring-2 ring-brand-navy/20")}
               >
                 {/* Event Summary */}
                 <button
@@ -418,6 +433,115 @@ export default function AuditLogPage() {
           </div>
         )}
       </div>
+
+      {/* ── Export Modal ── */}
+      <Modal
+        isOpen={showExportModal}
+        onClose={() => {
+          setShowExportModal(false);
+          setExportFormat("csv");
+          setExportDateFrom("");
+          setExportDateTo("");
+        }}
+        title="Export Audit Logs"
+        description="Download audit logs in CSV or PDF format"
+        size="md"
+      >
+        <div className="space-y-4">
+          {/* Export Format */}
+          <FormField
+            label="Export Format"
+            required
+            description="Choose file format"
+          >
+            <CustomSelect
+              value={exportFormat}
+              onChange={(v) => setExportFormat(v as "csv" | "pdf")}
+              options={[
+                { value: "csv", label: "CSV (Spreadsheet)" },
+                { value: "pdf", label: "PDF (Document)" },
+              ]}
+              placeholder="Select format..."
+            />
+          </FormField>
+
+          {/* Date Range */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              label="Start Date"
+              required
+              description="From date"
+            >
+              <DatePicker
+                value={exportDateFrom}
+                onChange={setExportDateFrom}
+                placeholder="Select start date"
+                max={exportDateTo || undefined}
+              />
+            </FormField>
+            <FormField
+              label="End Date"
+              required
+              description="To date"
+            >
+              <DatePicker
+                value={exportDateTo}
+                onChange={setExportDateTo}
+                placeholder="Select end date"
+                min={exportDateFrom || undefined}
+              />
+            </FormField>
+          </div>
+
+          {/* Info Note */}
+          {exportDateFrom && exportDateTo && (
+            <div className="bg-brand-navy/5 border border-brand-navy/20 rounded-xl p-4 flex items-start gap-3">
+              <Info className="size-5 text-brand-navy shrink-0 mt-0.5" />
+              <div className="text-sm text-brand-navy">
+                <p className="font-medium mb-1">Export Preview</p>
+                <p className="text-xs opacity-80">
+                  Audit logs from {new Date(exportDateFrom).toLocaleDateString()} to {new Date(exportDateTo).toLocaleDateString()}
+                  <br />
+                  Format: {exportFormat.toUpperCase()} • Filters: {selectedEventType !== "all" ? "Event Type, " : ""}{selectedCategory !== "all" ? "Category, " : ""}{selectedSeverity !== "all" ? "Severity" : "None"}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowExportModal(false);
+                setExportFormat("csv");
+                setExportDateFrom("");
+                setExportDateTo("");
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!exportDateFrom || !exportDateTo}
+              onClick={() => {
+                showToast(
+                  "success",
+                  "Export Started",
+                  `Audit logs (${exportFormat.toUpperCase()}) are being generated. Download will start shortly.`
+                );
+                setShowExportModal(false);
+                setExportFormat("csv");
+                setExportDateFrom("");
+                setExportDateTo("");
+              }}
+              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <Download className="size-4" />
+              Generate Export
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
