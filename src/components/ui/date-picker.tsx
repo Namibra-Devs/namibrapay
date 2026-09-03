@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -32,7 +33,10 @@ export default function DatePicker({
   max,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   
   // Calendar state
   const today = new Date();
@@ -40,22 +44,44 @@ export default function DatePicker({
   const [viewMonth, setViewMonth] = useState(selectedDate?.getMonth() ?? today.getMonth());
   const [viewYear, setViewYear] = useState(selectedDate?.getFullYear() ?? today.getFullYear());
 
+  useEffect(() => { setMounted(true); }, []);
+
   // Close on outside click
   useEffect(() => {
     if (!open) return;
+    
     const onMouseDown = (e: MouseEvent) => {
-      if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
+      const target = e.target as Node;
+      if (!triggerRef.current?.contains(target) && !dropdownRef.current?.contains(target)) {
+        setOpen(false);
+      }
     };
+    
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
+    
     document.addEventListener("mousedown", onMouseDown);
     document.addEventListener("keydown", onKeyDown);
+    
     return () => {
       document.removeEventListener("mousedown", onMouseDown);
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
+
+  // Calculate position when opening
+  const handleOpen = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setPos({ 
+        top: rect.bottom + 8, 
+        left: rect.left,
+        width: rect.width
+      });
+    }
+    setOpen((v) => !v);
+  };
 
   // Generate calendar days
   const getDaysInMonth = (month: number, year: number) => {
@@ -71,12 +97,10 @@ export default function DatePicker({
     const firstDay = getFirstDayOfMonth(viewMonth, viewYear);
     const days: (number | null)[] = [];
 
-    // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
       days.push(null);
     }
 
-    // Add all days of the month
     for (let i = 1; i <= daysInMonth; i++) {
       days.push(i);
     }
@@ -88,7 +112,6 @@ export default function DatePicker({
     const selected = new Date(viewYear, viewMonth, day);
     const dateStr = selected.toISOString().split("T")[0];
     
-    // Check min/max constraints
     if (min && dateStr < min) return;
     if (max && dateStr > max) return;
     
@@ -153,18 +176,19 @@ export default function DatePicker({
   const calendarDays = generateCalendar();
 
   return (
-    <div ref={containerRef} className={cn("relative", className)}>
+    <div className={cn("relative", className)}>
       {/* Trigger */}
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => !disabled && setOpen((v) => !v)}
+        onClick={() => !disabled && handleOpen()}
         disabled={disabled}
         className={cn(
           "w-full flex items-center gap-2 px-3 py-2 bg-card border rounded-lg text-sm focus:outline-none transition-all text-left",
           disabled
             ? "opacity-50 cursor-not-allowed border-border"
             : open
-            ? "border-border ring-2 ring-brand-teal/20"
+            ? "border-border ring-2 ring-[#64c6c3]/20"
             : "border-border hover:border-gray-300"
         )}
       >
@@ -174,116 +198,126 @@ export default function DatePicker({
         </span>
       </button>
 
-      {/* Dropdown Calendar */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -6, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.97 }}
-            transition={{ duration: 0.14, ease: "easeOut" }}
-            className="absolute z-50 mt-1.5 bg-white border border-gray-200 rounded-xl shadow-xl p-4 w-80"
-          >
-            {/* Month/Year Navigation */}
-            <div className="flex items-center justify-between mb-4">
-              <button
-                type="button"
-                onClick={handlePrevMonth}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ChevronLeft className="size-4 text-gray-600" />
-              </button>
-              
-              <div className="text-sm font-semibold text-gray-900">
-                {MONTHS[viewMonth]} {viewYear}
-              </div>
-              
-              <button
-                type="button"
-                onClick={handleNextMonth}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ChevronRight className="size-4 text-gray-600" />
-              </button>
-            </div>
-
-            {/* Day Headers */}
-            <div className="grid grid-cols-7 gap-1 mb-2">
-              {DAYS.map((day) => (
-                <div
-                  key={day}
-                  className="text-center text-xs font-medium text-gray-500 py-1"
+      {/* Dropdown Calendar - Use Portal */}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              ref={dropdownRef}
+              initial={{ opacity: 0, y: -6, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.97 }}
+              transition={{ duration: 0.14, ease: "easeOut" }}
+              style={{ 
+                position: "fixed", 
+                top: pos.top, 
+                left: pos.left,
+                width: Math.max(pos.width, 280)
+              }}
+              className="bg-card border border-border rounded-xl shadow-xl p-3 z-[9999]"
+            >
+              {/* Month/Year Navigation */}
+              <div className="flex items-center justify-between mb-3">
+                <button
+                  type="button"
+                  onClick={handlePrevMonth}
+                  className="p-1.5 hover:bg-muted rounded-lg transition-colors"
                 >
-                  {day}
+                  <ChevronLeft className="size-4 text-muted-foreground" />
+                </button>
+                
+                <div className="text-sm font-semibold text-foreground">
+                  {MONTHS[viewMonth]} {viewYear}
                 </div>
-              ))}
-            </div>
+                
+                <button
+                  type="button"
+                  onClick={handleNextMonth}
+                  className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+                >
+                  <ChevronRight className="size-4 text-muted-foreground" />
+                </button>
+              </div>
 
-            {/* Calendar Days */}
-            <div className="grid grid-cols-7 gap-1">
-              {calendarDays.map((day, index) => {
-                if (day === null) {
-                  return <div key={`empty-${index}`} />;
-                }
-
-                const disabled = isDateDisabled(day);
-                const selected = isSelected(day);
-                const today = isToday(day);
-
-                return (
-                  <button
+              {/* Day Headers */}
+              <div className="grid grid-cols-7 gap-1 mb-2">
+                {DAYS.map((day) => (
+                  <div
                     key={day}
-                    type="button"
-                    onClick={() => !disabled && handleDateSelect(day)}
-                    disabled={disabled}
-                    className={cn(
-                      "aspect-square flex items-center justify-center text-sm rounded-lg transition-all",
-                      disabled
-                        ? "text-gray-300 cursor-not-allowed"
-                        : selected
-                        ? "bg-[#1a7a5e] text-white font-semibold shadow-sm"
-                        : today
-                        ? "bg-brand-mint/20 text-[#1a7a5e] font-medium hover:bg-brand-mint/40"
-                        : "text-gray-700 hover:bg-gray-100"
-                    )}
+                    className="text-center text-[10px] font-medium text-muted-foreground py-1"
                   >
                     {day}
-                  </button>
-                );
-              })}
-            </div>
+                  </div>
+                ))}
+              </div>
 
-            {/* Quick Actions */}
-            <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-100">
-              <button
-                type="button"
-                onClick={() => {
-                  const todayStr = today.toISOString().split("T")[0];
-                  if ((!min || todayStr >= min) && (!max || todayStr <= max)) {
-                    onChange(todayStr);
-                    setOpen(false);
+              {/* Calendar Days */}
+              <div className="grid grid-cols-7 gap-1">
+                {calendarDays.map((day, index) => {
+                  if (day === null) {
+                    return <div key={`empty-${index}`} />;
                   }
-                }}
-                className="flex-1 px-3 py-1.5 text-xs font-medium text-[#1a7a5e] hover:bg-brand-mint/10 rounded-lg transition-colors"
-              >
-                Today
-              </button>
-              {value && (
+
+                  const disabled = isDateDisabled(day);
+                  const selected = isSelected(day);
+                  const todayDate = isToday(day);
+
+                  return (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => !disabled && handleDateSelect(day)}
+                      disabled={disabled}
+                      className={cn(
+                        "aspect-square flex items-center justify-center text-xs rounded-lg transition-all",
+                        disabled
+                          ? "text-gray-300 cursor-not-allowed"
+                          : selected
+                          ? "bg-[#1a7a5e] text-white font-semibold shadow-sm"
+                          : todayDate
+                          ? "bg-[#a3ffe2]/20 text-[#1a7a5e] font-medium hover:bg-[#a3ffe2]/40"
+                          : "text-foreground hover:bg-muted"
+                      )}
+                    >
+                      {day}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Quick Actions */}
+              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
                 <button
                   type="button"
                   onClick={() => {
-                    onChange("");
-                    setOpen(false);
+                    const todayStr = today.toISOString().split("T")[0];
+                    if ((!min || todayStr >= min) && (!max || todayStr <= max)) {
+                      onChange(todayStr);
+                      setOpen(false);
+                    }
                   }}
-                  className="flex-1 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="flex-1 px-3 py-1.5 text-xs font-medium text-[#1a7a5e] hover:bg-[#a3ffe2]/10 rounded-lg transition-colors"
                 >
-                  Clear
+                  Today
                 </button>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                {value && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onChange("");
+                      setOpen(false);
+                    }}
+                    className="flex-1 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted rounded-lg transition-colors"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }

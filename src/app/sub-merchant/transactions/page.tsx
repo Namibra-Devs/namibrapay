@@ -211,26 +211,23 @@ export default function SubMerchantTransactionsPage() {
           </FormField>
 
           {/* Amount Range */}
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-foreground">Amount Range</label>
+          <FormField label="Amount Range">
             <div className="flex items-center gap-2">
               <Input
                 type="number"
                 placeholder="Min"
                 value={minAmount}
                 onChange={(e) => setMinAmount(e.target.value)}
-                className="text-sm"
               />
-              <span className="text-muted-foreground">-</span>
+              <span className="text-muted-foreground text-sm">-</span>
               <Input
                 type="number"
                 placeholder="Max"
                 value={maxAmount}
                 onChange={(e) => setMaxAmount(e.target.value)}
-                className="text-sm"
               />
             </div>
-          </div>
+          </FormField>
         </div>
 
         {/* Active filters notice */}
