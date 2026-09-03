@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Plus, Building2, ChevronRight, MoreHorizontal, TrendingUp } from "lucide-react";
+import { Plus, Building2, ChevronRight, MoreHorizontal, TrendingUp, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatGHS, formatDate } from "@/lib/constants";
 import { mockSubMerchants } from "@/lib/merchant-mock-data";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
+import { Modal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
+import { FormField, Input, Textarea, Select } from "@/components/ui/form-field";
 
 const statusConfig = {
   pending: { badge: "bg-amber-50 text-amber-700 border-amber-200", dot: "bg-amber-400" },
@@ -18,6 +21,16 @@ const statusConfig = {
 export default function SubMerchantsPage() {
   const { can } = useMerchantRole();
   const [showCreate, setShowCreate] = useState(false);
+  
+  // Create sub-merchant modal state
+  const [newSubMerchantName, setNewSubMerchantName] = useState("");
+  const [newSubMerchantEmail, setNewSubMerchantEmail] = useState("");
+  const [newSubMerchantPhone, setNewSubMerchantPhone] = useState("");
+  const [newSubMerchantAddress, setNewSubMerchantAddress] = useState("");
+  const [newSubMerchantFeeRate, setNewSubMerchantFeeRate] = useState("");
+  const [newSubMerchantCategory, setNewSubMerchantCategory] = useState("");
+  
+  const { showToast } = useToast();
 
   return (
     <div className="px-6 py-6 space-y-6 pb-24 md:pb-6">
@@ -107,43 +120,169 @@ export default function SubMerchantsPage() {
       </motion.div>
 
       {/* Create Modal */}
-      {showCreate && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-          onClick={() => setShowCreate(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl"
-            onClick={(e) => e.stopPropagation()}>
-            <h2 className="font-bold text-lg mb-1" style={{ fontFamily: "var(--font-heading)" }}>Add Sub-Merchant</h2>
-            <p className="text-sm text-muted-foreground mb-5">Application will be submitted to NamibraPay Compliance for review.</p>
-            <div className="space-y-4">
-              {[
-                { label: "Business Name", placeholder: "e.g. Accra North Branch" },
-                { label: "Contact Email", placeholder: "contact@yourbusiness.com" },
-                { label: "Contact Phone", placeholder: "+233 XX XXX XXXX" },
-              ].map((field) => (
-                <div key={field.label}>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1.5">{field.label}</label>
-                  <input placeholder={field.placeholder}
-                    className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 focus:ring-2 focus:ring-[#64c6c3]/10 transition-all" />
-                </div>
-              ))}
-              <div className="bg-[#fedfb8]/20 border border-[#fedfb8]/40 rounded-xl px-4 py-3 text-xs text-[#d35400]">
-                KYC documents will be requested by Compliance after submission.
-              </div>
+      <Modal
+        isOpen={showCreate}
+        onClose={() => {
+          setShowCreate(false);
+          setNewSubMerchantName("");
+          setNewSubMerchantEmail("");
+          setNewSubMerchantPhone("");
+          setNewSubMerchantAddress("");
+          setNewSubMerchantFeeRate("");
+          setNewSubMerchantCategory("");
+        }}
+        title="Add Sub-Merchant"
+        description="Application will be submitted to NamibraPay Compliance for review"
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-900 mb-1">Compliance Review Required</p>
+              <p className="text-sm text-amber-700">
+                KYC documents will be requested by Compliance after submission. Approval typically takes 2-3 business days.
+              </p>
             </div>
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowCreate(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all">
-                Cancel
-              </button>
-              <button onClick={() => setShowCreate(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-[#263b8e] hover:bg-[#1e2f72] text-white text-sm font-medium transition-all">
-                Submit Application
-              </button>
-            </div>
-          </motion.div>
+          </div>
+
+          {/* Form Fields */}
+          <FormField
+            label="Business Name"
+            required
+            description="Legal or trading name of the sub-merchant"
+          >
+            <Input
+              value={newSubMerchantName}
+              onChange={(e) => setNewSubMerchantName(e.target.value)}
+              placeholder="e.g. Accra North Branch"
+            />
+          </FormField>
+
+          <FormField
+            label="Business Category"
+            required
+            description="Type of business or industry"
+          >
+            <Select
+              value={newSubMerchantCategory}
+              onChange={(e) => setNewSubMerchantCategory(e.target.value)}
+            >
+              <option value="">Select category...</option>
+              <option value="retail">Retail Store</option>
+              <option value="restaurant">Restaurant/Food Service</option>
+              <option value="services">Professional Services</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="education">Education</option>
+              <option value="ecommerce">E-commerce</option>
+              <option value="transport">Transportation</option>
+              <option value="other">Other</option>
+            </Select>
+          </FormField>
+
+          <FormField
+            label="Contact Email"
+            required
+            description="Primary email for this sub-merchant"
+          >
+            <Input
+              type="email"
+              value={newSubMerchantEmail}
+              onChange={(e) => setNewSubMerchantEmail(e.target.value)}
+              placeholder="contact@branch.com"
+            />
+          </FormField>
+
+          <FormField
+            label="Contact Phone"
+            required
+            description="Phone number with country code"
+          >
+            <Input
+              type="tel"
+              value={newSubMerchantPhone}
+              onChange={(e) => setNewSubMerchantPhone(e.target.value)}
+              placeholder="+233 XX XXX XXXX"
+            />
+          </FormField>
+
+          <FormField
+            label="Business Address"
+            required
+            description="Physical location of the sub-merchant"
+          >
+            <Textarea
+              value={newSubMerchantAddress}
+              onChange={(e) => setNewSubMerchantAddress(e.target.value)}
+              placeholder="Street address, city, region"
+              rows={2}
+            />
+          </FormField>
+
+          <FormField
+            label="Fee Rate (%)"
+            required
+            description="Transaction fee percentage (max 3.5%)"
+          >
+            <Input
+              type="number"
+              step="0.1"
+              min="0"
+              max="3.5"
+              value={newSubMerchantFeeRate}
+              onChange={(e) => setNewSubMerchantFeeRate(e.target.value)}
+              placeholder="e.g. 2.5"
+            />
+          </FormField>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowCreate(false);
+                setNewSubMerchantName("");
+                setNewSubMerchantEmail("");
+                setNewSubMerchantPhone("");
+                setNewSubMerchantAddress("");
+                setNewSubMerchantFeeRate("");
+                setNewSubMerchantCategory("");
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={
+                !newSubMerchantName.trim() ||
+                !newSubMerchantEmail.trim() ||
+                !newSubMerchantPhone.trim() ||
+                !newSubMerchantAddress.trim() ||
+                !newSubMerchantFeeRate ||
+                !newSubMerchantCategory ||
+                parseFloat(newSubMerchantFeeRate) > 3.5
+              }
+              onClick={() => {
+                showToast(
+                  "success",
+                  "Application Submitted",
+                  `${newSubMerchantName} has been submitted for compliance review. You'll receive an email once approved.`
+                );
+                setShowCreate(false);
+                setNewSubMerchantName("");
+                setNewSubMerchantEmail("");
+                setNewSubMerchantPhone("");
+                setNewSubMerchantAddress("");
+                setNewSubMerchantFeeRate("");
+                setNewSubMerchantCategory("");
+              }}
+              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Submit Application
+            </button>
+          </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

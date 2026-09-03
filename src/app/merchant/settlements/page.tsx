@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Download, Calendar } from "lucide-react";
+import { Download, Calendar, CheckCircle, AlertTriangle, Info, FileText, Check } from "lucide-react";
 import { formatGHS, formatDate } from "@/lib/constants";
 import { mockSettlements, mockPayouts } from "@/lib/merchant-mock-data";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { cn } from "@/lib/utils";
+import { Modal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
+import { FormField, Input } from "@/components/ui/form-field";
 
 const payoutStatusConfig = {
   pending: { badge: "bg-amber-50 text-amber-700 border-amber-200", dot: "bg-amber-400" },
@@ -20,6 +23,14 @@ type Tab = "summary" | "payouts" | "reconcile";
 export default function SettlementsPage() {
   const { can } = useMerchantRole();
   const [tab, setTab] = useState<Tab>("summary");
+  
+  // Export modal state
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFormat, setExportFormat] = useState<"csv" | "pdf">("csv");
+  const [exportDateFrom, setExportDateFrom] = useState("");
+  const [exportDateTo, setExportDateTo] = useState("");
+  
+  const { showToast } = useToast();
 
   return (
     <div className="px-6 py-6 space-y-6 pb-24 md:pb-6">
@@ -129,9 +140,12 @@ export default function SettlementsPage() {
               <span className="text-muted-foreground">Aug 2026</span>
             </div>
             {can("settlements.export") && (
-              <button className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-xl text-sm hover:bg-muted/50 transition-all">
+              <button 
+                onClick={() => setShowExportModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-xl text-sm hover:bg-muted/50 transition-all"
+              >
                 <Download className="size-3.5" />
-                Export CSV
+                Export
               </button>
             )}
           </div>
@@ -140,7 +154,7 @@ export default function SettlementsPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border bg-muted/30">
-                    {["Period", "Collected", "Fees", "Net", "Paid Out", "Variance"].map((h) => (
+                    {["Period", "Collected", "Fees", "Net Settled", "Paid Out", "Pending", "Variance", "Status"].map((h) => (
                       <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
@@ -148,17 +162,45 @@ export default function SettlementsPage() {
                 <tbody>
                   {mockSettlements.map((s) => {
                     const variance = s.netSettled - s.paidOut - s.pendingPayout;
+                    const isBalanced = Math.abs(variance) < 1;
+                    const hasDiscrepancy = Math.abs(variance) >= 100;
+                    
                     return (
-                      <tr key={s.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
+                      <tr key={s.id} className={cn(
+                        "border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors",
+                        hasDiscrepancy && "bg-red-50/30"
+                      )}>
                         <td className="px-4 py-3 font-medium text-xs">{s.periodLabel}</td>
-                        <td className="px-4 py-3 text-xs">{formatGHS(s.collected)}</td>
+                        <td className="px-4 py-3 text-xs font-semibold">{formatGHS(s.collected)}</td>
                         <td className="px-4 py-3 text-xs text-destructive">-{formatGHS(s.fees)}</td>
-                        <td className="px-4 py-3 text-xs text-emerald-600 font-medium">{formatGHS(s.netSettled)}</td>
+                        <td className="px-4 py-3 text-xs text-emerald-600 font-semibold">{formatGHS(s.netSettled)}</td>
                         <td className="px-4 py-3 text-xs">{formatGHS(s.paidOut)}</td>
+                        <td className="px-4 py-3 text-xs text-amber-600">{formatGHS(s.pendingPayout)}</td>
                         <td className="px-4 py-3 text-xs">
-                          <span className={cn("font-semibold", variance === 0 ? "text-emerald-600" : "text-amber-600")}>
-                            {variance === 0 ? "Balanced" : formatGHS(Math.abs(variance))}
+                          <span className={cn("font-semibold", 
+                            isBalanced ? "text-emerald-600" : 
+                            hasDiscrepancy ? "text-red-600" : "text-amber-600"
+                          )}>
+                            {isBalanced ? "—" : formatGHS(Math.abs(variance))}
                           </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          {isBalanced ? (
+                            <span className="flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium bg-emerald-50 text-emerald-700 border-emerald-200">
+                              <CheckCircle className="size-3" />
+                              Balanced
+                            </span>
+                          ) : hasDiscrepancy ? (
+                            <span className="flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium bg-red-50 text-red-700 border-red-200">
+                              <AlertTriangle className="size-3" />
+                              Discrepancy
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium bg-amber-50 text-amber-700 border-amber-200">
+                              <Info className="size-3" />
+                              Review
+                            </span>
+                          )}
                         </td>
                       </tr>
                     );
@@ -167,8 +209,148 @@ export default function SettlementsPage() {
               </table>
             </div>
           </div>
+
+          {/* Reconciliation Info */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+            <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-blue-900 mb-1">Settlement Reconciliation</p>
+              <p className="text-sm text-blue-700">
+                Variance indicates the difference between net settled amount and total payouts (paid out + pending). 
+                Small variances under GH₵1 are considered balanced. Contact support for discrepancies over GH₵100.
+              </p>
+            </div>
+          </div>
         </motion.div>
       )}
+      
+      {/* Export Modal */}
+      <Modal
+        isOpen={showExportModal}
+        onClose={() => {
+          setShowExportModal(false);
+          setExportFormat("csv");
+          setExportDateFrom("");
+          setExportDateTo("");
+        }}
+        title="Export Settlement Data"
+        description="Download settlement and payout records"
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+            <FileText className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-blue-900 mb-1">Settlement Export</p>
+              <p className="text-sm text-blue-700">
+                Export includes collected amounts, fees, net settled, payouts, and reconciliation status for the selected period.
+              </p>
+            </div>
+          </div>
+
+          {/* Format Selection */}
+          <FormField
+            label="Export Format"
+            required
+            description="Choose file format"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setExportFormat("csv")}
+                className={cn(
+                  "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
+                  exportFormat === "csv"
+                    ? "border-[#64c6c3] bg-[#64c6c3]/5"
+                    : "border-border hover:border-muted-foreground/30"
+                )}
+              >
+                <FileText className="size-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-semibold">CSV</p>
+                  <p className="text-xs text-muted-foreground">Spreadsheet format</p>
+                </div>
+                {exportFormat === "csv" && <Check className="size-4 text-[#64c6c3] ml-auto" />}
+              </button>
+              <button
+                onClick={() => setExportFormat("pdf")}
+                className={cn(
+                  "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
+                  exportFormat === "pdf"
+                    ? "border-[#263b8e] bg-[#263b8e]/5"
+                    : "border-border hover:border-muted-foreground/30"
+                )}
+              >
+                <FileText className="size-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-semibold">PDF</p>
+                  <p className="text-xs text-muted-foreground">Print-ready report</p>
+                </div>
+                {exportFormat === "pdf" && <Check className="size-4 text-[#263b8e] ml-auto" />}
+              </button>
+            </div>
+          </FormField>
+
+          {/* Date Range */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              label="Start Date"
+              required
+              description="From date"
+            >
+              <Input
+                type="date"
+                value={exportDateFrom}
+                onChange={(e) => setExportDateFrom(e.target.value)}
+              />
+            </FormField>
+            <FormField
+              label="End Date"
+              required
+              description="To date"
+            >
+              <Input
+                type="date"
+                value={exportDateTo}
+                onChange={(e) => setExportDateTo(e.target.value)}
+              />
+            </FormField>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowExportModal(false);
+                setExportFormat("csv");
+                setExportDateFrom("");
+                setExportDateTo("");
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!exportDateFrom || !exportDateTo}
+              onClick={() => {
+                showToast(
+                  "success",
+                  "Export Started",
+                  `Settlement data export (${exportFormat.toUpperCase()}) is being generated. Download will start shortly.`
+                );
+                setShowExportModal(false);
+                setExportFormat("csv");
+                setExportDateFrom("");
+                setExportDateTo("");
+              }}
+              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <Download className="size-4" />
+              Generate Export
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Plus, Mail, Shield, ShieldCheck, MoreHorizontal, UserCircle, AlertTriangle } from "lucide-react";
+import { Plus, Mail, Shield, ShieldCheck, MoreHorizontal, UserCircle, AlertTriangle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/constants";
 import { mockTeamMembers } from "@/lib/merchant-mock-data";
@@ -10,12 +10,21 @@ import type { TeamMember } from "@/lib/merchant-mock-data";
 import { MERCHANT_ROLE_LABELS, MERCHANT_ROLE_COLORS, MERCHANT_ROLES } from "@/lib/merchant-constants";
 import type { MerchantRole } from "@/lib/merchant-constants";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
+import { Modal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
+import { FormField, Input } from "@/components/ui/form-field";
 
 export default function TeamPage() {
   const { can, role } = useMerchantRole();
   const [showInvite, setShowInvite] = useState(false);
   const [actionTarget, setActionTarget] = useState<TeamMember | null>(null);
   const [inviteRole, setInviteRole] = useState<MerchantRole>(MERCHANT_ROLES.ADMIN);
+  
+  // Invite modal state
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteMessage, setInviteMessage] = useState("");
+  
+  const { showToast } = useToast();
 
   const assignableRoles = [MERCHANT_ROLES.ADMIN, MERCHANT_ROLES.DEVELOPER, MERCHANT_ROLES.FINANCE, MERCHANT_ROLES.SUPPORT] as MerchantRole[];
 
@@ -105,45 +114,171 @@ export default function TeamPage() {
       </motion.div>
 
       {/* Invite Modal */}
-      {showInvite && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-          onClick={() => setShowInvite(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl"
-            onClick={(e) => e.stopPropagation()}>
-            <div className="size-10 rounded-xl bg-[#263b8e]/10 border border-[#263b8e]/20 flex items-center justify-center mb-4">
-              <Mail className="size-5 text-[#263b8e]" />
+      <Modal
+        isOpen={showInvite}
+        onClose={() => {
+          setShowInvite(false);
+          setInviteEmail("");
+          setInviteMessage("");
+          setInviteRole(MERCHANT_ROLES.ADMIN);
+        }}
+        title="Invite Team Member"
+        description="They'll receive an email with a secure invitation link"
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+            <Mail className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-blue-900 mb-1">Team Invitation</p>
+              <p className="text-sm text-blue-700">
+                The invitation link is valid for 7 days. The recipient will be prompted to create an account or sign in.
+              </p>
             </div>
-            <h2 className="font-bold text-lg mb-1" style={{ fontFamily: "var(--font-heading)" }}>Invite Team Member</h2>
-            <p className="text-sm text-muted-foreground mb-5">They'll receive an email with a secure invitation link.</p>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Email Address</label>
-                <input placeholder="colleague@yourbusiness.com" type="email"
-                  className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 focus:ring-2 focus:ring-[#64c6c3]/10 transition-all" />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Role</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {assignableRoles.map((r) => (
-                    <button key={r} onClick={() => setInviteRole(r)}
-                      className={cn("px-3 py-2.5 rounded-xl border text-xs font-medium text-left transition-all",
-                        inviteRole === r ? cn(MERCHANT_ROLE_COLORS[r], "border-current") : "bg-card border-border hover:bg-muted/50")}>
-                      <p className="font-semibold">{MERCHANT_ROLE_LABELS[r]}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
+          </div>
+
+          <FormField
+            label="Email Address"
+            required
+            description="Enter the email of the person you want to invite"
+          >
+            <Input
+              type="email"
+              value={inviteEmail}
+              onChange={(e) => setInviteEmail(e.target.value)}
+              placeholder="colleague@yourbusiness.com"
+            />
+          </FormField>
+
+          <FormField
+            label="Role"
+            required
+            description="Select the role and permissions for this team member"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              {assignableRoles.map((r) => {
+                const rolePermissions = {
+                  [MERCHANT_ROLES.ADMIN]: "Full access to all features",
+                  [MERCHANT_ROLES.DEVELOPER]: "API keys, webhooks, integrations",
+                  [MERCHANT_ROLES.FINANCE]: "Settlements, payouts, reporting",
+                  [MERCHANT_ROLES.SUPPORT]: "Transactions, disputes, customers",
+                };
+                
+                return (
+                  <button
+                    key={r}
+                    onClick={() => setInviteRole(r)}
+                    className={cn(
+                      "px-4 py-3 rounded-xl border text-left transition-all",
+                      inviteRole === r
+                        ? cn(MERCHANT_ROLE_COLORS[r], "border-current shadow-sm")
+                        : "bg-card border-border hover:bg-muted/50"
+                    )}
+                  >
+                    <p className="font-semibold text-sm mb-1">{MERCHANT_ROLE_LABELS[r]}</p>
+                    <p className="text-xs text-muted-foreground leading-tight">
+                      {rolePermissions[r]}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowInvite(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all">Cancel</button>
-              <button onClick={() => setShowInvite(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-[#263b8e] hover:bg-[#1e2f72] text-white text-sm font-medium transition-all">Send Invite</button>
+          </FormField>
+
+          <FormField
+            label="Personal Message"
+            description="Optional message to include in the invitation email"
+          >
+            <Input
+              value={inviteMessage}
+              onChange={(e) => setInviteMessage(e.target.value)}
+              placeholder="Welcome to the team!"
+            />
+          </FormField>
+
+          {/* Permission Summary */}
+          <div className="bg-muted/30 border border-border rounded-xl p-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              {MERCHANT_ROLE_LABELS[inviteRole]} Permissions
+            </p>
+            <div className="space-y-1">
+              {(() => {
+                const permissions = {
+                  [MERCHANT_ROLES.ADMIN]: [
+                    "View and manage all transactions",
+                    "Manage settlements and payouts",
+                    "Invite and remove team members",
+                    "Configure API keys and webhooks",
+                    "Manage sub-merchants",
+                    "Update business settings",
+                  ],
+                  [MERCHANT_ROLES.DEVELOPER]: [
+                    "Generate and manage API keys",
+                    "Configure webhook endpoints",
+                    "Access API documentation",
+                    "View transaction logs",
+                    "Test sandbox environment",
+                  ],
+                  [MERCHANT_ROLES.FINANCE]: [
+                    "View all financial reports",
+                    "Export transaction data",
+                    "Reconcile settlements",
+                    "View payout history",
+                    "Download invoices",
+                  ],
+                  [MERCHANT_ROLES.SUPPORT]: [
+                    "View transaction details",
+                    "Handle customer disputes",
+                    "Initiate refunds",
+                    "View customer information",
+                    "Access support tools",
+                  ],
+                };
+                
+                return permissions[inviteRole].map((perm, idx) => (
+                  <div key={idx} className="flex items-start gap-2 text-xs">
+                    <ShieldCheck className="size-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">{perm}</span>
+                  </div>
+                ));
+              })()}
             </div>
-          </motion.div>
+          </div>
+
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowInvite(false);
+                setInviteEmail("");
+                setInviteMessage("");
+                setInviteRole(MERCHANT_ROLES.ADMIN);
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!inviteEmail.trim() || !inviteEmail.includes("@")}
+              onClick={() => {
+                showToast(
+                  "success",
+                  "Invitation Sent",
+                  `An invitation has been sent to ${inviteEmail} as ${MERCHANT_ROLE_LABELS[inviteRole]}.`
+                );
+                setShowInvite(false);
+                setInviteEmail("");
+                setInviteMessage("");
+                setInviteRole(MERCHANT_ROLES.ADMIN);
+              }}
+              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <Mail className="size-4" />
+              Send Invite
+            </button>
+          </div>
         </div>
-      )}
+      </Modal>
 
       {/* Action Modal */}
       {actionTarget && (

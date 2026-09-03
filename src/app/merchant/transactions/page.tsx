@@ -16,6 +16,9 @@ import {
   ArrowUpCircle,
   Eye,
   X,
+  Check,
+  FileText,
+  AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatGHS, formatDate } from "@/lib/constants";
@@ -23,6 +26,9 @@ import { mockMerchantTransactions } from "@/lib/merchant-mock-data";
 import type { MerchantTransaction } from "@/lib/merchant-mock-data";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import TransactionDetail from "../_components/transaction-details-modal";
+import { Modal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
+import { FormField, Input, Select } from "@/components/ui/form-field";
 
 const PAGE_SIZES = [10, 25, 50] as const;
 
@@ -43,6 +49,14 @@ export default function TransactionsPage() {
   const [page, setPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedTxn, setSelectedTxn] = useState<MerchantTransaction | null>(null);
+  
+  // Export modal state
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFormat, setExportFormat] = useState<"csv" | "pdf">("csv");
+  const [exportDateFrom, setExportDateFrom] = useState("");
+  const [exportDateTo, setExportDateTo] = useState("");
+  
+  const { showToast } = useToast();
 
   const filtered = useMemo(() => {
     return mockMerchantTransactions.filter((t) => {
@@ -107,7 +121,10 @@ export default function TransactionsPage() {
 
         {/* Export */}
         {can("transactions.export") && (
-          <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all">
+          <button 
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all"
+          >
             <Download className="size-3.5" />
             Export
           </button>
@@ -238,6 +255,170 @@ export default function TransactionsPage() {
       {selectedTxn && (
         <TransactionDetail txn={selectedTxn} onClose={() => setSelectedTxn(null)} />
       )}
+
+      {/* Export Modal */}
+      <Modal
+        isOpen={showExportModal}
+        onClose={() => {
+          setShowExportModal(false);
+          setExportFormat("csv");
+          setExportDateFrom("");
+          setExportDateTo("");
+        }}
+        title="Export Transactions"
+        description="Download your transaction history"
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+            <FileText className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-blue-900 mb-1">Transaction Export</p>
+              <p className="text-sm text-blue-700">
+                Export includes transaction reference, date/time, type, amount, fee, net, status, and payer/beneficiary information.
+              </p>
+            </div>
+          </div>
+
+          {/* Format Selection */}
+          <FormField
+            label="Export Format"
+            required
+            description="Choose file format"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setExportFormat("csv")}
+                className={cn(
+                  "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
+                  exportFormat === "csv"
+                    ? "border-[#64c6c3] bg-[#64c6c3]/5"
+                    : "border-border hover:border-muted-foreground/30"
+                )}
+              >
+                <FileText className="size-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-semibold">CSV</p>
+                  <p className="text-xs text-muted-foreground">Spreadsheet format</p>
+                </div>
+                {exportFormat === "csv" && <Check className="size-4 text-[#64c6c3] ml-auto" />}
+              </button>
+              <button
+                onClick={() => setExportFormat("pdf")}
+                className={cn(
+                  "flex items-center gap-3 p-4 border-2 rounded-xl text-left transition-all",
+                  exportFormat === "pdf"
+                    ? "border-[#263b8e] bg-[#263b8e]/5"
+                    : "border-border hover:border-muted-foreground/30"
+                )}
+              >
+                <FileText className="size-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-semibold">PDF</p>
+                  <p className="text-xs text-muted-foreground">Print-ready report</p>
+                </div>
+                {exportFormat === "pdf" && <Check className="size-4 text-[#263b8e] ml-auto" />}
+              </button>
+            </div>
+          </FormField>
+
+          {/* Date Range */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              label="Start Date"
+              required
+              description="From date"
+            >
+              <Input
+                type="date"
+                value={exportDateFrom}
+                onChange={(e) => setExportDateFrom(e.target.value)}
+              />
+            </FormField>
+            <FormField
+              label="End Date"
+              required
+              description="To date"
+            >
+              <Input
+                type="date"
+                value={exportDateTo}
+                onChange={(e) => setExportDateTo(e.target.value)}
+              />
+            </FormField>
+          </div>
+
+          {/* Current Filters Notice */}
+          {(statusFilter !== "all" || typeFilter !== "all" || search !== "") && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+              <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-amber-900 mb-1">Active Filters</p>
+                <p className="text-sm text-amber-700">
+                  Export will include current filters: 
+                  {statusFilter !== "all" && ` Status: ${statusFilter}`}
+                  {typeFilter !== "all" && ` Type: ${typeFilter}`}
+                  {search !== "" && ` Search: "${search}"`}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Warning for large exports */}
+          {exportDateFrom && exportDateTo && (
+            (() => {
+              const daysDiff = Math.ceil(
+                (new Date(exportDateTo).getTime() - new Date(exportDateFrom).getTime()) / 86400000
+              );
+              if (daysDiff > 90) {
+                return (
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                    <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+                    <p className="text-sm text-amber-700">
+                      Large date range selected ({daysDiff} days). Export may take several minutes to generate.
+                    </p>
+                  </div>
+                );
+              }
+              return null;
+            })()
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowExportModal(false);
+                setExportFormat("csv");
+                setExportDateFrom("");
+                setExportDateTo("");
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!exportDateFrom || !exportDateTo}
+              onClick={() => {
+                showToast(
+                  "success",
+                  "Export Started",
+                  `Transactions export (${exportFormat.toUpperCase()}) is being generated. Download will start shortly.`
+                );
+                setShowExportModal(false);
+                setExportFormat("csv");
+                setExportDateFrom("");
+                setExportDateTo("");
+              }}
+              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <Download className="size-4" />
+              Generate Export
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

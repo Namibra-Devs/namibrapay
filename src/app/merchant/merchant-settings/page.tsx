@@ -1,12 +1,45 @@
 'use client';
 
+import { useState } from "react";
 import { motion } from "motion/react";
-import { Building2, CreditCard, Bell, Shield, ToggleLeft, AlertTriangle } from "lucide-react";
+import { Building2, CreditCard, Bell, Shield, ToggleLeft, AlertTriangle, Check } from "lucide-react";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
 
 export default function MerchantSettingsPage() {
   const { can } = useMerchantRole();
+  const { showToast } = useToast();
+  
+  // Business Profile state
+  const [businessName, setBusinessName] = useState("Kwame Organics Ltd");
+  const [businessAddress, setBusinessAddress] = useState("12 Liberation Rd, Accra, Ghana");
+  const [contactEmail, setContactEmail] = useState("ops@kwameorganics.com");
+  const [contactPhone, setContactPhone] = useState("+233 20 123 4567");
+  
+  // Fee bearer state
+  const [feeBearer, setFeeBearer] = useState<"merchant" | "payer">("merchant");
+  
+  // Notification preferences state
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    successfulTransaction: true,
+    failedTransaction: true,
+    settlementProcessed: true,
+    payoutCompleted: true,
+    securityEvents: true,
+  });
+  
+  const handleSaveProfile = () => {
+    showToast("success", "Profile Updated", "Your business profile has been saved successfully.");
+  };
+  
+  const handleSaveFeeBearer = () => {
+    showToast("success", "Preference Saved", `Fee bearer updated to: ${feeBearer === "merchant" ? "Merchant" : "Payer"}`);
+  };
+  
+  const handleSaveNotifications = () => {
+    showToast("success", "Notifications Updated", "Your notification preferences have been saved.");
+  };
 
   return (
     <div className="px-6 py-6 space-y-6 pb-24 md:pb-6">
@@ -26,16 +59,17 @@ export default function MerchantSettingsPage() {
             <h2 className="font-semibold text-base" style={{ fontFamily: "var(--font-heading)" }}>Business Profile</h2>
           </div>
           {[
-            { label: "Business Name", value: "Kwame Organics Ltd", editable: can("settings.manage") },
-            { label: "Registration Number", value: "CS004152023", editable: false },
-            { label: "Business Address", value: "12 Liberation Rd, Accra, Ghana", editable: can("settings.manage") },
-            { label: "Contact Email", value: "ops@kwameorganics.com", editable: can("settings.manage") },
-            { label: "Contact Phone", value: "+233 20 123 4567", editable: can("settings.manage") },
+            { label: "Business Name", value: businessName, setValue: setBusinessName, editable: can("settings.manage") },
+            { label: "Registration Number", value: "CS004152023", setValue: null, editable: false },
+            { label: "Business Address", value: businessAddress, setValue: setBusinessAddress, editable: can("settings.manage") },
+            { label: "Contact Email", value: contactEmail, setValue: setContactEmail, editable: can("settings.manage") },
+            { label: "Contact Phone", value: contactPhone, setValue: setContactPhone, editable: can("settings.manage") },
           ].map((field) => (
             <div key={field.label}>
               <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">{field.label}</label>
               <input
-                defaultValue={field.value}
+                value={field.value}
+                onChange={(e) => field.setValue?.(e.target.value)}
                 disabled={!field.editable}
                 className={cn("w-full px-3 py-2.5 text-sm border rounded-xl outline-none transition-all",
                   field.editable
@@ -45,7 +79,11 @@ export default function MerchantSettingsPage() {
             </div>
           ))}
           {can("settings.manage") && (
-            <button className="px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all">
+            <button 
+              onClick={handleSaveProfile}
+              className="px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center gap-2"
+            >
+              <Check className="size-4" />
               Save Changes
             </button>
           )}
@@ -87,21 +125,41 @@ export default function MerchantSettingsPage() {
               <h3 className="font-medium text-sm">Fee Bearer Preference</h3>
             </div>
             {can("settings.manage") ? (
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { key: "merchant", label: "Merchant bears fees", desc: "Fees deducted from your settlement" },
-                  { key: "payer", label: "Payer bears fees", desc: "Fees added to the checkout amount" },
-                ].map((opt) => (
-                  <label key={opt.key} className={cn("flex flex-col gap-1 p-3 rounded-xl border cursor-pointer transition-all hover:bg-muted/30",
-                    opt.key === "merchant" ? "border-[#64c6c3]/40 bg-[#64c6c3]/5" : "border-border")}>
-                    <div className="flex items-center gap-2">
-                      <input type="radio" name="fee_bearer" defaultChecked={opt.key === "merchant"} className="accent-[#64c6c3] size-3" />
-                      <span className="text-xs font-semibold">{opt.label}</span>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground pl-5">{opt.desc}</p>
-                  </label>
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { key: "merchant" as const, label: "Merchant bears fees", desc: "Fees deducted from your settlement" },
+                    { key: "payer" as const, label: "Payer bears fees", desc: "Fees added to the checkout amount" },
+                  ].map((opt) => (
+                    <label 
+                      key={opt.key} 
+                      className={cn(
+                        "flex flex-col gap-1 p-3 rounded-xl border cursor-pointer transition-all hover:bg-muted/30",
+                        feeBearer === opt.key ? "border-[#64c6c3]/40 bg-[#64c6c3]/5" : "border-border"
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        <input 
+                          type="radio" 
+                          name="fee_bearer" 
+                          checked={feeBearer === opt.key}
+                          onChange={() => setFeeBearer(opt.key)}
+                          className="accent-[#64c6c3] size-3" 
+                        />
+                        <span className="text-xs font-semibold">{opt.label}</span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground pl-5">{opt.desc}</p>
+                    </label>
+                  ))}
+                </div>
+                <button 
+                  onClick={handleSaveFeeBearer}
+                  className="w-full px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2"
+                >
+                  <Check className="size-4" />
+                  Save Fee Preference
+                </button>
+              </>
             ) : (
               <div className="bg-muted/30 rounded-xl px-3 py-2.5 text-sm text-muted-foreground">
                 Merchant absorbs fees (default)
@@ -122,21 +180,33 @@ export default function MerchantSettingsPage() {
             </div>
             <div className="space-y-3">
               {[
-                { label: "Successful transaction", sub: "Email & SMS on each collection" },
-                { label: "Failed transaction", sub: "Email on failures" },
-                { label: "Settlement processed", sub: "Email when NSP settles funds" },
-                { label: "Payout completed", sub: "Email when payout hits your bank" },
-                { label: "Security events", sub: "Email on login, key changes" },
+                { key: "successfulTransaction" as const, label: "Successful transaction", sub: "Email & SMS on each collection" },
+                { key: "failedTransaction" as const, label: "Failed transaction", sub: "Email on failures" },
+                { key: "settlementProcessed" as const, label: "Settlement processed", sub: "Email when NSP settles funds" },
+                { key: "payoutCompleted" as const, label: "Payout completed", sub: "Email when payout hits your bank" },
+                { key: "securityEvents" as const, label: "Security events", sub: "Email on login, key changes" },
               ].map((n) => (
-                <div key={n.label} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
+                <div key={n.key} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
                   <div>
                     <p className="text-sm font-medium">{n.label}</p>
                     <p className="text-xs text-muted-foreground">{n.sub}</p>
                   </div>
-                  <input type="checkbox" defaultChecked className="accent-[#64c6c3] size-4" />
+                  <input 
+                    type="checkbox" 
+                    checked={notificationPrefs[n.key]}
+                    onChange={(e) => setNotificationPrefs(prev => ({ ...prev, [n.key]: e.target.checked }))}
+                    className="accent-[#64c6c3] size-4" 
+                  />
                 </div>
               ))}
             </div>
+            <button 
+              onClick={handleSaveNotifications}
+              className="w-full px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2"
+            >
+              <Check className="size-4" />
+              Save Notification Preferences
+            </button>
           </motion.div>
         )}
 

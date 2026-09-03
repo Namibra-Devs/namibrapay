@@ -15,11 +15,16 @@ import {
   Send,
   Terminal,
   Zap,
+  Key,
+  Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/constants";
 import { mockApiKeys, mockWebhookLogs } from "@/lib/merchant-mock-data";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
+import { Modal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
+import { FormField, Input, Select } from "@/components/ui/form-field";
 
 type Tab = "keys" | "webhooks" | "sandbox";
 
@@ -29,6 +34,18 @@ export default function ApiPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showNewKeySecret, setShowNewKeySecret] = useState(false);
   const [revokeTarget, setRevokeTarget] = useState<string | null>(null);
+  
+  // Generate API key modal state
+  const [showGenerateKeyModal, setShowGenerateKeyModal] = useState(false);
+  const [newKeyLabel, setNewKeyLabel] = useState("");
+  const [newKeyEnvironment, setNewKeyEnvironment] = useState<"live" | "test">("test");
+  const [generatedKey, setGeneratedKey] = useState<{ public: string; secret: string } | null>(null);
+  
+  // Webhook configuration modal state
+  const [showWebhookModal, setShowWebhookModal] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState("https://api.kwameorganics.com/webhooks/namibrapay");
+  
+  const { showToast } = useToast();
 
   const handleCopy = (id: string, text: string) => {
     void navigator.clipboard.writeText(text);
@@ -69,8 +86,10 @@ export default function ApiPage() {
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
           {can("api.manage") && (
             <div className="flex justify-end">
-              <button onClick={() => setShowNewKeySecret(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all">
+              <button 
+                onClick={() => setShowGenerateKeyModal(true)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
+              >
                 <Plus className="size-4" />
                 Generate New Key
               </button>
@@ -141,20 +160,26 @@ export default function ApiPage() {
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
           {/* Webhook Config */}
           <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
-            <h3 className="font-semibold text-sm" style={{ fontFamily: "var(--font-heading)" }}>Webhook Endpoint</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-sm" style={{ fontFamily: "var(--font-heading)" }}>Webhook Endpoint</h3>
+              {can("api.manage") && (
+                <button
+                  onClick={() => setShowWebhookModal(true)}
+                  className="px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-muted/50 transition-all"
+                >
+                  Configure
+                </button>
+              )}
+            </div>
             <div className="flex gap-3">
               <div className="flex-1 relative">
                 <Globe className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
                 <input
-                  defaultValue="https://api.kwameorganics.com/webhooks/namibrapay"
-                  className="w-full pl-9 pr-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-[#64c6c3]/60 transition-all font-mono"
+                  value={webhookUrl}
+                  readOnly
+                  className="w-full pl-9 pr-4 py-2.5 text-sm bg-muted/30 border border-border rounded-xl outline-none font-mono cursor-not-allowed"
                 />
               </div>
-              {can("api.manage") && (
-                <button className="px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all">
-                  Save
-                </button>
-              )}
             </div>
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">Subscribed Events</p>
@@ -271,6 +296,252 @@ export default function ApiPage() {
           </motion.div>
         </div>
       )}
+
+      {/* Generate API Key Modal */}
+      <Modal
+        isOpen={showGenerateKeyModal}
+        onClose={() => {
+          setShowGenerateKeyModal(false);
+          setNewKeyLabel("");
+          setNewKeyEnvironment("test");
+          setGeneratedKey(null);
+        }}
+        title="Generate API Key"
+        description="Create new API credentials for integration"
+        size="md"
+      >
+        <div className="space-y-6">
+          {!generatedKey ? (
+            <>
+              {/* Info Banner */}
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+                <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-blue-900 mb-1">API Key Security</p>
+                  <p className="text-sm text-blue-700">
+                    Your secret key will only be shown once. Store it securely - you won't be able to see it again.
+                  </p>
+                </div>
+              </div>
+
+              <FormField
+                label="Key Label"
+                required
+                description="Descriptive name for this API key"
+              >
+                <Input
+                  value={newKeyLabel}
+                  onChange={(e) => setNewKeyLabel(e.target.value)}
+                  placeholder="e.g. Production Server, Mobile App"
+                />
+              </FormField>
+
+              <FormField
+                label="Environment"
+                required
+                description="Select whether this key is for testing or live transactions"
+              >
+                <Select
+                  value={newKeyEnvironment}
+                  onChange={(e) => setNewKeyEnvironment(e.target.value as "live" | "test")}
+                >
+                  <option value="test">Test Environment (Sandbox)</option>
+                  <option value="live">Live Environment (Production)</option>
+                </Select>
+              </FormField>
+
+              {newKeyEnvironment === "live" && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                  <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-amber-900 mb-1">Production Key</p>
+                    <p className="text-sm text-amber-700">
+                      This key will process real transactions with actual money. Ensure it's stored securely.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center gap-3 pt-4 border-t border-border">
+                <button
+                  onClick={() => {
+                    setShowGenerateKeyModal(false);
+                    setNewKeyLabel("");
+                    setNewKeyEnvironment("test");
+                  }}
+                  className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  disabled={!newKeyLabel.trim()}
+                  onClick={() => {
+                    // Simulate key generation
+                    const publicKey = `pk_${newKeyEnvironment}_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+                    const secretKey = `sk_${newKeyEnvironment}_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+                    setGeneratedKey({ public: publicKey, secret: secretKey });
+                  }}
+                  className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <Key className="size-4" />
+                  Generate Key
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Success State - Show Generated Keys */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-3">
+                <Check className="size-5 text-emerald-600 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-emerald-900">API Key Generated</p>
+                  <p className="text-sm text-emerald-700">Copy and save your secret key now.</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
+                    Public Key
+                  </label>
+                  <div className="flex items-center gap-2 bg-muted/30 rounded-lg px-3 py-2.5">
+                    <code className="text-xs font-mono flex-1 truncate">{generatedKey.public}</code>
+                    <button
+                      onClick={() => {
+                        void navigator.clipboard.writeText(generatedKey.public);
+                        showToast("success", "Copied", "Public key copied to clipboard");
+                      }}
+                      className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <Copy className="size-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
+                    Secret Key <span className="text-red-600">— Save this now!</span>
+                  </label>
+                  <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
+                    <code className="text-xs font-mono flex-1 truncate text-amber-900">{generatedKey.secret}</code>
+                    <button
+                      onClick={() => {
+                        void navigator.clipboard.writeText(generatedKey.secret);
+                        showToast("success", "Copied", "Secret key copied to clipboard");
+                      }}
+                      className="shrink-0 text-amber-700 hover:text-amber-900 transition-colors"
+                    >
+                      <Copy className="size-4" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-amber-700 mt-2">
+                    ⚠️ You won't be able to see this secret key again. Store it securely.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  showToast("success", "API Key Created", `${newKeyLabel} key has been added to your account.`);
+                  setShowGenerateKeyModal(false);
+                  setNewKeyLabel("");
+                  setNewKeyEnvironment("test");
+                  setGeneratedKey(null);
+                }}
+                className="w-full px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
+              >
+                Done
+              </button>
+            </>
+          )}
+        </div>
+      </Modal>
+
+      {/* Configure Webhook Modal */}
+      <Modal
+        isOpen={showWebhookModal}
+        onClose={() => setShowWebhookModal(false)}
+        title="Configure Webhook"
+        description="Set up event notifications for your integration"
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+            <Globe className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-blue-900 mb-1">Webhook Endpoint</p>
+              <p className="text-sm text-blue-700">
+                We'll send POST requests to this URL when subscribed events occur. Ensure your endpoint returns a 200 OK response.
+              </p>
+            </div>
+          </div>
+
+          <FormField
+            label="Webhook URL"
+            required
+            description="HTTPS endpoint to receive event notifications"
+          >
+            <Input
+              type="url"
+              value={webhookUrl}
+              onChange={(e) => setWebhookUrl(e.target.value)}
+              placeholder="https://yourdomain.com/webhooks/namibrapay"
+            />
+          </FormField>
+
+          <FormField
+            label="Subscribed Events"
+            required
+            description="Select which events to receive"
+          >
+            <div className="space-y-2">
+              {[
+                { event: "collection.success", label: "Collection Success", desc: "When a collection is successfully completed" },
+                { event: "collection.failed", label: "Collection Failed", desc: "When a collection fails" },
+                { event: "payout.completed", label: "Payout Completed", desc: "When funds are disbursed" },
+                { event: "payout.failed", label: "Payout Failed", desc: "When a payout fails" },
+                { event: "dispute.opened", label: "Dispute Opened", desc: "When a customer opens a dispute" },
+              ].map(({ event, label, desc }) => (
+                <label
+                  key={event}
+                  className="flex items-start gap-3 p-3 bg-card border border-border rounded-lg cursor-pointer hover:bg-muted/30 transition-all"
+                >
+                  <input
+                    type="checkbox"
+                    defaultChecked={event !== "dispute.opened"}
+                    className="mt-0.5 accent-[#64c6c3] size-4"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
+                    <code className="text-[10px] text-muted-foreground">{event}</code>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </FormField>
+
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => setShowWebhookModal(false)}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!webhookUrl.trim() || !webhookUrl.startsWith("https://")}
+              onClick={() => {
+                showToast("success", "Webhook Updated", "Your webhook configuration has been saved.");
+                setShowWebhookModal(false);
+              }}
+              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Save Configuration
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
