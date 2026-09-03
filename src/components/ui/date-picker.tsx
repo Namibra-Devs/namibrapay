@@ -188,7 +188,7 @@ export default function DatePicker({
           disabled
             ? "opacity-50 cursor-not-allowed border-border"
             : open
-            ? "border-border ring-2 ring-[#64c6c3]/20"
+            ? "border-border ring-2 ring-brand-teal/20"
             : "border-border hover:border-gray-300"
         )}
       >
@@ -214,7 +214,7 @@ export default function DatePicker({
                 left: pos.left,
                 width: Math.max(pos.width, 280)
               }}
-              className="bg-card border border-border rounded-xl shadow-xl p-3 z-[9999]"
+              className="bg-card border border-border rounded-xl shadow-xl p-3 z-9999"
             >
               {/* Month/Year Navigation */}
               <div className="flex items-center justify-between mb-3">
@@ -275,7 +275,7 @@ export default function DatePicker({
                           : selected
                           ? "bg-[#1a7a5e] text-white font-semibold shadow-sm"
                           : todayDate
-                          ? "bg-[#a3ffe2]/20 text-[#1a7a5e] font-medium hover:bg-[#a3ffe2]/40"
+                          ? "bg-brand-mint/20 text-[#1a7a5e] font-medium hover:bg-brand-mint/40"
                           : "text-foreground hover:bg-muted"
                       )}
                     >
@@ -296,7 +296,7 @@ export default function DatePicker({
                       setOpen(false);
                     }
                   }}
-                  className="flex-1 px-3 py-1.5 text-xs font-medium text-[#1a7a5e] hover:bg-[#a3ffe2]/10 rounded-lg transition-colors"
+                  className="flex-1 px-3 py-1.5 text-xs font-medium text-[#1a7a5e] hover:bg-brand-mint/10 rounded-lg transition-colors"
                 >
                   Today
                 </button>
