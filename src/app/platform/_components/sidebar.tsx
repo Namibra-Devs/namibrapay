@@ -55,13 +55,13 @@ export default function PlatformSidebar() {
       )}
     >
       {/* Logo */}
-      <div className={cn("flex items-center gap-2.5 px-4 py-5 border-b border-sidebar-border shrink-0", collapsed && "justify-center px-2")}>
+      <div className={cn("flex items-center gap-2.5 px-4 py-2 h-14 border-b border-sidebar-border shrink-0", collapsed && "justify-center px-2")}>
         <div className="size-8 flex items-center justify-center shrink-0">
           <Image
-            src="/favicon.png"
+            src="/logo-md.png"
             alt="NamibraPay"
-            width={40}
-            height={40}
+            width={30}
+            height={30}
             unoptimized
           />
         </div>

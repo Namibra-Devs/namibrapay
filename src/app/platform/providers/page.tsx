@@ -639,8 +639,8 @@ export default function ProvidersPage() {
           setNewProviderType("");
           setNewProviderApiUrl("");
         }}
-        title="Add Network Service Provider"
-        description="Configure a new NSP connection"
+        title="Add Bank Provider"
+        description="Configure a new bank partner connection"
         size="md"
       >
         <div className="space-y-6">
@@ -659,7 +659,7 @@ export default function ProvidersPage() {
           <FormField
             label="Provider Name"
             required
-            description="Display name for the NSP"
+            description="Display name for the bank provider"
           >
             <Input
               type="text"

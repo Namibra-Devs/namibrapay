@@ -26,7 +26,7 @@ export type Transaction = {
 
 export type Alert = {
   id: string;
-  type: "nsp_threshold" | "provider_outage" | "compliance_hold" | "payout_failed" | "security";
+  type: "balance_threshold" | "provider_outage" | "compliance_hold" | "payout_failed" | "security";
   title: string;
   description: string;
   severity: "low" | "medium" | "high" | "critical";
@@ -41,60 +41,24 @@ export type Provider = {
   status: "operational" | "degraded" | "down";
   lastSuccessful: string;
   avgLatencyMs: number;
-  nspBalance: number;
-  nspThreshold: number;
-  nspStatus: "healthy" | "warning" | "critical";
+  settlementBalance: number;
+  balanceThreshold: number;
+  balanceStatus: "healthy" | "warning" | "critical";
   uptime: number;
 };
 
 export const mockProviders: Provider[] = [
   {
-    id: "p1",
-    name: "MTN Mobile Money",
-    shortCode: "MTN",
+    id: "umb001",
+    name: "Universal Merchant Bank (UMB)",
+    shortCode: "UMB",
     status: "operational",
-    lastSuccessful: "2026-09-03T12:30:00Z",
-    avgLatencyMs: 342,
-    nspBalance: 2_840_000,
-    nspThreshold: 500_000,
-    nspStatus: "healthy",
-    uptime: 99.8,
-  },
-  {
-    id: "p2",
-    name: "Vodafone Cash",
-    shortCode: "VOD",
-    status: "degraded",
-    lastSuccessful: "2026-09-03T12:27:00Z",
-    avgLatencyMs: 1240,
-    nspBalance: 620_000,
-    nspThreshold: 500_000,
-    nspStatus: "warning",
-    uptime: 97.2,
-  },
-  {
-    id: "p3",
-    name: "AirtelTigo Money",
-    shortCode: "AT",
-    status: "operational",
-    lastSuccessful: "2026-09-03T12:31:00Z",
-    avgLatencyMs: 289,
-    nspBalance: 1_100_000,
-    nspThreshold: 300_000,
-    nspStatus: "healthy",
-    uptime: 99.5,
-  },
-  {
-    id: "p4",
-    name: "GhIPSS / GIP",
-    shortCode: "GIP",
-    status: "down",
-    lastSuccessful: "2026-09-03T10:30:00Z",
-    avgLatencyMs: 0,
-    nspBalance: 380_000,
-    nspThreshold: 400_000,
-    nspStatus: "critical",
-    uptime: 91.3,
+    lastSuccessful: new Date().toISOString(),
+    avgLatencyMs: 285,
+    settlementBalance: 4_500_000,
+    balanceThreshold: 1_000_000,
+    balanceStatus: "healthy",
+    uptime: 99.7,
   },
 ];
 
@@ -176,24 +140,15 @@ export const mockMerchants: Merchant[] = [
 export const mockAlerts: Alert[] = [
   {
     id: "a1",
-    type: "provider_outage",
-    title: "GhIPSS / GIP Provider Down",
-    description: "No successful transactions in the last 2 hours. Engineering notified.",
-    severity: "critical",
-    createdAt: "2026-09-03T10:30:00Z",
-    isRead: false,
-  },
-  {
-    id: "a2",
-    type: "nsp_threshold",
-    title: "Vodafone Cash NSP Balance Warning",
-    description: "Balance GHS 620,000 is approaching threshold of GHS 500,000.",
+    type: "balance_threshold",
+    title: "Settlement Balance Warning",
+    description: "UMB settlement balance approaching threshold. Consider prefunding.",
     severity: "high",
     createdAt: "2026-09-03T11:30:00Z",
     isRead: false,
   },
   {
-    id: "a3",
+    id: "a2",
     type: "compliance_hold",
     title: "SumaFoods Ghana — Compliance Hold",
     description: "Account suspended pending AML investigation. KYC Officer assigned.",
@@ -202,7 +157,7 @@ export const mockAlerts: Alert[] = [
     isRead: true,
   },
   {
-    id: "a4",
+    id: "a3",
     type: "payout_failed",
     title: "Payout Batch #PB-2024-0891 Failed",
     description: "3 of 47 payouts failed. Finance review required.",
@@ -211,7 +166,7 @@ export const mockAlerts: Alert[] = [
     isRead: false,
   },
   {
-    id: "a5",
+    id: "a4",
     type: "security",
     title: "Unusual Login Activity Detected",
     description: "Multiple failed login attempts from IP 41.189.xxx.xxx.",
@@ -239,7 +194,7 @@ export const mockTransactions: Transaction[] = Array.from({ length: 20 }, (_, i)
   status: (["successful", "successful", "successful", "failed", "pending"][
     Math.floor(Math.random() * 5)
   ] ?? "successful") as Transaction["status"],
-  provider: ["MTN", "VOD", "AT", "GIP"][Math.floor(Math.random() * 4)] ?? "MTN",
+  provider: "UMB",
   type: Math.random() > 0.3 ? "collection" : "payout",
   customerRef: `REF-${Math.random().toString(36).slice(2, 10).toUpperCase()}`,
   createdAt: `2026-09-0${2 + Math.floor(Math.random() * 2)}T${String(Math.floor(Math.random() * 24)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}:00Z`,

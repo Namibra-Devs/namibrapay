@@ -1,19 +1,36 @@
 import type { SignInPayload, SignUpPayload, AuthResponse, SignInResponse, ApiErrorBody } from "@/types/auth";
 
+// Extended response type for pending accounts
+export type SignInResponseExtended = SignInResponse | {
+  status: "pending";
+  email: string;
+  businessName: string;
+  message: string;
+};
+
+// Compliance status type
+export type ComplianceStatus = "incomplete" | "pending" | "approved" | "rejected";
+
 // Mock auth functions - replace with real API calls later
-export async function signIn(payload: SignInPayload): Promise<SignInResponse> {
+export async function signIn(payload: SignInPayload): Promise<SignInResponseExtended> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   
   // Mock: Check if account is pending approval
-  // In production, backend would return this status
+  // In production, backend would check account status from database
   const isPending = false; // Set to true to test pending flow
   
   if (isPending) {
-    throw new Error("ACCOUNT_PENDING: Your account is still under review. Please check your email for updates.");
+    return {
+      status: "pending",
+      email: payload.email,
+      businessName: "Your Business", // Would come from database
+      message: "Your account is still under review. Please check your application status.",
+    };
   }
   
   // Mock response - returning successful auth (no MFA required)
+  // TODO: In production, include complianceStatus from backend
   return {
     token: "mock-token",
     user: {
@@ -23,6 +40,7 @@ export async function signIn(payload: SignInPayload): Promise<SignInResponse> {
       lastName: "User",
       businessName: "Test Business",
       role: "owner", // Default to merchant owner role
+      complianceStatus: "incomplete" as ComplianceStatus, // Would come from database
     },
   };
 }
@@ -66,8 +84,9 @@ export async function signUp(payload: SignUpPayload): Promise<AuthResponse> {
       email: payload.email,
       firstName: payload.firstName,
       lastName: payload.lastName,
-      businessName: payload.businessName,
+      businessName: payload.businessName || "New Business",
       role: "owner",
+      complianceStatus: "incomplete" as ComplianceStatus, // New accounts start in Test Mode
     },
   };
 }

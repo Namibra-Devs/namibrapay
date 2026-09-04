@@ -51,7 +51,7 @@ export type FeeLedgerEntry = {
   transactionAmount: number;
   feeRate: string;
   feeAmount: number;
-  nspShare: number;
+  bankShare: number;
   platformShare: number;
   ref: string;
 };
@@ -63,25 +63,25 @@ export type FinancialReport = {
   period: string;
   generatedAt: string;
   size: string;
-  type: "reconciliation" | "fee_ledger" | "payout" | "volume" | "nsp_balance";
+  type: "reconciliation" | "fee_ledger" | "payout" | "volume" | "settlement_balance";
 };
 
 export const mockPrefundRequests: PrefundRequest[] = [
   {
     id: "pf1",
-    provider: "GhIPSS / GIP",
-    providerCode: "GIP",
-    amount: 500_000,
+    provider: "Universal Merchant Bank",
+    providerCode: "UMB",
+    amount: 1_000_000,
     status: "pending",
     requestedBy: "Ama Serwaa",
     requestedAt: new Date(Date.now() - 3600000).toISOString(),
-    notes: "Balance critically low. GIP is down — urgent prefund required.",
+    notes: "Settlement balance approaching threshold. Prefund requested to maintain adequate float.",
   },
   {
     id: "pf2",
-    provider: "Vodafone Cash",
-    providerCode: "VOD",
-    amount: 300_000,
+    provider: "Universal Merchant Bank",
+    providerCode: "UMB",
+    amount: 750_000,
     status: "approved",
     requestedBy: "Kofi Mensah",
     requestedAt: new Date(Date.now() - 7200000).toISOString(),
@@ -91,26 +91,14 @@ export const mockPrefundRequests: PrefundRequest[] = [
   },
   {
     id: "pf3",
-    provider: "MTN Mobile Money",
-    providerCode: "MTN",
-    amount: 1_000_000,
+    provider: "Universal Merchant Bank",
+    providerCode: "UMB",
+    amount: 1_500_000,
     status: "completed",
     requestedBy: "Ama Serwaa",
     requestedAt: new Date(Date.now() - 172800000).toISOString(),
     approvedBy: "Super Admin",
     approvedAt: new Date(Date.now() - 165600000).toISOString(),
-  },
-  {
-    id: "pf4",
-    provider: "AirtelTigo Money",
-    providerCode: "AT",
-    amount: 200_000,
-    status: "rejected",
-    requestedBy: "Kwame Acheampong",
-    requestedAt: new Date(Date.now() - 259200000).toISOString(),
-    approvedBy: "Super Admin",
-    approvedAt: new Date(Date.now() - 252000000).toISOString(),
-    notes: "Duplicate request — existing approved request still pending.",
   },
 ];
 
@@ -128,7 +116,7 @@ export const mockReconciliationEntries: ReconciliationEntry[] = Array.from({ len
   return {
     id: `rec-${i}`,
     date: date.toISOString().split("T")[0] ?? "",
-    provider: (["MTN", "VOD", "AT", "GIP"] as const)[i % 4] ?? "MTN",
+    provider: "UMB",
     expectedCollections: exp,
     actualCollections: act,
     expectedPayouts: expP,
@@ -140,7 +128,7 @@ export const mockReconciliationEntries: ReconciliationEntry[] = Array.from({ len
     discrepancyCause: hasDisc
       ? i === 2
         ? "Timing difference — T+1 settlement lag"
-        : "NSP reporting mismatch — escalated to GIP"
+        : "Bank reporting mismatch — escalated to UMB back office"
       : undefined,
   };
 });
@@ -154,7 +142,7 @@ export const mockPayoutBatches: PayoutBatch[] = [
     payoutCount: 47,
     status: "pending_approval",
     createdAt: new Date(Date.now() - 1800000).toISOString(),
-    provider: "MTN",
+    provider: "UMB",
   },
   {
     id: "pb2",
@@ -164,7 +152,7 @@ export const mockPayoutBatches: PayoutBatch[] = [
     payoutCount: 18,
     status: "pending_approval",
     createdAt: new Date(Date.now() - 3600000).toISOString(),
-    provider: "VOD",
+    provider: "UMB",
   },
   {
     id: "pb3",
@@ -176,7 +164,7 @@ export const mockPayoutBatches: PayoutBatch[] = [
     createdAt: new Date(Date.now() - 7200000).toISOString(),
     approvedBy: "Super Admin",
     approvedAt: new Date(Date.now() - 5400000).toISOString(),
-    provider: "AT",
+    provider: "UMB",
   },
   {
     id: "pb4",
@@ -188,7 +176,7 @@ export const mockPayoutBatches: PayoutBatch[] = [
     createdAt: new Date(Date.now() - 86400000).toISOString(),
     approvedBy: "Finance Lead",
     approvedAt: new Date(Date.now() - 82800000).toISOString(),
-    provider: "MTN",
+    provider: "UMB",
   },
   {
     id: "pb5",
@@ -198,7 +186,7 @@ export const mockPayoutBatches: PayoutBatch[] = [
     payoutCount: 47,
     status: "failed",
     createdAt: new Date(Date.now() - 172800000).toISOString(),
-    provider: "GIP",
+    provider: "UMB",
     failedCount: 3,
   },
 ];
@@ -206,19 +194,22 @@ export const mockPayoutBatches: PayoutBatch[] = [
 export const mockFeeLedger: FeeLedgerEntry[] = Array.from({ length: 20 }, (_, i) => {
   // Use index-based deterministic values instead of Math.random()
   const txAmt = 200 + (i * 487) % 10000; // Deterministic pseudo-random
-  const rate = ([0.012, 0.013, 0.015] as const)[i % 3] ?? 0.015;
+  const rate = 0.015; // Fixed 1.5% rate
   const fee = Math.floor(txAmt * rate);
+  const bankShare = Math.floor(fee * (1.0 / 1.5)); // 1% to bank (66.67% of fee)
+  const platformShare = fee - bankShare; // 0.5% to platform (33.33% of fee)
+  
   return {
     id: `fl-${i}`,
     date: new Date(Date.now() - i * 3_600_000).toISOString(),
     merchantName: mockMerchants[i % mockMerchants.length]!.name,
-    channel: (["MTN MoMo", "Vodafone Cash", "AirtelTigo"] as const)[i % 3] ?? "MTN MoMo",
+    channel: "UMB",
     transactionType: (i % 3 === 0 ? "payout" : "collection") as FeeLedgerEntry["transactionType"],
     transactionAmount: txAmt,
-    feeRate: `${(rate * 100).toFixed(1)}%`,
+    feeRate: "1.5%",
     feeAmount: fee,
-    nspShare: Math.floor(fee * 0.6),
-    platformShare: Math.floor(fee * 0.4),
+    bankShare: bankShare,
+    platformShare: platformShare,
     ref: `REF-${i.toString(36).padStart(8, '0').toUpperCase()}`,
   };
 });
@@ -227,7 +218,7 @@ export const mockFinancialReports: FinancialReport[] = [
   {
     id: "r1",
     name: "Daily Reconciliation",
-    description: "Provider-level reconciliation for all channels",
+    description: "UMB reconciliation for all transactions",
     period: "Sep 01, 2026",
     generatedAt: new Date(Date.now() - 3600000).toISOString(),
     size: "248 KB",
@@ -236,7 +227,7 @@ export const mockFinancialReports: FinancialReport[] = [
   {
     id: "r2",
     name: "Fee Ledger Export",
-    description: "All fee entries with NSP / platform split",
+    description: "All fee entries with bank / platform split",
     period: "Aug 2026",
     generatedAt: new Date(Date.now() - 86400000).toISOString(),
     size: "1.2 MB",
@@ -254,7 +245,7 @@ export const mockFinancialReports: FinancialReport[] = [
   {
     id: "r4",
     name: "Volume Report",
-    description: "Transaction volume by merchant and channel",
+    description: "Transaction volume by merchant",
     period: "Q2 2026",
     generatedAt: new Date(Date.now() - 604800000).toISOString(),
     size: "3.1 MB",
@@ -262,11 +253,11 @@ export const mockFinancialReports: FinancialReport[] = [
   },
   {
     id: "r5",
-    name: "NSP Balance History",
-    description: "Daily NSP balance snapshots across all providers",
+    name: "Settlement Balance History",
+    description: "Daily UMB settlement balance snapshots",
     period: "Aug 2026",
     generatedAt: new Date(Date.now() - 86400000).toISOString(),
     size: "112 KB",
-    type: "nsp_balance",
+    type: "settlement_balance",
   },
 ];

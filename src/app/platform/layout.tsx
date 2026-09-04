@@ -18,7 +18,7 @@ export default function PlatformLayout({ children }: { children: ReactNode }) {
         {/* Topbar */}
         <header className="h-14 shrink-0 border-b border-border bg-card/60 backdrop-blur-sm flex items-center justify-between px-6 z-30">
           <div className="flex items-center gap-2">
-            <div className="size-1.5 rounded-full bg-[#64c6c3] animate-pulse" />
+            <div className="size-1.5 rounded-full bg-brand-teal animate-pulse" />
             <span className="text-xs text-muted-foreground font-medium">
               Platform Dashboard · <span className="text-foreground">{ROLE_LABELS[role]}</span>
             </span>

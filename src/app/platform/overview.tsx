@@ -10,7 +10,7 @@ import {
   Users,
 } from "lucide-react";
 import { KpiCard } from "./_components/kpi-card";
-import { NspBalanceCard } from "./_components/nsp-card";
+import { SettlementBalanceCard } from "./_components/nsp-card";
 import { AlertsFeed } from "./_components/alerts-feed";
 import { TransactionChart } from "./_components/transaction-chart";
 import { mockProviders, mockAlerts } from "@/lib/mock-data";
@@ -89,7 +89,7 @@ export default function PlatformOverview() {
           Platform Overview
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Real-time operational intelligence across all providers and merchants.
+          Real-time operational intelligence across UMB and all merchants.
         </p>
       </motion.div>
 
@@ -107,7 +107,7 @@ export default function PlatformOverview() {
         ))}
       </motion.div>
 
-      {/* NSP Balances */}
+      {/* UMB Settlement Balance */}
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -116,9 +116,9 @@ export default function PlatformOverview() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="font-semibold text-base" style={{ fontFamily: "var(--font-heading)" }}>
-              Provider NSP Balances
+              UMB Settlement Balance
             </h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Settlement float per provider — live</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Universal Merchant Bank settlement float — live</p>
           </div>
           <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
             <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-emerald-400 inline-block" />Healthy</span>
@@ -134,7 +134,7 @@ export default function PlatformOverview() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 + i * 0.06 }}
             >
-              <NspBalanceCard provider={p} />
+              <SettlementBalanceCard provider={p} />
             </motion.div>
           ))}
         </div>

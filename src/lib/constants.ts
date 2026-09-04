@@ -46,13 +46,20 @@ export const PROVIDER_STATUS = {
 
 export type ProviderStatus = (typeof PROVIDER_STATUS)[keyof typeof PROVIDER_STATUS];
 
-export const NSP_STATUS = {
+export const BALANCE_STATUS = {
   HEALTHY: "healthy",
   WARNING: "warning",
   CRITICAL: "critical",
 } as const;
 
-export type NspStatus = (typeof NSP_STATUS)[keyof typeof NSP_STATUS];
+export type BalanceStatus = (typeof BALANCE_STATUS)[keyof typeof BALANCE_STATUS];
+
+// Fee Structure Constants
+export const FEE_STRUCTURE = {
+  DEFAULT_RATE: 1.5, // Default merchant rate: 1.5%
+  BANK_SHARE: 1.0,   // Bank (UMB) share: 1%
+  PLATFORM_SHARE: 0.5, // NamibraPay share: 0.5%
+} as const;
 
 export const formatGHS = (amount: number): string => {
   return new Intl.NumberFormat("en-GH", {

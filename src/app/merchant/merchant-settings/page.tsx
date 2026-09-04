@@ -201,7 +201,7 @@ export default function MerchantSettingsPage() {
               {[
                 { key: "successfulTransaction" as const, label: "Successful transaction", sub: "Email & SMS on each collection" },
                 { key: "failedTransaction" as const, label: "Failed transaction", sub: "Email on failures" },
-                { key: "settlementProcessed" as const, label: "Settlement processed", sub: "Email when NSP settles funds" },
+                { key: "settlementProcessed" as const, label: "Settlement processed", sub: "Email when bank settles funds" },
                 { key: "payoutCompleted" as const, label: "Payout completed", sub: "Email when payout hits your bank" },
                 { key: "securityEvents" as const, label: "Security events", sub: "Email on login, key changes" },
               ].map((n) => (

@@ -18,6 +18,13 @@ type OnboardingStatus = "pending" | "under_review" | "info_requested" | "approve
 interface OnboardingData {
   email: string;
   businessName: string;
+  registrationNumber?: string;
+  country?: string;
+  address?: string;
+  industry?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
   submittedAt: string;
   status: OnboardingStatus;
   statusMessage?: string;
@@ -77,21 +84,43 @@ const STATUS_CONFIG: Record<OnboardingStatus, {
   },
 };
 
-// ── Mock Data (Replace with actual API call) ─────────────────────
+// ── Get Onboarding Data ─────────────────────────────────────────
 
-function getMockOnboardingData(email: string): OnboardingData {
-  // In production, this would be an API call
+function getOnboardingData(email: string): OnboardingData | null {
+  // Try to get data from sessionStorage first (just submitted)
+  const storedData = typeof window !== "undefined" ? sessionStorage.getItem("onboardingData") : null;
+  
+  if (storedData) {
+    try {
+      const parsed = JSON.parse(storedData);
+      // In production, this would be an API call to get the actual status
+      return {
+        ...parsed,
+        status: "pending" as OnboardingStatus,
+        statusMessage: "Your application has been submitted successfully and is awaiting review.",
+        estimatedCompletionDays: 2,
+        complianceNotes: [
+          "Application received and assigned to compliance team",
+          "Initial document verification in progress",
+        ],
+      };
+    } catch (e) {
+      console.error("Failed to parse onboarding data:", e);
+    }
+  }
+  
+  // Fallback: simulate API call with minimal data
+  // In production, this would fetch from backend API
   return {
     email,
-    businessName: "Acme Payments Ltd",
+    businessName: "Your Business",
     submittedAt: new Date().toISOString(),
-    status: "under_review",
-    statusMessage: "Your application is being reviewed by our compliance team.",
+    status: "pending",
+    statusMessage: "Application is being reviewed by our compliance team.",
     estimatedCompletionDays: 2,
     complianceNotes: [
-      "Business registration certificate received and verified",
-      "Director ID document under verification",
-      "Awaiting final approval from compliance officer",
+      "Application received",
+      "Under compliance review",
     ],
   };
 }
@@ -108,9 +137,8 @@ function OnboardingStatusContent() {
 
   useEffect(() => {
     if (email) {
-      // Simulate API call
-      const mockData = getMockOnboardingData(email);
-      setData(mockData);
+      const onboardingData = getOnboardingData(email);
+      setData(onboardingData);
     }
   }, [email]);
 
@@ -119,8 +147,8 @@ function OnboardingStatusContent() {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
     if (email) {
-      const mockData = getMockOnboardingData(email);
-      setData(mockData);
+      const onboardingData = getOnboardingData(email);
+      setData(onboardingData);
     }
     setIsRefreshing(false);
   };
@@ -250,7 +278,7 @@ function OnboardingStatusContent() {
                   Application Details
                 </h3>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex items-start gap-3">
                     <div className="size-10 rounded-lg bg-brand-navy/10 flex items-center justify-center shrink-0">
                       <Building2 className="size-5 text-brand-navy" />
@@ -261,6 +289,18 @@ function OnboardingStatusContent() {
                     </div>
                   </div>
 
+                  {data.registrationNumber && (
+                    <div className="flex items-start gap-3">
+                      <div className="size-10 rounded-lg bg-brand-navy/10 flex items-center justify-center shrink-0">
+                        <FileText className="size-5 text-brand-navy" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-0.5">Registration Number</p>
+                        <p className="text-sm font-semibold text-foreground">{data.registrationNumber}</p>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex items-start gap-3">
                     <div className="size-10 rounded-lg bg-brand-teal/10 flex items-center justify-center shrink-0">
                       <Mail className="size-5 text-brand-teal" />
@@ -270,6 +310,58 @@ function OnboardingStatusContent() {
                       <p className="text-sm font-semibold text-foreground break-all">{data.email}</p>
                     </div>
                   </div>
+
+                  {data.phone && (
+                    <div className="flex items-start gap-3">
+                      <div className="size-10 rounded-lg bg-brand-teal/10 flex items-center justify-center shrink-0">
+                        <Phone className="size-5 text-brand-teal" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-0.5">Phone Number</p>
+                        <p className="text-sm font-semibold text-foreground">{data.phone}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {(data.firstName || data.lastName) && (
+                    <div className="flex items-start gap-3">
+                      <div className="size-10 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
+                        <User className="size-5 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-0.5">Owner Name</p>
+                        <p className="text-sm font-semibold text-foreground">
+                          {data.firstName} {data.lastName}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {data.industry && (
+                    <div className="flex items-start gap-3">
+                      <div className="size-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                        <Briefcase className="size-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-0.5">Industry</p>
+                        <p className="text-sm font-semibold text-foreground capitalize">
+                          {data.industry.replace(/_/g, " ")}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {data.address && (
+                    <div className="flex items-start gap-3 sm:col-span-2">
+                      <div className="size-10 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                        <MapPin className="size-5 text-emerald-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-0.5">Business Address</p>
+                        <p className="text-sm font-semibold text-foreground">{data.address}</p>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="flex items-start gap-3">
                     <div className="size-10 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
@@ -282,6 +374,8 @@ function OnboardingStatusContent() {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
                         })}
                       </p>
                     </div>

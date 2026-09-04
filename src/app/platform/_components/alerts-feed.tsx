@@ -14,7 +14,7 @@ const severityStyles = {
 
 const typeIcons = {
   provider_outage: Zap,
-  nsp_threshold: AlertTriangle,
+  balance_threshold: AlertTriangle,
   compliance_hold: ShieldAlert,
   payout_failed: XCircle,
   security: Lock,

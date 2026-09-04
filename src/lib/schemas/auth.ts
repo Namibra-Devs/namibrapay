@@ -46,7 +46,63 @@ export const fileSchema = z
     "Only PDF, JPG, and PNG files are accepted"
   );
 
-// ── Sign Up Schema (Multi-Step) ──────────────────────────────────
+// ── Sign Up Schema (Simple Account Creation) ────────────────────
+
+export const simpleSignUpSchema = z.object({
+  businessName: z
+    .string()
+    .min(2, "Business name must be at least 2 characters.")
+    .max(100, "Business name is too long."),
+
+  firstName: z
+    .string()
+    .min(1, "First name is required.")
+    .max(50, "First name is too long."),
+
+  lastName: z
+    .string()
+    .min(1, "Last name is required.")
+    .max(50, "Last name is too long."),
+
+  email: z
+    .string()
+    .min(1, "Email is required.")
+    .email("Enter a valid email address."),
+
+  phone: z
+    .string()
+    .min(10, "Enter a valid phone number.")
+    .regex(/^[\d\s\-()+]+$/, "Phone number can only contain digits."),
+
+  businessType: z.enum(["starter", "registered"], {
+    message: "Please select your business type.",
+  }),
+
+  isDeveloper: z.enum(["yes", "no"], {
+    message: "Please answer this question.",
+  }),
+
+  password: z
+    .string()
+    .min(10, "Password must be at least 10 characters.")
+    .regex(/[A-Z]/, "Include at least one uppercase letter.")
+    .regex(/[a-z]/, "Include at least one lowercase letter.")
+    .regex(/[0-9]/, "Include at least one number.")
+    .regex(/[^A-Za-z0-9]/, "Include at least one special character."),
+  
+  passwordConfirm: z.string().min(1, "Please confirm your password."),
+
+  acceptedTerms: z.boolean().refine((val) => val === true, {
+    message: "You must accept the Terms of Service to continue.",
+  }),
+}).refine((data) => data.password === data.passwordConfirm, {
+  message: "Passwords do not match.",
+  path: ["passwordConfirm"],
+});
+
+export type SimpleSignUpValues = z.infer<typeof simpleSignUpSchema>;
+
+// ── Compliance/KYC Form Schema (Post-Login) ──────────────────────
 
 // Step 1: Business Details
 export const businessDetailsSchema = z.object({
@@ -70,7 +126,7 @@ export const businessDetailsSchema = z.object({
   industry: z.string().min(1, "Please select your industry."),
   
   businessType: z.enum(["starter", "registered"], {
-    errorMap: () => ({ message: "Please select your business type." }),
+    message: "Please select your business type.",
   }),
 });
 
@@ -99,7 +155,7 @@ export const ownerDetailsSchema = z.object({
     .regex(/^[\d\s\-()+]+$/, "Phone number can only contain digits."),
 
   isDeveloper: z.enum(["yes", "no"], {
-    errorMap: () => ({ message: "Please answer this question." }),
+    message: "Please answer this question.",
   }),
 });
 
@@ -155,21 +211,39 @@ export const termsSchema = z.object({
   }),
 });
 
-// Combined Sign Up Schema (all steps)
-export const signUpSchema = businessDetailsSchema
+// Combined Compliance Schema (all KYC/business info)
+export const complianceFormSchema = businessDetailsSchema
+  .merge(kycDocumentsSchema)
+  .merge(payoutAccountSchema);
+
+export type ComplianceFormValues = z.infer<typeof complianceFormSchema>;
+export type BusinessDetailsValues = z.infer<typeof businessDetailsSchema>;
+export type KYCDocumentsValues = z.infer<typeof kycDocumentsSchema>;
+export type PayoutAccountValues = z.infer<typeof payoutAccountSchema>;
+
+// Legacy: Keep old full schema for backwards compatibility (without refinements)
+const baseSignUpFields = z.object({
+  firstName: z.string().min(1, "First name is required.").max(50, "First name is too long."),
+  lastName: z.string().min(1, "Last name is required.").max(50, "Last name is too long."),
+  email: z.string().min(1, "Email is required.").email("Enter a valid email address."),
+  phone: z.string().min(10, "Enter a valid phone number.").regex(/^[\d\s\-()+]+$/, "Phone number can only contain digits."),
+  password: z.string().min(10, "Password must be at least 10 characters.")
+    .regex(/[A-Z]/, "Include at least one uppercase letter.")
+    .regex(/[a-z]/, "Include at least one lowercase letter.")
+    .regex(/[0-9]/, "Include at least one number.")
+    .regex(/[^A-Za-z0-9]/, "Include at least one special character."),
+  acceptedTerms: z.boolean(),
+  acceptedPrivacy: z.boolean(),
+});
+
+export const signUpSchema = baseSignUpFields
+  .merge(businessDetailsSchema)
   .merge(ownerDetailsSchema)
   .merge(kycDocumentsSchema)
   .merge(payoutAccountSchema)
-  .merge(securitySchema)
-  .merge(termsSchema);
+  .merge(securitySchema);
 
 export type SignUpValues = z.infer<typeof signUpSchema>;
-export type BusinessDetailsValues = z.infer<typeof businessDetailsSchema>;
-export type OwnerDetailsValues = z.infer<typeof ownerDetailsSchema>;
-export type KYCDocumentsValues = z.infer<typeof kycDocumentsSchema>;
-export type PayoutAccountValues = z.infer<typeof payoutAccountSchema>;
-export type SecurityValues = z.infer<typeof securitySchema>;
-export type TermsValues = z.infer<typeof termsSchema>;
 
 // ── Forgot Password ──────────────────────────────────────────────
 

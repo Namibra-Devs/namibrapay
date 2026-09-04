@@ -30,7 +30,7 @@ type Tab = "overview" | "prefunding" | "reconciliation" | "payouts" | "fee_ledge
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "overview", label: "Overview" },
-  { id: "prefunding", label: "NSP Prefunding" },
+  { id: "prefunding", label: "Settlement Prefunding" },
   { id: "reconciliation", label: "Reconciliation" },
   { id: "payouts", label: "Payout Batches" },
   { id: "fee_ledger", label: "Fee Ledger" },
@@ -65,7 +65,7 @@ const reportTypeCfg = {
   fee_ledger:     { color: "bg-brand-teal/10 text-[#1a6e6c]", label: "Fee Ledger"     },
   payout:         { color: "bg-brand-peach/40 text-amber-700", label: "Payouts"        },
   volume:         { color: "bg-[#bcbbee]/40 text-purple-700", label: "Volume"        },
-  nsp_balance:    { color: "bg-emerald-50 text-emerald-700",  label: "NSP Balance"   },
+  settlement_balance:    { color: "bg-emerald-50 text-emerald-700",  label: "Settlement Balance"   },
 };
 
 // ── KPI Card ────────────────────────────────────────────────────────────────
@@ -95,8 +95,8 @@ function KpiCard({ label, value, sub, color, icon: Icon, trend }: {
   );
 }
 
-// ── NSP Balance Bar ─────────────────────────────────────────────────────────
-function NspBalanceBar({ balance, threshold }: { balance: number; threshold: number }) {
+// ── Settlement Balance Bar ───────────────────────────────────────
+function SettlementBalanceBar({ balance, threshold }: { balance: number; threshold: number }) {
   const pct = Math.min((balance / (threshold * 4)) * 100, 100);
   const thresholdPct = Math.min((threshold / (threshold * 4)) * 100, 100);
   const isWarning = balance < threshold * 1.5;
@@ -175,7 +175,7 @@ export default function TreasuryPage() {
     );
   }
 
-  const totalNSPBalance = mockProviders.reduce((s, p) => s + p.nspBalance, 0);
+  const totalSettlementBalance = mockProviders.reduce((s, p) => s + p.settlementBalance, 0);
   const pendingPrefunds = mockPrefundRequests.filter((p) => p.status === "pending").length;
   const pendingBatches  = mockPayoutBatches.filter((b) => b.status === "pending_approval").length;
   const totalFees       = mockFeeLedger.reduce((s, e) => s + e.feeAmount, 0);
@@ -195,7 +195,7 @@ export default function TreasuryPage() {
               Treasury & Finance
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              NSP balance monitoring · Reconciliation · Payouts · Fee Ledger
+              Settlement balance monitoring · Reconciliation · Payouts · Fee Ledger
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -242,16 +242,16 @@ export default function TreasuryPage() {
           <div className="space-y-6">
             {/* KPI row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <KpiCard label="Total NSP Balance" value={formatGHS(totalNSPBalance)} sub="Across 4 providers" color="#64c6c3" icon={Banknote} trend="up" />
-              <KpiCard label="Today's Volume" value={formatGHS(4_940_000)} sub="MTN · VOD · AT · GIP" color="#263b8e" icon={TrendingUp} trend="up" />
-              <KpiCard label="Total Fees (30d)" value={formatGHS(totalFees)} sub="Platform + NSP share" color="#fedfb8" icon={DollarSign} trend="neutral" />
+              <KpiCard label="UMB Settlement Balance" value={formatGHS(totalSettlementBalance)} sub="Universal Merchant Bank" color="#64c6c3" icon={Banknote} trend="up" />
+              <KpiCard label="Today's Volume" value={formatGHS(4_940_000)} sub="All transactions via UMB" color="#263b8e" icon={TrendingUp} trend="up" />
+              <KpiCard label="Total Fees (30d)" value={formatGHS(totalFees)} sub="Platform + Bank share" color="#fedfb8" icon={DollarSign} trend="neutral" />
               <KpiCard label="Discrepancies" value={String(discrepancies)} sub="Active reconciliation flags" color={discrepancies > 0 ? "#ef4444" : "#64c6c3"} icon={AlertTriangle} />
             </div>
 
-            {/* NSP Balance cards */}
+            {/* Settlement Balance card */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold" style={{ fontFamily: "var(--font-heading)" }}>NSP Balances</h2>
+                <h2 className="text-sm font-semibold" style={{ fontFamily: "var(--font-heading)" }}>UMB Settlement Balance</h2>
                 {canApprove && (
                   <button
                     onClick={() => setShowThresholdModal(true)}
@@ -261,21 +261,21 @@ export default function TreasuryPage() {
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 {mockProviders.map((p) => {
-                  const isCritical = p.nspStatus === "critical";
-                  const isWarning  = p.nspStatus === "warning";
+                  const isCritical = p.balanceStatus === "critical";
+                  const isWarning  = p.balanceStatus === "warning";
                   return (
                     <div key={p.id} className={cn("bg-card border rounded-2xl p-4", isCritical ? "border-red-200" : isWarning ? "border-amber-200" : "border-border")}>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-bold text-muted-foreground font-mono">{p.shortCode}</span>
                         <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full font-medium",
                           isCritical ? "bg-red-50 text-red-700" : isWarning ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700")}>
-                          {p.nspStatus}
+                          {p.balanceStatus}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground truncate mb-0.5">{p.name}</p>
-                      <NspBalanceBar balance={p.nspBalance} threshold={p.nspThreshold} />
+                      <SettlementBalanceBar balance={p.settlementBalance} threshold={p.balanceThreshold} />
                       {(isCritical || isWarning) && canApprove && (
                         <button
                           onClick={() => { setShowPrefundModal(true); }}
@@ -311,7 +311,7 @@ export default function TreasuryPage() {
 
             {/* Fee split bar */}
             <div className="bg-card border border-border rounded-2xl p-5">
-              <h2 className="text-sm font-semibold mb-4" style={{ fontFamily: "var(--font-heading)" }}>Daily Fee Split (NSP vs Platform)</h2>
+              <h2 className="text-sm font-semibold mb-4" style={{ fontFamily: "var(--font-heading)" }}>Daily Fee Split (Bank vs Platform)</h2>
               <ResponsiveContainer width="100%" height={160}>
                 <BarChart data={mockChartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }} barSize={12}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -319,8 +319,8 @@ export default function TreasuryPage() {
                   <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }} />
                   <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="successful" name="NSP Share" fill="#64c6c3" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="failed" name="Platform Share" fill="#263b8e" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="successful" name="Bank Share (1%)" fill="#64c6c3" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="failed" name="Platform Share (0.5%)" fill="#263b8e" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -333,61 +333,26 @@ export default function TreasuryPage() {
                     Float Utilization Report
                   </h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Prefunded float amounts, daily average utilization, and peak usage by provider
+                    Prefunded float amount, daily average utilization, and peak usage for UMB settlement account
                   </p>
                 </div>
                 <BarChart2 className="size-8 text-brand-teal" />
               </div>
 
-              {/* Provider Float Cards */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-                {(() => {
-                  const floatData = [
-                    {
-                      provider: "MTN Mobile Money",
-                      shortCode: "MTN",
-                      color: "#fbbf24",
-                      prefundedAmount: 500000,
-                      dailyAvgUtilization: 387500,
-                      peakUtilization: 465000,
-                      idleFloat: 35000,
-                      lastPrefund: new Date(Date.now() - 7 * 86400000),
-                    },
-                    {
-                      provider: "Vodafone Cash",
-                      shortCode: "VOD",
-                      color: "#ef4444",
-                      prefundedAmount: 400000,
-                      dailyAvgUtilization: 312000,
-                      peakUtilization: 385000,
-                      idleFloat: 15000,
-                      lastPrefund: new Date(Date.now() - 5 * 86400000),
-                    },
-                    {
-                      provider: "AirtelTigo Money",
-                      shortCode: "AT",
-                      color: "#3b82f6",
-                      prefundedAmount: 300000,
-                      dailyAvgUtilization: 195000,
-                      peakUtilization: 267000,
-                      idleFloat: 33000,
-                      lastPrefund: new Date(Date.now() - 10 * 86400000),
-                    },
-                    {
-                      provider: "Gip",
-                      shortCode: "GIP",
-                      color: "#10b981",
-                      prefundedAmount: 250000,
-                      dailyAvgUtilization: 162500,
-                      peakUtilization: 218750,
-                      idleFloat: 31250,
-                      lastPrefund: new Date(Date.now() - 3 * 86400000),
-                    },
-                  ];
-
-                  return (
-                    <>
-                      {floatData.map((provider) => {
+              {/* UMB Float Card */}
+              <div className="grid grid-cols-1 gap-4 mb-6">
+                {[
+                  {
+                    provider: "Universal Merchant Bank",
+                    shortCode: "UMB",
+                    color: "#64c6c3",
+                    prefundedAmount: 4_500_000,
+                    dailyAvgUtilization: 3_200_000,
+                    peakUtilization: 4_100_000,
+                    idleFloat: 400_000,
+                    lastPrefund: new Date(Date.now() - 3 * 86400000),
+                  },
+                ].map((provider) => {
                     const utilizationPercent = (provider.dailyAvgUtilization / provider.prefundedAmount) * 100;
                     const peakPercent = (provider.peakUtilization / provider.prefundedAmount) * 100;
                     const idlePercent = (provider.idleFloat / provider.prefundedAmount) * 100;
@@ -512,9 +477,6 @@ export default function TreasuryPage() {
                       </div>
                     );
                   })}
-                    </>
-                  );
-                })()}
               </div>
 
               {/* Summary Stats */}
@@ -522,25 +484,25 @@ export default function TreasuryPage() {
                 <div className="text-center">
                   <p className="text-xs text-muted-foreground mb-1">Total Prefunded</p>
                   <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
-                    {formatGHS(1450000)}
+                    {formatGHS(4_500_000)}
                   </p>
                 </div>
                 <div className="text-center">
                   <p className="text-xs text-muted-foreground mb-1">Avg Daily Usage</p>
                   <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
-                    {formatGHS(1057000)}
+                    {formatGHS(3_200_000)}
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Total Peak</p>
+                  <p className="text-xs text-muted-foreground mb-1">Peak Usage</p>
                   <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
-                    {formatGHS(1335750)}
+                    {formatGHS(4_100_000)}
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Total Idle</p>
+                  <p className="text-xs text-muted-foreground mb-1">Idle Float</p>
                   <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
-                    {formatGHS(114250)}
+                    {formatGHS(400_000)}
                   </p>
                 </div>
               </div>
@@ -560,11 +522,11 @@ export default function TreasuryPage() {
           </div>
         )}
 
-        {/* ── NSP PREFUNDING ── */}
+        {/* ── SETTLEMENT PREFUNDING ── */}
         {tab === "prefunding" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">Track and approve NSP prefunding requests.</p>
+              <p className="text-sm text-muted-foreground">Track and approve UMB settlement prefunding requests.</p>
               {canApprove && (
                 <button onClick={() => setShowPrefundModal(true)}
                   className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all">
@@ -829,7 +791,7 @@ export default function TreasuryPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border bg-muted/30">
-                    {["Date", "Merchant", "Channel", "Type", "Tx Amount", "Rate", "Fee", "NSP Share", "Platform Share", "Ref"].map((h) => (
+                    {["Date", "Merchant", "Channel", "Type", "Tx Amount", "Rate", "Fee", "Bank Share", "Platform Share", "Ref"].map((h) => (
                       <th key={h} className="text-left px-3 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5">{h}</th>
                     ))}
                   </tr>
@@ -850,7 +812,7 @@ export default function TreasuryPage() {
                       <td className="px-3 py-3 text-xs font-medium">{formatGHS(entry.transactionAmount)}</td>
                       <td className="px-3 py-3 text-xs font-mono text-brand-navy font-bold">{entry.feeRate}</td>
                       <td className="px-3 py-3 text-xs font-semibold">{formatGHS(entry.feeAmount)}</td>
-                      <td className="px-3 py-3 text-xs text-muted-foreground">{formatGHS(entry.nspShare)}</td>
+                      <td className="px-3 py-3 text-xs text-muted-foreground">{formatGHS(entry.bankShare)}</td>
                       <td className="px-3 py-3 text-xs text-muted-foreground">{formatGHS(entry.platformShare)}</td>
                       <td className="px-3 py-3 text-xs font-mono text-muted-foreground">{entry.ref}</td>
                     </tr>
@@ -909,7 +871,7 @@ export default function TreasuryPage() {
             <div className="bg-muted/30 border border-border rounded-2xl p-5">
               <p className="text-sm font-semibold mb-3" style={{ fontFamily: "var(--font-heading)" }}>Quick Generate</p>
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
-                {(["reconciliation", "fee_ledger", "payout", "volume", "nsp_balance"] as const).map((t) => {
+                {(["reconciliation", "fee_ledger", "payout", "volume", "settlement_balance"] as const).map((t) => {
                   const cfg = reportTypeCfg[t];
                   return (
                     <button 
@@ -998,7 +960,7 @@ export default function TreasuryPage() {
               onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-5">
                 <div>
-                  <h2 className="font-bold text-lg" style={{ fontFamily: "var(--font-heading)" }}>Request NSP Prefund</h2>
+                  <h2 className="font-bold text-lg" style={{ fontFamily: "var(--font-heading)" }}>Request Settlement Prefund</h2>
                   <p className="text-xs text-muted-foreground mt-0.5">This will be submitted for Finance approval.</p>
                 </div>
                 <button onClick={() => setShowPrefundModal(false)} className="p-1.5 rounded-lg hover:bg-muted/60"><X className="size-4" /></button>
@@ -1011,7 +973,7 @@ export default function TreasuryPage() {
                     onChange={setPrefundProviderId}
                     options={mockProviders.map((p) => ({
                       value: p.id,
-                      label: `${p.name} — ${formatGHS(p.nspBalance)} current`
+                      label: `${p.name} — ${formatGHS(p.settlementBalance)} current`
                     }))}
                     placeholder="Select provider..."
                   />
@@ -1041,12 +1003,12 @@ export default function TreasuryPage() {
         )}
       </AnimatePresence>
 
-      {/* ── NSP Threshold Configuration Modal ── */}
+      {/* ── Settlement Balance Threshold Configuration Modal ── */}
       <Modal
         isOpen={showThresholdModal}
         onClose={() => setShowThresholdModal(false)}
-        title="Configure NSP Alert Thresholds"
-        description="Set warning and critical balance levels for each provider"
+        title="Configure Balance Alert Thresholds"
+        description="Set warning and critical balance levels for UMB settlement account"
         size="lg"
       >
         <div className="space-y-6">
@@ -1111,7 +1073,7 @@ export default function TreasuryPage() {
             </button>
             <button
               onClick={() => {
-                showToast("success", "Thresholds Updated", "NSP alert thresholds have been saved.");
+                showToast("success", "Thresholds Updated", "Balance alert thresholds have been saved.");
                 setShowThresholdModal(false);
               }}
               className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
@@ -1290,7 +1252,7 @@ export default function TreasuryPage() {
                 { value: "reconciliation", label: "Reconciliation Records" },
                 { value: "float_utilization", label: "Float Utilization Report" },
                 { value: "payout_history", label: "Payout Batch History" },
-                { value: "prefund_requests", label: "NSP Prefunding Requests" },
+                { value: "prefund_requests", label: "Settlement Prefunding Requests" },
               ]}
               placeholder="Select report type..."
             />
@@ -1419,7 +1381,7 @@ export default function TreasuryPage() {
                 { value: "fee_ledger", label: "Fee Ledger Report" },
                 { value: "payout", label: "Payout Report" },
                 { value: "volume", label: "Transaction Volume Report" },
-                { value: "nsp_balance", label: "NSP Balance Report" },
+                { value: "nsp_balance", label: "Settlement Balance Report" },
                 { value: "financial_summary", label: "Financial Summary Report" },
                 { value: "custom", label: "Custom Report" },
               ]}

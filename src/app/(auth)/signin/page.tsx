@@ -41,6 +41,14 @@ export default function SignInPage() {
     try {
       const res = await signIn(data);
 
+      // Check if account is pending approval
+      if ("status" in res && res.status === "pending") {
+        showToast("info", "Account Pending Approval", res.message);
+        await new Promise((r) => setTimeout(r, 1000));
+        router.push(`/onboarding-status?email=${encodeURIComponent(res.email)}`);
+        return;
+      }
+
       if ("requiresMFA" in res) {
         showToast("info", "Verification code sent", "Check your email for the 6-digit code.");
         const hint = res.hint ?? maskEmail(data.email);
@@ -55,7 +63,7 @@ export default function SignInPage() {
       showToast("success", "Welcome back!", `Good to see you, ${res.user.firstName}.`);
       await new Promise((r) => setTimeout(r, 1400));
       
-      // Route based on user role/tier
+      // Route based on user role/tier per SRS Section 3
       const role = res.user.role;
       
       if (role === "super_admin" || role === "finance" || role === "compliance" || role === "support" || role === "engineer") {
@@ -63,7 +71,7 @@ export default function SignInPage() {
       } else if (role === "sub_merchant_admin" || role === "sub_merchant_viewer") {
         router.push("/sub-merchant");
       } else {
-        // Merchant roles (owner, admin, developer, finance, support)
+        // Merchant roles - check onboarding status per SRS MD-002
         router.push("/merchant");
       }
     } catch (err) {

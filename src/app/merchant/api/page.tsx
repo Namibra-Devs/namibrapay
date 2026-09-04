@@ -47,6 +47,9 @@ export default function ApiPage() {
   const [webhookUrl, setWebhookUrl] = useState("https://api.kwameorganics.com/webhooks/namibrapay");
   
   const { showToast } = useToast();
+  
+  // TODO: Replace with actual compliance status from API/auth context
+  const complianceStatus: "incomplete" | "pending" | "approved" | "rejected" = "pending";
 
   const handleCopy = (id: string, text: string) => {
     void navigator.clipboard.writeText(text);
@@ -62,42 +65,42 @@ export default function ApiPage() {
 
   return (
     <div className="px-6 py-6 space-y-6 pb-24 md:pb-6">
-      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-        className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>API & Webhooks</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage your integration credentials, webhook endpoints, and test your setup.</p>
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+          className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>API & Webhooks</h1>
+            <p className="text-sm text-muted-foreground mt-1">Manage your integration credentials, webhook endpoints, and test your setup.</p>
+          </div>
+        </motion.div>
+
+        {/* Tabs */}
+        <div className="flex items-center gap-1 bg-muted/50 rounded-xl p-1 w-fit">
+          {tabs.map(({ key, label, icon: Icon }) => (
+            <button key={key} onClick={() => setTab(key)}
+              className={cn("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                tab === key ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground")}>
+              <Icon className="size-3.5" />
+              {label}
+            </button>
+          ))}
         </div>
-      </motion.div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-1 bg-muted/50 rounded-xl p-1 w-fit">
-        {tabs.map(({ key, label, icon: Icon }) => (
-          <button key={key} onClick={() => setTab(key)}
-            className={cn("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
-              tab === key ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground")}>
-            <Icon className="size-3.5" />
-            {label}
-          </button>
-        ))}
-      </div>
+        {/* API Keys */}
+        {tab === "keys" && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+            {can("api.manage") && (
+              <div className="flex justify-end">
+                <button 
+                  onClick={() => setShowGenerateKeyModal(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
+                >
+                  <Plus className="size-4" />
+                  Generate New Key
+                </button>
+              </div>
+            )}
 
-      {/* API Keys */}
-      {tab === "keys" && (
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-          {can("api.manage") && (
-            <div className="flex justify-end">
-              <button 
-                onClick={() => setShowGenerateKeyModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
-              >
-                <Plus className="size-4" />
-                Generate New Key
-              </button>
-            </div>
-          )}
-
-          <div className="space-y-3">
+            <div className="space-y-3">
             {mockApiKeys.map((key) => (
               <div key={key.id}
                 className={cn("bg-card border rounded-2xl p-5 transition-all",

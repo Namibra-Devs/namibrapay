@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import type { Provider } from "@/lib/mock-data";
 import { formatGHS, formatDate } from "@/lib/constants";
 
-const nspColors = {
+const balanceColors = {
   healthy: { bar: "bg-emerald-400", text: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200" },
   warning: { bar: "bg-amber-400", text: "text-amber-600", bg: "bg-amber-50 border-amber-200" },
   critical: { bar: "bg-red-400", text: "text-red-600", bg: "bg-red-50 border-red-200" },
@@ -18,13 +18,13 @@ const providerStatusColors = {
 
 type Props = { provider: Provider };
 
-export function NspBalanceCard({ provider }: Props) {
-  const nsp = nspColors[provider.nspStatus];
+export function SettlementBalanceCard({ provider }: Props) {
+  const balance = balanceColors[provider.balanceStatus];
   const status = providerStatusColors[provider.status];
-  const balancePct = Math.min(100, (provider.nspBalance / (provider.nspThreshold * 8)) * 100);
+  const balancePct = Math.min(100, (provider.settlementBalance / (provider.balanceThreshold * 8)) * 100);
 
   return (
-    <div className={cn("rounded-2xl border p-5 flex flex-col gap-4 transition-all hover:shadow-md", nsp.bg)}>
+    <div className={cn("rounded-2xl border p-5 flex flex-col gap-4 transition-all hover:shadow-md", balance.bg)}>
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div>
@@ -39,19 +39,19 @@ export function NspBalanceCard({ provider }: Props) {
         </div>
       </div>
 
-      {/* NSP Balance */}
+      {/* Settlement Balance */}
       <div>
         <div className="flex items-baseline justify-between mb-2">
-          <p className={cn("text-xl font-bold", nsp.text)} style={{ fontFamily: "var(--font-heading)" }}>
-            {formatGHS(provider.nspBalance)}
+          <p className={cn("text-xl font-bold", balance.text)} style={{ fontFamily: "var(--font-heading)" }}>
+            {formatGHS(provider.settlementBalance)}
           </p>
           <p className="text-xs text-muted-foreground">
-            min {formatGHS(provider.nspThreshold)}
+            min {formatGHS(provider.balanceThreshold)}
           </p>
         </div>
         <div className="h-1.5 rounded-full bg-black/10 overflow-hidden">
           <div
-            className={cn("h-full rounded-full transition-all duration-700", nsp.bar)}
+            className={cn("h-full rounded-full transition-all duration-700", balance.bar)}
             style={{ width: `${balancePct}%` }}
           />
         </div>
@@ -65,3 +65,6 @@ export function NspBalanceCard({ provider }: Props) {
     </div>
   );
 }
+
+// Export an alias for backwards compatibility
+export const NspBalanceCard = SettlementBalanceCard;

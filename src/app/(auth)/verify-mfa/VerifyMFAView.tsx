@@ -169,12 +169,11 @@ export default function VerifyMFAView() {
         <div className="border-t border-gray-100 mb-7" />
 
         <h1 className="text-center text-xs font-semibold tracking-[0.18em] uppercase text-gray-400 mb-3 font-heading">
-          Sign in to your account
+          Two-Factor Authentication
         </h1>
 
         <p className="text-center text-sm text-gray-500 leading-relaxed mb-8">
-          Enter the 6-digit verification code sent to{" "}
-          <span className="font-semibold text-gray-700">{hint}</span>
+          Enter the 6-digit code from your authenticator app
         </p>
 
         {/* OTP inputs */}
@@ -204,26 +203,17 @@ export default function VerifyMFAView() {
           ))}
         </div>
 
-        {/* Expiry */}
-        <p
-          className={cn(
-            "text-center text-xs mb-6 transition-colors",
-            isExpired ? "text-red-500 font-medium" : "text-gray-400",
-          )}
-        >
-          {isExpired
-            ? "Code expired — please request a new one below."
-            : `Code expires in ${formatTime(secondsLeft)}`}
+        {/* Expiry - Remove for TOTP */}
+        <p className="text-center text-xs text-gray-400 mb-6">
+          Open your authenticator app to get your code
         </p>
 
         {/* Submit */}
         <motion.button
           type="button"
           onClick={handleVerify}
-          disabled={!isComplete || submitting || isExpired}
-          whileTap={
-            !isComplete || submitting || isExpired ? {} : { scale: 0.98 }
-          }
+          disabled={!isComplete || submitting}
+          whileTap={!isComplete || submitting ? {} : { scale: 0.98 }}
           className="w-full flex items-center justify-center gap-2 bg-brand-teal text-white py-3.5 rounded-xl font-semibold text-sm hover:bg-brand-teal/90 transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-brand-teal"
         >
           {submitting ? (
@@ -232,24 +222,21 @@ export default function VerifyMFAView() {
               Verifying…
             </>
           ) : (
-            "Sign in"
+            "Verify & Sign in"
           )}
         </motion.button>
       </div>
 
       {/* Below-card links */}
       <div className="mt-6 flex flex-col items-center gap-3">
-        <button
-          type="button"
-          onClick={handleResend}
-          disabled={resending || submitting}
-          className="text-sm text-white/70 underline underline-offset-2 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+        <Link
+          href="/signin"
+          className="text-sm text-white/70 hover:text-white transition-colors"
         >
-          {resending && <Loader2 size={13} className="animate-spin" />}
-          Resend OTP
-        </button>
+          ← Back to sign in
+        </Link>
         <p className="text-sm text-white/50">
-          Need help signing in?{" "}
+          Lost access to your authenticator?{" "}
           <a
             href="mailto:support@namibra.io"
             className="text-brand-teal font-semibold hover:underline transition-colors"

@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from "@/lib/utils";
+import { MoveUp, MoveDown } from "lucide-react";
 import type { ReactNode } from "react";
 
 type KpiCardProps = {
@@ -31,7 +32,7 @@ export function KpiCard({ label, value, sub, trend, accent = "#64c6c3", icon }: 
       </div>
       {trend && (
         <div className={cn("flex items-center gap-1 text-xs font-medium", trend.positive ? "text-emerald-600" : "text-destructive")}>
-          <span>{trend.positive ? "▲" : "▼"}</span>
+          {trend.positive ? <MoveUp className="size-3.5" /> : <MoveDown className="size-3.5" />}
           <span>{trend.value} vs yesterday</span>
         </div>
       )}

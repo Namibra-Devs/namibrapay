@@ -25,3 +25,10 @@ Create a feature summary document
 Document the new modals and their usage
 Update any technical documentation
 What would you like me to focus on next?
+
+
+Now lets implement the Compliance page:
+
+ 
+
+This's going to be a normal pages like the tiers page style. So we're going to gather design insights from the other pages, tier 1 or 2 to design the page. Don't go back to the old style. The UI should be professional, modern, sleek and motion, UX and it should be consistent with the design system.

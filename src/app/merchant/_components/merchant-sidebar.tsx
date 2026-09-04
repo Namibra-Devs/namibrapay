@@ -9,13 +9,14 @@ import {
   Banknote,
   Users,
   Code2,
-  UserCircle,
+  User,
   Settings,
   ChevronLeft,
   ChevronRight,
   Bell,
   LogOut,
   Building2,
+  FileCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
@@ -24,6 +25,7 @@ import { useState } from "react";
 
 const navItems = [
   { to: "/merchant", label: "Overview", icon: LayoutDashboard, permission: "dashboard.view" },
+  { to: "/merchant/compliance", label: "Compliance", icon: FileCheck, permission: "settings.view" },
   { to: "/merchant/transactions", label: "Transactions", icon: ArrowLeftRight, permission: "transactions.view" },
   { to: "/merchant/settlements", label: "Settlements", icon: Banknote, permission: "settlements.view" },
   { to: "/merchant/sub-merchants", label: "Sub-Merchants", icon: Building2, permission: "submerchants.view" },
@@ -46,13 +48,13 @@ export default function MerchantSidebar() {
       )}
     >
       {/* Logo */}
-      <div className={cn("flex items-center gap-2.5 px-4 py-5 border-b border-sidebar-border shrink-0", collapsed && "justify-center px-2")}>
+      <div className={cn("flex items-center gap-2.5 px-4 py-2 h-14 border-b border-sidebar-border shrink-0", collapsed && "justify-center px-2")}>
         <div className="size-8 flex items-center justify-center shrink-0">
           <Image
-            src="/favicon.png"
+            src="/logo-md.png"
             alt="NamibraPay"
-            width={40}
-            height={40}
+            width={30}
+            height={30}
             unoptimized
           />
         </div>
@@ -109,7 +111,7 @@ export default function MerchantSidebar() {
 
         <div className={cn("flex items-center gap-2.5 px-3 py-2.5 rounded-lg", collapsed && "justify-center")}>
           <div className="size-7 rounded-full bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center shrink-0">
-            <UserCircle className="size-3.5 text-brand-teal" />
+            <User className="size-3.5 text-brand-teal" />
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
