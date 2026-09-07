@@ -49,11 +49,14 @@ export default function PlatformSidebar() {
   return (
     <aside
       className={cn(
-        "hidden md:flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out z-40",
+        "hidden md:flex flex-col h-screen top-0 transition-all duration-300 ease-in-out z-40 relative",
         "bg-sidebar border-r border-sidebar-border",
-        collapsed ? "w-17" : "w-60"
+        collapsed ? "w-14" : "w-60"
       )}
     >
+      {/* Vertical center line */}
+      <div className="absolute left-1/2 top-14 bottom-0 w-px bg-sidebar-border/50 -translate-x-1/2 pointer-events-none" />
+      
       {/* Logo */}
       <div className={cn("flex items-center gap-2.5 px-4 py-2 h-14 border-b border-sidebar-border shrink-0", collapsed && "justify-center px-2")}>
         <div className="size-8 flex items-center justify-center shrink-0">
@@ -76,7 +79,7 @@ export default function PlatformSidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
+      <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5 relative z-10">
         {visibleNavItems.map(({ to, label, icon: Icon }) => {
           const isActive = to === "/platform"
             ? pathname === "/platform" || pathname === "/platform/"
@@ -86,16 +89,23 @@ export default function PlatformSidebar() {
               key={to}
               href={to}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group",
+                "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-150 group",
                 collapsed && "justify-center px-2",
                 isActive
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                  ? "bg-sidebar-accent text-sidebar-foreground"
                   : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
               )}
               title={collapsed ? label : undefined}
             >
               <Icon className="size-4 shrink-0" />
               {!collapsed && <span className="truncate">{label}</span>}
+              {/* Active indicator dot at the end */}
+              {!collapsed && isActive && (
+                <span className="ml-auto size-1.5 h-0.5 w-10 rounded-full bg-brand-teal shrink-0" />
+              )}
+              {collapsed && isActive && (
+                <span className="absolute right-1 size-1 rounded-full bg-brand-teal" />
+              )}
               {!collapsed && label === "Overview" && unreadAlerts > 0 && (
                 <span className="ml-auto bg-brand-pink/30 text-[#c0392b] text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-brand-pink/50">
                   {unreadAlerts}
@@ -107,7 +117,7 @@ export default function PlatformSidebar() {
       </nav>
 
       {/* Bottom */}
-      <div className="border-t border-sidebar-border p-2 space-y-1 shrink-0">
+      <div className="border-t border-sidebar-border p-2 space-y-1 shrink-0 bg-sidebar relative z-10">
         {/* Alerts */}
         <button
           className={cn(
@@ -125,7 +135,7 @@ export default function PlatformSidebar() {
           </div>
           {!collapsed && <span>Alerts</span>}
           {!collapsed && unreadAlerts > 0 && (
-            <span className="ml-auto text-[10px] font-bold bg-brand-pink/20 text-[#c0392b] px-1.5 py-0.5 rounded-full">
+            <span className="ml-auto text-[10px] font-bold bg-brand-pink/20 text-[#c0392b] px-1.5 py-0.5 rounded-full border border-brand-pink/50">
               {unreadAlerts}
             </span>
           )}
@@ -156,7 +166,7 @@ export default function PlatformSidebar() {
         <button
           onClick={() => setCollapsed(!collapsed)}
           className={cn(
-            "w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs",
+            "w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs",
             "text-sidebar-foreground/30 hover:text-sidebar-foreground/60 hover:bg-sidebar-accent transition-colors"
           )}
         >
@@ -187,10 +197,14 @@ export function PlatformBottomNav() {
             key={to}
             href={to}
             className={cn(
-              "flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors",
-              isActive ? "text-sidebar-primary" : "text-sidebar-foreground/40"
+              "flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors relative",
+              isActive ? "text-sidebar-foreground" : "text-sidebar-foreground/40"
             )}
           >
+            {/* Active indicator dot for mobile */}
+            {isActive && (
+              <span className="absolute top-0 left-1/2 -translate-x-1/2 size-1 rounded-full bg-brand-teal" />
+            )}
             <Icon className="size-5" />
             {label}
           </Link>
