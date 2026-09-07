@@ -29,6 +29,7 @@ export interface AuthUser {
   lastName: string;
   businessName: string;
   role: string;
+  complianceStatus?: "incomplete" | "pending" | "approved" | "rejected";
 }
 
 export interface AuthResponse {
