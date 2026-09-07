@@ -18,7 +18,7 @@ import {
   type KYCDocumentsValues,
   type PayoutAccountValues,
 } from "@/lib/schemas/auth";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/toast.tsx";
 import { cn } from "@/lib/utils";
 import { resetComplianceReminder } from "@/hooks/use-compliance-reminder";
 import { logger } from "@/lib/logger";

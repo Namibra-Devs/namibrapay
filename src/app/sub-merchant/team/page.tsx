@@ -21,7 +21,7 @@ import { SUB_MERCHANT_ROLE_LABELS, SUB_MERCHANT_ROLE_COLORS } from "@/lib/sub-me
 import { useSubMerchantRole } from "@/hooks/use-sub-merchant-role";
 import { Modal } from "@/components/ui/modal";
 import { FormField, Input } from "@/components/ui/form-field";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/toast.tsx";
 
 const inviteStatusBadge = {
   accepted: "bg-emerald-50 text-emerald-700 border-emerald-200",

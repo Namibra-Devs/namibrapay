@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/constants";
 import { usePermission } from "@/hooks/use-role";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/toast.tsx";
 import { FormField } from "@/components/ui/form-field";
 import DatePicker from "@/components/ui/date-picker";
-import CustomSelect from "@/components/ui/select";
+import CustomSelect from "@/components/ui/select.tsx";
 import {
   mockAuditEvents,
   getEventTypeColor,

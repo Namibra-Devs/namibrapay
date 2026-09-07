@@ -11,7 +11,7 @@ import { MERCHANT_ROLE_LABELS, MERCHANT_ROLE_COLORS, MERCHANT_ROLES } from "@/li
 import type { MerchantRole } from "@/lib/merchant-constants";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/toast.tsx";
 import { FormField, Input } from "@/components/ui/form-field";
 
 export default function TeamPage() {

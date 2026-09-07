@@ -8,7 +8,7 @@ import { mockSettlements, mockPayouts } from "@/lib/merchant-mock-data";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { cn } from "@/lib/utils";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/toast.tsx";
 import DatePicker from "@/components/ui/date-picker";
 import { FormField, Input } from "@/components/ui/form-field";
 

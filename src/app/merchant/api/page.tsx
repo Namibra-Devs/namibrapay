@@ -23,9 +23,9 @@ import { formatDate } from "@/lib/constants";
 import { mockApiKeys, mockWebhookLogs } from "@/lib/merchant-mock-data";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/toast.tsx";
 import { FormField, Input, Select } from "@/components/ui/form-field";
-import CustomSelect from "@/components/ui/select";
+import CustomSelect from "@/components/ui/select.tsx";
 
 type Tab = "keys" | "webhooks" | "sandbox";
 

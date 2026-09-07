@@ -14,7 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useSubMerchantRole } from "@/hooks/use-sub-merchant-role";
 import { FormField, Input, Textarea } from "@/components/ui/form-field";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/toast.tsx";
 import PhoneInput from "@/components/ui/phone-input";
 
 export default function SubMerchantSettingsPage() {

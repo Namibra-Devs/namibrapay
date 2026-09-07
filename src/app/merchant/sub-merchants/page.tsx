@@ -9,10 +9,10 @@ import { INDUSTRY_OPTIONS } from "@/lib/constants/options";
 import { mockSubMerchants } from "@/lib/merchant-mock-data";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/toast.tsx";
 import { FormField, Input, Textarea, Select } from "@/components/ui/form-field";
 import PhoneInput from "@/components/ui/phone-input";
-import CustomSelect from "@/components/ui/select";
+import CustomSelect from "@/components/ui/select.tsx";
 
 const statusConfig = {
   pending: { badge: "bg-amber-50 text-amber-700 border-amber-200", dot: "bg-amber-400" },

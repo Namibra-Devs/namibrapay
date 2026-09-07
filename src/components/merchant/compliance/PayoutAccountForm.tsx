@@ -9,7 +9,7 @@ import {
 } from "@/lib/schemas/auth";
 import { BANK_OPTIONS_GHANA } from "@/lib/constants/options";
 import { FieldError } from "@/components/ui/field-error";
-import Select from "@/components/ui/select";
+import Select from "@/components/ui/select.tsx";
 import { cn } from "@/lib/utils";
 
 const inputBase = "w-full px-3 py-2.5 text-sm border rounded-xl outline-none transition-all bg-background border-border focus:border-brand-teal/60 focus:ring-2 focus:ring-brand-teal/10 disabled:bg-muted/30 disabled:cursor-not-allowed";
