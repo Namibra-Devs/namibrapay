@@ -11,23 +11,31 @@ const nextConfig: NextConfig = {
   // Recommended for production
   poweredByHeader: false,
   
-  // Turbopack experimental config for module resolution
-  experimental: {
-    turbo: {
-      resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
-    },
-  },
+  // Ensure Next.js resolves .tsx files for component imports
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
   
-  // Configure webpack to resolve .tsx files without needing index files
+  // Configure webpack to properly resolve modules
   webpack: (config, { isServer }) => {
-    // Ensure webpack resolves .tsx files for imports without extensions
-    config.resolve.extensions = ['.tsx', '.ts', '.jsx', '.js', '.json', '.mjs'];
+    // Add module resolution rules
+    config.resolve.modules = [
+      ...(config.resolve.modules || []),
+      'node_modules',
+    ];
     
-    // Allow importing .tsx files via .js extension
+    // Ensure proper extension resolution order
+    config.resolve.extensions = [
+      '.tsx',
+      '.ts',
+      '.jsx',
+      '.js',
+      '.json',
+      '.mjs',
+    ];
+    
+    // Allow .tsx files to be resolved without extension
     config.resolve.extensionAlias = {
       '.js': ['.tsx', '.ts', '.jsx', '.js'],
-      '.jsx': ['.tsx', '.jsx'],
-      '.ts': ['.tsx', '.ts'],
+      '.mjs': ['.mts', '.mjs'],
     };
     
     return config;
