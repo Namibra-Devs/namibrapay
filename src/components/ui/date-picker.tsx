@@ -217,7 +217,7 @@ export default function DatePicker({
             <>
               {/* Invisible backdrop */}
               <div
-                className="fixed inset-0 z-[9998]"
+                className="fixed inset-0 z-9998"
                 onClick={() => setOpen(false)}
               />
               <motion.div
@@ -232,7 +232,7 @@ export default function DatePicker({
                   left: pos.left,
                   width: Math.max(pos.width, 280)
                 }}
-                className="bg-card border border-border rounded-xl shadow-xl p-3 z-[9999]"
+                className="bg-card border border-border rounded-xl shadow-xl p-3 z-9999"
               >
               {/* Month/Year Navigation */}
               <div className="flex items-center justify-between mb-3">

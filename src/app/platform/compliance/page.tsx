@@ -163,6 +163,12 @@ export default function CompliancePage() {
   const [holdReason, setHoldReason] = useState("");
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportMerchantId, setExportMerchantId] = useState("");
+  const [viewingRetentionDoc, setViewingRetentionDoc] = useState<typeof mockRetentionDocuments[0] | null>(null);
+  
+  // Filter states
+  const [kycFilter, setKycFilter] = useState<"all" | "pending" | "info_requested">("all");
+  const [amlFilter, setAmlFilter] = useState<"all" | "open" | "critical">("all");
+  
   const { showToast } = useToast();
 
   if (!canView) {
@@ -178,6 +184,19 @@ export default function CompliancePage() {
   const pendingCount = mockKycApplications.filter(a => a.status === "pending").length;
   const infoRequestedCount = mockKycApplications.filter(a => a.status === "info_requested").length;
   const openAmlFlags = mockAmlFlags.filter(f => f.status === "open" || f.status === "investigating").length;
+
+  // Filtered data
+  const filteredKycApplications = kycFilter === "all" 
+    ? mockKycApplications 
+    : kycFilter === "pending"
+    ? mockKycApplications.filter(a => a.status === "pending")
+    : mockKycApplications.filter(a => a.status === "info_requested");
+
+  const filteredAmlFlags = amlFilter === "all"
+    ? mockAmlFlags
+    : amlFilter === "open"
+    ? mockAmlFlags.filter(f => f.status === "open")
+    : mockAmlFlags.filter(f => f.severity === "critical");
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -235,20 +254,44 @@ export default function CompliancePage() {
             <div className={cn("flex flex-col transition-all duration-300 border-r border-border", selectedApp ? "w-105 shrink-0" : "flex-1")}>
               <div className="px-6 py-4 border-b border-border bg-card/30">
                 <div className="flex items-center gap-2 text-xs">
-                  <button className="px-2.5 py-1 rounded-lg border transition-all bg-foreground text-background border-foreground">
+                  <button 
+                    onClick={() => setKycFilter("all")}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg border transition-all",
+                      kycFilter === "all" 
+                        ? "bg-foreground text-background border-foreground" 
+                        : "bg-card border-border hover:bg-muted/50"
+                    )}
+                  >
                     All ({mockKycApplications.length})
                   </button>
-                  <button className="px-2.5 py-1 rounded-lg border transition-all bg-card border-border hover:bg-muted/50">
+                  <button 
+                    onClick={() => setKycFilter("pending")}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg border transition-all",
+                      kycFilter === "pending" 
+                        ? "bg-foreground text-background border-foreground" 
+                        : "bg-card border-border hover:bg-muted/50"
+                    )}
+                  >
                     Pending ({pendingCount})
                   </button>
-                  <button className="px-2.5 py-1 rounded-lg border transition-all bg-card border-border hover:bg-muted/50">
+                  <button 
+                    onClick={() => setKycFilter("info_requested")}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg border transition-all",
+                      kycFilter === "info_requested" 
+                        ? "bg-foreground text-background border-foreground" 
+                        : "bg-card border-border hover:bg-muted/50"
+                    )}
+                  >
                     Info Requested ({infoRequestedCount})
                   </button>
                 </div>
               </div>
 
               <div className="flex-1 overflow-y-auto divide-y divide-border">
-                {mockKycApplications.map((app) => {
+                {filteredKycApplications.map((app) => {
                   const cfg = applicationStatusConfig[app.status];
                   const Icon = cfg.icon;
                   const isSelected = selectedApp?.id === app.id;
@@ -526,23 +569,47 @@ export default function CompliancePage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
-                  AML Flags ({mockAmlFlags.length})
+                  AML Flags ({filteredAmlFlags.length})
                 </h2>
                 <div className="flex items-center gap-2 text-xs">
-                  <button className="px-2.5 py-1 rounded-lg border transition-all bg-foreground text-background border-foreground">
+                  <button 
+                    onClick={() => setAmlFilter("all")}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg border transition-all",
+                      amlFilter === "all" 
+                        ? "bg-foreground text-background border-foreground" 
+                        : "bg-card border-border hover:bg-muted/50"
+                    )}
+                  >
                     All
                   </button>
-                  <button className="px-2.5 py-1 rounded-lg border transition-all bg-card border-border hover:bg-muted/50">
+                  <button 
+                    onClick={() => setAmlFilter("open")}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg border transition-all",
+                      amlFilter === "open" 
+                        ? "bg-foreground text-background border-foreground" 
+                        : "bg-card border-border hover:bg-muted/50"
+                    )}
+                  >
                     Open
                   </button>
-                  <button className="px-2.5 py-1 rounded-lg border transition-all bg-card border-border hover:bg-muted/50">
+                  <button 
+                    onClick={() => setAmlFilter("critical")}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg border transition-all",
+                      amlFilter === "critical" 
+                        ? "bg-foreground text-background border-foreground" 
+                        : "bg-card border-border hover:bg-muted/50"
+                    )}
+                  >
                     Critical
                   </button>
                 </div>
               </div>
 
               <div className="space-y-3">
-                {mockAmlFlags.map((flag) => {
+                {filteredAmlFlags.map((flag) => {
                   const severityConfig = {
                     critical: { color: "bg-red-50 text-red-700 border-red-200", icon: AlertTriangle },
                     high: { color: "bg-orange-50 text-orange-700 border-orange-200", icon: AlertTriangle },
@@ -741,7 +808,12 @@ export default function CompliancePage() {
                 <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
                   Retention Tracker ({mockRetentionDocuments.length} documents)
                 </h2>
-                <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all">
+                <button 
+                  onClick={() => {
+                    showToast("success", "Export Started", "Retention report is being generated. Download will start shortly.");
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all"
+                >
                   <Download className="size-3.5" /> Export Report
                 </button>
               </div>
@@ -788,7 +860,11 @@ export default function CompliancePage() {
                             {formatFileSize(doc.fileSize)}
                           </td>
                           <td className="px-4 py-3.5">
-                            <button className="p-1.5 hover:bg-muted rounded-lg transition-all">
+                            <button 
+                              onClick={() => setViewingRetentionDoc(doc)}
+                              className="p-1.5 hover:bg-muted rounded-lg transition-all"
+                              title="View document"
+                            >
                               <Eye className="size-3.5 text-muted-foreground" />
                             </button>
                           </td>
@@ -804,7 +880,7 @@ export default function CompliancePage() {
 
         {/* ── REPORTS TAB ── */}
         {tab === "reports" && (
-          <div className="p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {/* Export KYC Package */}
             <div className="bg-card border border-border rounded-2xl p-6">
               <div className="flex items-start justify-between mb-4">
@@ -827,25 +903,27 @@ export default function CompliancePage() {
             </div>
 
             {/* ── Per-Provider Compliance Matrix (PD-033) ── */}
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h3 className="text-lg font-bold mb-1" style={{ fontFamily: "var(--font-heading)" }}>
-                    Provider Approval Matrix
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Merchant approval status across all network service providers
-                  </p>
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <div className="p-6 pb-0">
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h3 className="text-lg font-bold mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+                      Provider Approval Matrix
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Merchant approval status across all network service providers
+                    </p>
+                  </div>
+                  <ShieldCheck className="size-8 text-emerald-500" />
                 </div>
-                <ShieldCheck className="size-8 text-emerald-500" />
               </div>
 
               {/* Matrix Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-border">
-                      <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Merchant</th>
+                    <tr className="border-b border-border bg-muted/30">
+                      <th className="text-left py-3 px-4 font-semibold text-muted-foreground sticky left-0 bg-muted/30">Merchant</th>
                       <th className="text-center py-3 px-4 font-semibold text-muted-foreground">MTN</th>
                       <th className="text-center py-3 px-4 font-semibold text-muted-foreground">Vodafone</th>
                       <th className="text-center py-3 px-4 font-semibold text-muted-foreground">AirtelTigo</th>
@@ -882,11 +960,19 @@ export default function CompliancePage() {
                         
                         return (
                           <tr key={merchant.id} className="border-b border-border hover:bg-muted/30 transition-colors">
-                            <td className="py-3 px-4 font-medium">{merchant.name}</td>
-                            <td className="py-3 px-4 text-center">{statusIcon(merchant.mtn)}</td>
-                            <td className="py-3 px-4 text-center">{statusIcon(merchant.vodafone)}</td>
-                            <td className="py-3 px-4 text-center">{statusIcon(merchant.airteltigo)}</td>
-                            <td className="py-3 px-4 text-center">{statusIcon(merchant.gip)}</td>
+                            <td className="py-3 px-4 font-medium sticky left-0 bg-card">{merchant.name}</td>
+                            <td className="py-3 px-4">
+                              <div className="flex justify-center">{statusIcon(merchant.mtn)}</div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex justify-center">{statusIcon(merchant.vodafone)}</div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex justify-center">{statusIcon(merchant.airteltigo)}</div>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex justify-center">{statusIcon(merchant.gip)}</div>
+                            </td>
                             <td className="py-3 px-4 text-right">
                               <span className={cn(
                                 "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
@@ -906,7 +992,7 @@ export default function CompliancePage() {
               </div>
 
               {/* Legend */}
-              <div className="mt-6 pt-6 border-t border-border flex items-center gap-6 text-xs">
+              <div className="px-6 pb-6 pt-3 border-t border-border flex items-center gap-6 text-xs">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="size-4 text-emerald-600" />
                   <span className="text-muted-foreground">Approved</span>
@@ -1177,6 +1263,107 @@ export default function CompliancePage() {
           </div>
         </div>
       </Modal>
+
+      {/* ── Retention Document Viewer Modal ── */}
+      <AnimatePresence>
+        {viewingRetentionDoc && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-9999 flex items-center justify-center p-6"
+            onClick={() => setViewingRetentionDoc(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-card border border-border rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl flex flex-col"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+                <div className="flex items-center gap-3">
+                  <div className="size-9 rounded-xl bg-brand-teal/20 flex items-center justify-center">
+                    <FileText className="size-4 text-[#1a7a5e]" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm">{viewingRetentionDoc.merchantName}</h3>
+                    <p className="text-xs text-muted-foreground">{getDocumentTypeLabel(viewingRetentionDoc.documentType)}</p>
+                  </div>
+                </div>
+                <button onClick={() => setViewingRetentionDoc(null)} className="p-2 hover:bg-muted/50 rounded-xl transition-all">
+                  <X className="size-4" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-6">
+                <div className="bg-muted/30 rounded-xl p-12 text-center space-y-4">
+                  <FileText className="size-16 text-muted-foreground/40 mx-auto" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Document Preview</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Full document viewer would render here in production
+                    </p>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      showToast("success", "Download Started", `${getDocumentTypeLabel(viewingRetentionDoc.documentType)} is being downloaded`);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium mx-auto transition-all"
+                  >
+                    <Download className="size-4" /> Download Document
+                  </button>
+                </div>
+              </div>
+
+              {/* Footer with retention info */}
+              <div className="px-6 py-4 border-t border-border bg-muted/20">
+                <div className="grid grid-cols-4 gap-4 text-xs">
+                  <div>
+                    <p className="text-muted-foreground mb-0.5">Retention Start</p>
+                    <p className="font-medium">{new Date(viewingRetentionDoc.retentionStart).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground mb-0.5">Expiry Date</p>
+                    <p className="font-medium">{new Date(viewingRetentionDoc.retentionExpiry).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground mb-0.5">Days Until Expiry</p>
+                    <p className={cn("font-medium", 
+                      viewingRetentionDoc.daysUntilExpiry < 0 ? "text-muted-foreground" :
+                      viewingRetentionDoc.daysUntilExpiry < 365 ? "text-amber-600" : 
+                      "text-foreground")}
+                    >
+                      {viewingRetentionDoc.daysUntilExpiry < 0 ? "Expired" : `${viewingRetentionDoc.daysUntilExpiry} days`}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground mb-0.5">File Size</p>
+                    <p className="font-medium font-mono">{formatFileSize(viewingRetentionDoc.fileSize)}</p>
+                  </div>
+                </div>
+                {viewingRetentionDoc.daysUntilExpiry < 365 && viewingRetentionDoc.daysUntilExpiry > 0 && (
+                  <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
+                    <AlertTriangle className="size-4 text-amber-600 shrink-0 mt-0.5" />
+                    <p className="text-xs text-amber-800">
+                      This document is expiring soon. Ensure required actions are taken before the expiry date.
+                    </p>
+                  </div>
+                )}
+                {viewingRetentionDoc.daysUntilExpiry < 0 && (
+                  <div className="mt-3 p-3 bg-muted border border-border rounded-lg">
+                    <p className="text-xs text-muted-foreground">
+                      This document has expired and is archived. It can still be accessed for audit purposes.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
