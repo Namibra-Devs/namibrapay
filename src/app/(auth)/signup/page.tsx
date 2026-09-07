@@ -13,6 +13,7 @@ import { PasswordStrengthMeter } from "@/components/ui/password-strength-meter";
 import { FieldError } from "@/components/ui/fielderror";
 import { useToast } from "@/components/ui/toast";
 import { signUp, getErrorMessage } from "@/lib/auth-api";
+import { logger } from "@/lib/logger";
 import { TOKEN_KEY } from "@/lib/api";
 import { simpleSignUpSchema, type SimpleSignUpValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
@@ -56,7 +57,7 @@ export default function SignUpPage() {
 
   const onSubmit = async (data: SimpleSignUpValues) => {
     try {
-      const res = await signUp(data as any);
+      const res = await signUp(data);
       
       localStorage.setItem(TOKEN_KEY, res.token);
       showToast("success", "Account created!", "Complete your business onboarding to get started.");
@@ -65,6 +66,7 @@ export default function SignUpPage() {
       // Redirect to compliance/onboarding form per SRS MD-001
       router.push("/merchant");
     } catch (err) {
+      logger.error("Sign up failed", err, { email: data.email, businessName: data.businessName });
       showToast("error", "Sign up failed", getErrorMessage(err));
     }
   };

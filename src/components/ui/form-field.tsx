@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { AlertCircle } from "lucide-react";
+import { memo } from "react";
 
 interface FormFieldProps {
   label: string;
@@ -12,7 +13,7 @@ interface FormFieldProps {
   className?: string;
 }
 
-export function FormField({
+export const FormField = memo(function FormField({
   label,
   error,
   required = false,
@@ -38,17 +39,17 @@ export function FormField({
       )}
     </div>
   );
-}
+});
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
 }
 
-export function Input({ error, className, ...props }: InputProps) {
+export const Input = memo(function Input({ error, className, ...props }: InputProps) {
   return (
     <input
       className={cn(
-        "w-full px-3 py-2 bg-card border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#64c6c3]/20 transition-all",
+        "w-full px-3 py-2 bg-card border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/20 transition-all",
         error ? "border-red-300 focus:border-red-500" : "border-border",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         className
@@ -56,18 +57,18 @@ export function Input({ error, className, ...props }: InputProps) {
       {...props}
     />
   );
-}
+});
 
 interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   error?: boolean;
 }
 
-export function Textarea({ error, className, ...props }: TextareaProps) {
+export const Textarea = memo(function Textarea({ error, className, ...props }: TextareaProps) {
   return (
     <textarea
       className={cn(
-        "w-full px-3 py-2 bg-card border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#64c6c3]/20 transition-all resize-none",
+        "w-full px-3 py-2 bg-card border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/20 transition-all resize-none",
         error ? "border-red-300 focus:border-red-500" : "border-border",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         className
@@ -75,17 +76,17 @@ export function Textarea({ error, className, ...props }: TextareaProps) {
       {...props}
     />
   );
-}
+});
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   error?: boolean;
 }
 
-export function Select({ error, className, children, ...props }: SelectProps) {
+export const Select = memo(function Select({ error, className, children, ...props }: SelectProps) {
   return (
     <select
       className={cn(
-        "w-full px-3 py-2 bg-card border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#64c6c3]/20 transition-all",
+        "w-full px-3 py-2 bg-card border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-teal/20 transition-all",
         error ? "border-red-300 focus:border-red-500" : "border-border",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         className
@@ -95,4 +96,4 @@ export function Select({ error, className, children, ...props }: SelectProps) {
       {children}
     </select>
   );
-}
+});

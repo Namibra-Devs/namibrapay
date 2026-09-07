@@ -2,13 +2,16 @@
 
 import { RoleProvider } from "@/hooks/use-role";
 import { ToastProvider } from "@/components/ui/toast";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
-    <RoleProvider>
-      <ToastProvider>
-        {children}
-      </ToastProvider>
-    </RoleProvider>
+    <ErrorBoundary>
+      <RoleProvider>
+        <ToastProvider>
+          {children}
+        </ToastProvider>
+      </RoleProvider>
+    </ErrorBoundary>
   );
 }

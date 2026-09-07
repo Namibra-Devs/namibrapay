@@ -9,6 +9,7 @@ import Logo from "@/components/ui/logo";
 import { useToast } from "@/components/ui/toast";
 import { verifyOtp, resendOtp, getErrorMessage } from "@/lib/auth-api";
 import { TOKEN_KEY } from "@/lib/api";
+import { logger } from "@/lib/logger";
 import { cn } from "@/lib/utils";
 
 const OTP_LENGTH = 6;
@@ -103,6 +104,7 @@ export default function VerifyMFAView() {
       await new Promise((r) => setTimeout(r, 1400));
       router.push("/dashboard");
     } catch (err) {
+      logger.error("MFA verification failed", err);
       showToast("error", "Invalid code", getErrorMessage(err));
       setDigits(Array(OTP_LENGTH).fill(""));
       setSubmitting(false);
@@ -121,6 +123,7 @@ export default function VerifyMFAView() {
       showToast("success", "Code resent!", "Check your inbox and spam folder.");
       focusAt(0);
     } catch (err) {
+      logger.error("OTP resend failed", err);
       showToast("error", "Failed to resend", getErrorMessage(err));
     } finally {
       setResending(false);

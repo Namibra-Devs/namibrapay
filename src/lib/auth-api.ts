@@ -77,6 +77,11 @@ export async function resetPassword(token: string, password: string): Promise<vo
 export async function signUp(payload: SignUpPayload): Promise<AuthResponse> {
   await new Promise(resolve => setTimeout(resolve, 1000));
   
+  // Validate payload structure at runtime
+  if (!payload.email || !payload.password || !payload.firstName || !payload.lastName) {
+    throw new Error("Missing required fields");
+  }
+  
   return {
     token: "mock-token",
     user: {

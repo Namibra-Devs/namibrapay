@@ -10,6 +10,7 @@ import {
   Calendar, User, Phone, MapPin, Briefcase
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { logger } from "@/lib/logger";
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -105,7 +106,7 @@ function getOnboardingData(email: string): OnboardingData | null {
         ],
       };
     } catch (e) {
-      console.error("Failed to parse onboarding data:", e);
+      logger.error("Failed to parse onboarding data", e);
     }
   }
   

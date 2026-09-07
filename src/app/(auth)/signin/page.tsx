@@ -11,6 +11,7 @@ import Logo from "@/components/ui/logo";
 import { FieldError } from "@/components/ui/fielderror";
 import { useToast } from "@/components/ui/toast";
 import { signIn, getErrorMessage } from "@/lib/auth-api";
+import { logger } from "@/lib/logger";
 import { TOKEN_KEY } from "@/lib/api";
 import { signInSchema, type SignInValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
@@ -75,6 +76,7 @@ export default function SignInPage() {
         router.push("/merchant");
       }
     } catch (err) {
+      logger.error("Sign in failed", err, { email: data.email });
       showToast("error", "Sign in failed", getErrorMessage(err));
     }
   };

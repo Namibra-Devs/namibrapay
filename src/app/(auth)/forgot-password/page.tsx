@@ -10,6 +10,7 @@ import Logo from "@/components/ui/logo";
 import { FieldError } from "@/components/ui/fielderror";
 import { useToast } from "@/components/ui/toast";
 import { forgotPassword, getErrorMessage } from "@/lib/auth-api";
+import { logger } from "@/lib/logger";
 import { forgotPasswordSchema, type ForgotPasswordValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +38,7 @@ export default function ForgotPasswordPage() {
       setSentEmail(data.email);
       setSent(true);
     } catch (err) {
+      logger.error("Forgot password request failed", err, { email: data.email });
       showToast("error", "Failed to send", getErrorMessage(err));
     }
   };

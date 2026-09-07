@@ -11,6 +11,7 @@ import Logo from "@/components/ui/logo";
 import { FieldError } from "@/components/ui/fielderror";
 import { useToast } from "@/components/ui/toast";
 import { resetPassword, getErrorMessage } from "@/lib/auth-api";
+import { logger } from "@/lib/logger";
 import { resetPasswordSchema, type ResetPasswordValues } from "@/lib/schemas/auth";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +42,7 @@ export default function ResetPasswordView() {
       await new Promise((r) => setTimeout(r, 1400));
       router.push("/signin");
     } catch (err) {
+      logger.error("Password reset failed", err);
       showToast("error", "Reset failed", getErrorMessage(err));
     }
   };

@@ -2,7 +2,7 @@
 
 A modern, responsive landing page for NamibraPay - a fintech platform providing seamless payment solutions across Africa. Built with Next.js 16, TypeScript, and Tailwind CSS.
 
-## 🚀 Features
+## Features
 
 - **Modern Design**: Clean, professional interface with smooth animations
 - **Responsive Layout**: Optimized for all devices and screen sizes
@@ -11,7 +11,7 @@ A modern, responsive landing page for NamibraPay - a fintech platform providing 
 - **TypeScript**: Full type safety and enhanced developer experience
 - **Component Architecture**: Modular, reusable components for maintainability
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: [Next.js 16](https://nextjs.org/) with App Router
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
@@ -20,7 +20,7 @@ A modern, responsive landing page for NamibraPay - a fintech platform providing 
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Utilities**: [clsx](https://github.com/lukeed/clsx), [tailwind-merge](https://github.com/dcastil/tailwind-merge)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -44,7 +44,7 @@ src/
     └── utils.ts           # Utility functions
 ```
 
-## 🎨 Design System
+## Design System
 
 ### Brand Colors
 - **Navy**: Primary brand color for headings and important elements
@@ -65,7 +65,7 @@ src/
 - **Use Cases**: Real-world application scenarios
 - **CTA Section**: Final conversion opportunity
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+ 
@@ -100,14 +100,14 @@ src/
 4. **Open in browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 📜 Available Scripts
+## Available Scripts
 
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint for code quality
 
-## 🎯 Key Sections
+## Key Sections
 
 ### Hero Section
 - Compelling headline and value proposition
@@ -132,7 +132,7 @@ src/
 - Business-to-business transactions
 - Cross-border payments
 
-## 🎨 Styling Guidelines
+## Styling Guidelines
 
 ### Tailwind Configuration
 - Custom color palette matching brand identity
@@ -145,7 +145,7 @@ src/
 - Staggered animations for list items
 - Smooth transitions between states
 
-## 🔧 Development Guidelines
+## Development Guidelines
 
 ### Component Structure
 - Use TypeScript for all components
@@ -165,14 +165,14 @@ src/
 - Component-based architecture
 - Reusable utility functions
 
-## 📱 Responsive Design
+## Responsive Design
 
 - **Mobile First**: Optimized for mobile devices
 - **Tablet**: Enhanced layout for medium screens
 - **Desktop**: Full-featured experience for large screens
 - **Touch Friendly**: Appropriate touch targets and interactions
 
-## 🚀 Deployment
+## Deployment
 
 ### Vercel (Recommended)
 1. Connect your repository to Vercel
@@ -184,7 +184,7 @@ src/
 - **AWS Amplify**: Full-stack deployment
 - **Docker**: Containerized deployment
 
-## 🤝 Contributing
+# Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -192,14 +192,14 @@ src/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is private and proprietary to NamibraPay.
 
-## 📞 Support
+## Support
 
 For questions or support, please contact the development team.
 
 ---
 
-Built with ❤️ for NamibraPay
+Built with LOVE for NamibraPay
