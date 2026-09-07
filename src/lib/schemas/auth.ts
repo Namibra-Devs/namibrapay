@@ -12,27 +12,6 @@ export const signInSchema = z.object({
 
 export type SignInValues = z.infer<typeof signInSchema>;
 
-// ── Industry Options ─────────────────────────────────────────────
-
-export const INDUSTRY_OPTIONS = [
-  { value: "ecommerce", label: "E-commerce & Online Retail" },
-  { value: "fintech", label: "Financial Technology" },
-  { value: "education", label: "Education & E-learning" },
-  { value: "healthcare", label: "Healthcare & Wellness" },
-  { value: "logistics", label: "Logistics & Delivery" },
-  { value: "hospitality", label: "Hospitality & Travel" },
-  { value: "entertainment", label: "Entertainment & Media" },
-  { value: "nonprofit", label: "Non-profit & NGO" },
-  { value: "professional_services", label: "Professional Services" },
-  { value: "retail", label: "Retail & Point of Sale" },
-  { value: "utilities", label: "Utilities & Bill Payments" },
-  { value: "telecommunications", label: "Telecommunications" },
-  { value: "agriculture", label: "Agriculture & Agribusiness" },
-  { value: "manufacturing", label: "Manufacturing" },
-  { value: "real_estate", label: "Real Estate" },
-  { value: "other", label: "Other" },
-] as const;
-
 // ── File Upload Validation ───────────────────────────────────────
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -218,6 +197,7 @@ export const complianceFormSchema = businessDetailsSchema
 
 export type ComplianceFormValues = z.infer<typeof complianceFormSchema>;
 export type BusinessDetailsValues = z.infer<typeof businessDetailsSchema>;
+export type OwnerDetailsValues = z.infer<typeof ownerDetailsSchema>;
 export type KYCDocumentsValues = z.infer<typeof kycDocumentsSchema>;
 export type PayoutAccountValues = z.infer<typeof payoutAccountSchema>;
 

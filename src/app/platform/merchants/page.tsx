@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatGHS, formatDate } from "@/lib/constants";
+import { INDUSTRY_OPTIONS } from "@/lib/constants/options";
 import { mockMerchants } from "@/lib/mock-data";
 import type { Merchant } from "@/lib/mock-data";
 import { usePermission } from "@/hooks/use-role";
@@ -730,17 +731,7 @@ export default function MerchantsPage() {
             <CustomSelect
               value={newMerchantIndustry}
               onChange={setNewMerchantIndustry}
-              options={[
-                { value: "retail", label: "Retail & E-commerce" },
-                { value: "education", label: "Education" },
-                { value: "healthcare", label: "Healthcare" },
-                { value: "hospitality", label: "Hospitality" },
-                { value: "transport", label: "Transport & Logistics" },
-                { value: "fintech", label: "Financial Technology" },
-                { value: "agriculture", label: "Agriculture" },
-                { value: "utilities", label: "Utilities" },
-                { value: "other", label: "Other" },
-              ]}
+              options={INDUSTRY_OPTIONS}
               placeholder="Select industry..."
             />
           </FormField>

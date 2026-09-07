@@ -199,11 +199,11 @@ export default function MerchantSettingsPage() {
             </div>
             <div className="space-y-3">
               {[
-                { key: "successfulTransaction" as const, label: "Successful transaction", sub: "Email & SMS on each collection" },
-                { key: "failedTransaction" as const, label: "Failed transaction", sub: "Email on failures" },
-                { key: "settlementProcessed" as const, label: "Settlement processed", sub: "Email when bank settles funds" },
-                { key: "payoutCompleted" as const, label: "Payout completed", sub: "Email when payout hits your bank" },
-                { key: "securityEvents" as const, label: "Security events", sub: "Email on login, key changes" },
+                { key: "successfulTransaction", label: "Successful transaction", sub: "Email & SMS on each collection" },
+                { key: "failedTransaction", label: "Failed transaction", sub: "Email on failures" },
+                { key: "settlementProcessed", label: "Settlement processed", sub: "Email when bank settles funds" },
+                { key: "payoutCompleted", label: "Payout completed", sub: "Email when payout hits your bank" },
+                { key: "securityEvents", label: "Security events", sub: "Email on login, key changes" },
               ].map((n) => (
                 <div key={n.key} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
                   <div>
@@ -212,9 +212,9 @@ export default function MerchantSettingsPage() {
                   </div>
                   <input 
                     type="checkbox" 
-                    checked={notificationPrefs[n.key]}
+                    checked={notificationPrefs[n.key as keyof typeof notificationPrefs]}
                     onChange={(e) => setNotificationPrefs(prev => ({ ...prev, [n.key]: e.target.checked }))}
-                    className="accent-brand-teal size-4" 
+                    className="accent-brand-teal size-4 cursor-pointer" 
                   />
                 </div>
               ))}

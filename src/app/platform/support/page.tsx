@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
-import { FormField, Input, Textarea, Select } from "@/components/ui/form-field";
+import { FormField, Input, Textarea } from "@/components/ui/form-field";
 import CustomSelect from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { formatDate, formatGHS } from "@/lib/constants";
@@ -93,6 +93,10 @@ export default function SupportPage() {
   const [refundAmount, setRefundAmount] = useState("");
   const [refundReason, setRefundReason] = useState("");
   const [refundNotes, setRefundNotes] = useState("");
+  
+  // Transaction search filters
+  const [txnSearchMerchant, setTxnSearchMerchant] = useState("all");
+  const [txnSearchStatus, setTxnSearchStatus] = useState("all");
   
   const { showToast } = useToast();
 
@@ -429,20 +433,36 @@ export default function SupportPage() {
                   className="px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all"
                 />
               </div>
-              <div className="flex items-center gap-3">
-                <select className="flex-1 px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all">
-                  <option>All Merchants</option>
-                  <option>Kwame Organics Ltd</option>
-                  <option>Accra Tech Hub</option>
-                  <option>SumaFoods Ghana</option>
-                </select>
-                <select className="flex-1 px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all">
-                  <option>All Statuses</option>
-                  <option>Successful</option>
-                  <option>Failed</option>
-                  <option>Pending</option>
-                </select>
-                <button className="flex items-center gap-2 px-6 py-2.5 bg-[#1a7a5e] hover:bg-[#15614a] text-white rounded-xl text-sm font-medium transition-all">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <CustomSelect
+                    options={[
+                      { value: "all", label: "All Merchants" },
+                      { value: "kwame", label: "Kwame Organics Ltd" },
+                      { value: "accra", label: "Accra Tech Hub" },
+                      { value: "suma", label: "SumaFoods Ghana" },
+                    ]}
+                    value={txnSearchMerchant}
+                    onChange={setTxnSearchMerchant}
+                    placeholder="Select merchant..."
+                    triggerClassName="rounded-xl"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <CustomSelect
+                    options={[
+                      { value: "all", label: "All Statuses" },
+                      { value: "successful", label: "Successful" },
+                      { value: "failed", label: "Failed" },
+                      { value: "pending", label: "Pending" },
+                    ]}
+                    value={txnSearchStatus}
+                    onChange={setTxnSearchStatus}
+                    placeholder="Select status..."
+                    triggerClassName="rounded-xl"
+                  />
+                </div>
+                <button className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#1a7a5e] hover:bg-[#15614a] text-white rounded-xl text-sm font-medium transition-all shrink-0">
                   <Search className="size-4" /> Search
                 </button>
               </div>

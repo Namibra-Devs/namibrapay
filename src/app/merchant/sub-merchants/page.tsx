@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { Plus, Building2, ChevronRight, MoreHorizontal, TrendingUp, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatGHS, formatDate } from "@/lib/constants";
+import { INDUSTRY_OPTIONS } from "@/lib/constants/options";
 import { mockSubMerchants } from "@/lib/merchant-mock-data";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { Modal } from "@/components/ui/modal";
@@ -170,16 +171,7 @@ export default function SubMerchantsPage() {
             <CustomSelect
               value={newSubMerchantCategory}
               onChange={setNewSubMerchantCategory}
-              options={[
-                { value: "retail", label: "Retail Store" },
-                { value: "restaurant", label: "Restaurant/Food Service" },
-                { value: "services", label: "Professional Services" },
-                { value: "healthcare", label: "Healthcare" },
-                { value: "education", label: "Education" },
-                { value: "ecommerce", label: "E-commerce" },
-                { value: "transport", label: "Transportation" },
-                { value: "other", label: "Other" },
-              ]}
+              options={INDUSTRY_OPTIONS}
               placeholder="Select category..."
             />
           </FormField>

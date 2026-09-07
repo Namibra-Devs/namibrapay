@@ -50,6 +50,15 @@ export default function SettingsPage() {
   const [inviteRole, setInviteRole] = useState("");
   const [inviteName, setInviteName] = useState("");
 
+  // Notification preferences state
+  const [notifications, setNotifications] = useState({
+    emailNotifications: true,
+    smsNotifications: true,
+    transactionAlerts: true,
+    securityAlerts: true,
+    systemUpdates: false,
+  });
+
   // Save confirmation
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 
@@ -488,33 +497,43 @@ export default function SettingsPage() {
 
               <div className="space-y-6">
                 {[
-                  { title: "Email Notifications", description: "Receive email alerts for critical events", icon: Mail, enabled: true },
-                  { title: "SMS Notifications", description: "Receive SMS for high-priority alerts", icon: Smartphone, enabled: true },
-                  { title: "Transaction Alerts", description: "Daily transaction summary reports", icon: DollarSign, enabled: true },
-                  { title: "Security Alerts", description: "Immediate alerts for security events", icon: Shield, enabled: true },
-                  { title: "System Updates", description: "Platform maintenance and update notifications", icon: Globe, enabled: false },
-                ].map((notif) => (
-                  <div key={notif.title} className="flex items-center justify-between p-4 border border-border rounded-xl">
-                    <div className="flex items-center gap-4">
-                      <div className="size-10 rounded-xl bg-brand-navy/10 flex items-center justify-center">
-                        <notif.icon className="size-5 text-brand-navy" />
+                  { key: "emailNotifications", title: "Email Notifications", description: "Receive email alerts for critical events", icon: Mail },
+                  { key: "smsNotifications", title: "SMS Notifications", description: "Receive SMS for high-priority alerts", icon: Smartphone },
+                  { key: "transactionAlerts", title: "Transaction Alerts", description: "Daily transaction summary reports", icon: DollarSign },
+                  { key: "securityAlerts", title: "Security Alerts", description: "Immediate alerts for security events", icon: Shield },
+                  { key: "systemUpdates", title: "System Updates", description: "Platform maintenance and update notifications", icon: Globe },
+                ].map((notif) => {
+                  const isEnabled = notifications[notif.key as keyof typeof notifications];
+                  return (
+                    <div key={notif.title} className="flex items-center justify-between p-4 border border-border rounded-xl">
+                      <div className="flex items-center gap-4">
+                        <div className="size-10 rounded-xl bg-brand-navy/10 flex items-center justify-center">
+                          <notif.icon className="size-5 text-brand-navy" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">{notif.title}</p>
+                          <p className="text-xs text-muted-foreground">{notif.description}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-semibold text-sm">{notif.title}</p>
-                        <p className="text-xs text-muted-foreground">{notif.description}</p>
-                      </div>
+                      <button
+                        onClick={() => {
+                          if (canEdit) {
+                            setNotifications(prev => ({ ...prev, [notif.key]: !prev[notif.key as keyof typeof prev] }));
+                            setHasChanges(true);
+                          }
+                        }}
+                        className={cn("relative w-12 h-6 rounded-full transition-colors",
+                          isEnabled ? "bg-brand-teal" : "bg-muted",
+                          canEdit ? "cursor-pointer" : "cursor-not-allowed opacity-50")}
+                        disabled={!canEdit}
+                      >
+                        <span className={cn("absolute top-0.5 size-5 bg-white rounded-full shadow-sm transition-transform",
+                          isEnabled ? "right-0.5" : "left-0.5")}
+                        />
+                      </button>
                     </div>
-                    <button
-                      className={cn("relative w-12 h-6 rounded-full transition-colors",
-                        notif.enabled ? "bg-brand-teal" : "bg-muted")}
-                      disabled={!canEdit}
-                    >
-                      <span className={cn("absolute top-0.5 size-5 bg-white rounded-full shadow-sm transition-transform",
-                        notif.enabled ? "right-0.5" : "left-0.5")}
-                      />
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

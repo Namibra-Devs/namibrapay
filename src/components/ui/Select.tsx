@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -32,13 +33,49 @@ export default function Select({
   compact = false,
 }: SelectProps) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
+  const [openUpward, setOpenUpward] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Update dropdown position when opened
+  useEffect(() => {
+    if (open && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = 264; // max-h-64 = 16rem = 256px + padding
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+
+      // Check if there's enough space below
+      const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+
+      setOpenUpward(shouldOpenUpward);
+      setDropdownPos({
+        top: shouldOpenUpward 
+          ? rect.top + window.scrollY - dropdownHeight - 8 
+          : rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+  }, [open]);
 
   // Close on outside click
   useEffect(() => {
     if (!open) return;
     const onMouseDown = (e: MouseEvent) => {
-      if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
+      if (
+        !containerRef.current?.contains(e.target as Node) &&
+        !dropdownRef.current?.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
     };
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
@@ -85,51 +122,63 @@ export default function Select({
         />
       </button>
 
-      {/* Dropdown - matches role switcher styling */}
-      <AnimatePresence>
-        {open && (
-          <>
-            <div
-              className="fixed inset-0 z-40"
-              onClick={() => setOpen(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, y: -6, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -6, scale: 0.97 }}
-              transition={{ duration: 0.14, ease: "easeOut" }}
-              className="absolute left-0 right-0 top-full mt-2 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50"
-            >
-              <div className="p-2 space-y-1 max-h-64 overflow-y-auto">
-                {options.map((option) => {
-                  const isSelected = option.value === value;
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => {
-                        onChange(option.value);
-                        setOpen(false);
-                      }}
-                      className={cn(
-                        "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left",
-                        isSelected
-                          ? "bg-brand-mint/20 text-[#1a7a5e]"
-                          : "hover:bg-muted/50"
-                      )}
-                    >
-                      <span className="flex-1">{option.label}</span>
-                      {isSelected && (
-                        <Check className="size-4 text-[#1a7a5e]" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </>
+      {/* Dropdown - Portal with high z-index */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {open && (
+              <>
+                {/* Invisible backdrop to catch clicks */}
+                <div
+                  className="fixed inset-0 z-9998"
+                  onClick={() => setOpen(false)}
+                />
+                <motion.div
+                  ref={dropdownRef}
+                  initial={{ opacity: 0, y: openUpward ? 6 : -6, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: openUpward ? 6 : -6, scale: 0.97 }}
+                  transition={{ duration: 0.14, ease: "easeOut" }}
+                  style={{
+                    position: "fixed",
+                    top: dropdownPos.top,
+                    left: dropdownPos.left,
+                    width: dropdownPos.width,
+                  }}
+                  className="bg-card border border-border rounded-xl shadow-lg overflow-hidden z-9999"
+                >
+                  <div className="p-2 space-y-1 max-h-64 overflow-y-auto">
+                    {options.map((option) => {
+                      const isSelected = option.value === value;
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => {
+                            onChange(option.value);
+                            setOpen(false);
+                          }}
+                          className={cn(
+                            "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left",
+                            isSelected
+                              ? "bg-brand-mint/20 text-[#1a7a5e]"
+                              : "hover:bg-muted/50"
+                          )}
+                        >
+                          <span className="flex-1">{option.label}</span>
+                          {isSelected && (
+                            <Check className="size-4 text-[#1a7a5e]" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </div>
   );
 }
