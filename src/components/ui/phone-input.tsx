@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import PhoneCodePicker from "./phonecodepicker";
+import PhoneCodePicker from "./phone-code-picker";
 
 interface PhoneInputProps {
   value: string; // Full phone number with code, e.g., "+233 24 555 6789"

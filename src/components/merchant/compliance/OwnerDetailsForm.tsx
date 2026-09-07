@@ -7,7 +7,7 @@ import {
   ownerDetailsSchema,
   type OwnerDetailsValues,
 } from "@/lib/schemas/auth";
-import { FieldError } from "@/components/ui/fielderror";
+import { FieldError } from "@/components/ui/field-error";
 import PhoneInput from "@/components/ui/phone-input";
 import { cn } from "@/lib/utils";
 

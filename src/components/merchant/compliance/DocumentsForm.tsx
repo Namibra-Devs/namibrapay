@@ -7,7 +7,7 @@ import {
   kycDocumentsSchema,
   type KYCDocumentsValues,
 } from "@/lib/schemas/auth";
-import { FieldError } from "@/components/ui/fielderror";
+import { FieldError } from "@/components/ui/field-error";
 import { cn } from "@/lib/utils";
 
 const labelBase = "block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider";

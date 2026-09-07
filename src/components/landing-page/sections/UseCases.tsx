@@ -2,7 +2,7 @@
 
 import { motion, type Variants } from "motion/react";
 import { Store, GraduationCap, Truck, Landmark } from "lucide-react";
-import SectionBadge from "@/components/ui/sectionbadge";
+import SectionBadge from "@/components/ui/section-badge";
 import { type LucideIcon } from "lucide-react";
 
 interface UseCase {

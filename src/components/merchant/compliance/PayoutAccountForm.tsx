@@ -8,7 +8,7 @@ import {
   type PayoutAccountValues,
 } from "@/lib/schemas/auth";
 import { BANK_OPTIONS_GHANA } from "@/lib/constants/options";
-import { FieldError } from "@/components/ui/fielderror";
+import { FieldError } from "@/components/ui/field-error";
 import Select from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 

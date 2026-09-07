@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { ArrowUpRight, Play, CheckCircle2 } from "lucide-react";
-import SectionBadge from "@/components/ui/sectionbadge";
+import SectionBadge from "@/components/ui/section-badge";
 
 function fadeUp(delay: number) {
   return {

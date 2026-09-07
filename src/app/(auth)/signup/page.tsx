@@ -10,7 +10,7 @@ import { motion } from "motion/react";
 import Logo from "@/components/ui/logo";
 import PhoneInput from "@/components/ui/phone-input";
 import { PasswordStrengthMeter } from "@/components/ui/password-strength-meter";
-import { FieldError } from "@/components/ui/fielderror";
+import { FieldError } from "@/components/ui/field-error";
 import { useToast } from "@/components/ui/toast";
 import { signUp, getErrorMessage } from "@/lib/auth-api";
 import { logger } from "@/lib/logger";

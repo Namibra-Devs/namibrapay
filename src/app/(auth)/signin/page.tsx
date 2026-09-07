@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import Logo from "@/components/ui/logo";
-import { FieldError } from "@/components/ui/fielderror";
+import { FieldError } from "@/components/ui/field-error";
 import { useToast } from "@/components/ui/toast";
 import { signIn, getErrorMessage } from "@/lib/auth-api";
 import { logger } from "@/lib/logger";
