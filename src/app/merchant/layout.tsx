@@ -7,9 +7,18 @@ import { MerchantRoleProvider } from "@/hooks/use-merchant-role";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { MERCHANT_ROLE_LABELS } from "@/lib/merchant-constants";
 import { RefreshCw, ShieldOff } from "lucide-react";
+import ComplianceReminderModal from "@/components/merchant/ComplianceReminderModal";
+import { useComplianceReminder } from "@/hooks/use-compliance-reminder";
 
 function LayoutInner({ children }: { children: ReactNode }) {
   const { role } = useMerchantRole();
+  
+  // TODO: Replace with actual compliance status from user data
+  // For now, using "incomplete" to demonstrate the feature
+  const complianceStatus = "incomplete"; // "incomplete" | "pending" | "complete"
+  const complianceProgress = 0; // 0-100, based on completed steps
+  
+  const { showModal, dismissCount, handleDismiss } = useComplianceReminder(complianceStatus);
   
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -39,6 +48,15 @@ function LayoutInner({ children }: { children: ReactNode }) {
         </main>
       </div>
       <MerchantBottomNav />
+      
+      {/* Compliance Reminder Modal */}
+      <ComplianceReminderModal
+        isOpen={showModal}
+        onClose={handleDismiss}
+        businessName="Kwame Organics Ltd" // TODO: Replace with actual business name from user data
+        completionProgress={complianceProgress}
+        dismissCount={dismissCount}
+      />
     </div>
   );
 }

@@ -20,6 +20,7 @@ import {
 } from "@/lib/schemas/auth";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import { resetComplianceReminder } from "@/hooks/use-compliance-reminder";
 import BusinessDetailsForm from "@/components/merchant/compliance/BusinessDetailsForm";
 import OwnerDetailsForm from "@/components/merchant/compliance/OwnerDetailsForm";
 import DocumentsForm from "@/components/merchant/compliance/DocumentsForm";
@@ -89,6 +90,9 @@ export default function CompliancePage() {
       // TODO: Replace with actual API call per SRS MD-001
       console.log("Submitting onboarding application:", completeData);
       await new Promise((r) => setTimeout(r, 2000));
+
+      // Reset compliance reminder since they've submitted
+      resetComplianceReminder();
 
       showToast("success", "Application submitted!", "Your application is under review. You'll be notified once approved.");
       await new Promise((r) => setTimeout(r, 1500));
