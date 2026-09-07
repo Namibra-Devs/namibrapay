@@ -38,7 +38,7 @@ export default function TeamPage() {
         </div>
         {can("team.manage") && (
           <button onClick={() => setShowInvite(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all shrink-0">
+            className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all shrink-0">
             <Plus className="size-4" />
             Invite Member
           </button>
@@ -64,13 +64,13 @@ export default function TeamPage() {
                   <tr key={member.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-full bg-[#64c6c3]/10 border border-[#64c6c3]/20 flex items-center justify-center shrink-0">
-                          <UserCircle className="size-4 text-[#64c6c3]" />
+                        <div className="size-8 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center shrink-0">
+                          <UserCircle className="size-4 text-brand-teal" />
                         </div>
                         <div>
                           <p className="font-medium text-sm flex items-center gap-2">
                             {member.name}
-                            {isCurrentUser && <span className="text-[9px] bg-[#64c6c3]/10 text-[#1a6e6c] border border-[#64c6c3]/20 px-1.5 py-0.5 rounded-full font-medium">You</span>}
+                            {isCurrentUser && <span className="text-[9px] bg-brand-teal/10 text-[#1a6e6c] border border-brand-teal/20 px-1.5 py-0.5 rounded-full font-medium">You</span>}
                           </p>
                           <p className="text-xs text-muted-foreground">{member.email}</p>
                         </div>
@@ -205,6 +205,14 @@ export default function TeamPage() {
             <div className="space-y-1">
               {(() => {
                 const permissions: Record<MerchantRole, string[]> = {
+                  [MERCHANT_ROLES.OWNER]: [
+                    "Full account access",
+                    "Delete or transfer account",
+                    "Change payout bank account",
+                    "Manage all team members",
+                    "Configure all settings",
+                    "View all financial data",
+                  ],
                   [MERCHANT_ROLES.ADMIN]: [
                     "View and manage all transactions",
                     "Manage settlements and payouts",
@@ -271,7 +279,7 @@ export default function TeamPage() {
                 setInviteMessage("");
                 setInviteRole(MERCHANT_ROLES.ADMIN);
               }}
-              className="flex-1 px-4 py-2.5 bg-[#263b8e] hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <Mail className="size-4" />
               Send Invite

@@ -57,7 +57,19 @@ export default function SignUpPage() {
 
   const onSubmit = async (data: SimpleSignUpValues) => {
     try {
-      const res = await signUp(data);
+      // Transform the form data to match API expectations
+      const signUpPayload = {
+        businessName: data.businessName,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        businessType: data.businessType,
+        isDeveloper: data.isDeveloper === "yes",
+      };
+
+      const res = await signUp(signUpPayload);
       
       localStorage.setItem(TOKEN_KEY, res.token);
       showToast("success", "Account created!", "Complete your business onboarding to get started.");
