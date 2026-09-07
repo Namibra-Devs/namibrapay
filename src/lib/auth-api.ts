@@ -74,7 +74,7 @@ export async function resetPassword(token: string, password: string): Promise<vo
   await new Promise(resolve => setTimeout(resolve, 1000));
 }
 
-export async function signUp(payload: SignUpPayload): Promise<AuthResponse> {
+export async function signUp(payload: Partial<SignUpPayload> & Pick<SignUpPayload, "email" | "password" | "firstName" | "lastName" | "businessName" | "phone">): Promise<AuthResponse> {
   await new Promise(resolve => setTimeout(resolve, 1000));
   
   // Validate payload structure at runtime

@@ -178,7 +178,7 @@ export default function TeamPage() {
                   >
                     <p className="font-semibold text-sm mb-1">{MERCHANT_ROLE_LABELS[r]}</p>
                     <p className="text-xs text-muted-foreground leading-tight">
-                      {rolePermissions[r]}
+                      {rolePermissions[r as keyof typeof rolePermissions]}
                     </p>
                   </button>
                 );
@@ -204,7 +204,7 @@ export default function TeamPage() {
             </p>
             <div className="space-y-1">
               {(() => {
-                const permissions = {
+                const permissions: Record<MerchantRole, string[]> = {
                   [MERCHANT_ROLES.ADMIN]: [
                     "View and manage all transactions",
                     "Manage settlements and payouts",
@@ -236,7 +236,7 @@ export default function TeamPage() {
                   ],
                 };
                 
-                return permissions[inviteRole].map((perm, idx) => (
+                return permissions[inviteRole]?.map((perm: string, idx: number) => (
                   <div key={idx} className="flex items-start gap-2 text-xs">
                     <ShieldCheck className="size-3.5 text-emerald-600 shrink-0 mt-0.5" />
                     <span className="text-muted-foreground">{perm}</span>
