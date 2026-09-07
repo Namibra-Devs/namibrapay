@@ -50,7 +50,8 @@ export default function SignInPage() {
         return;
       }
 
-      if ("requiresMFA" in res) {
+      // Type guard: at this point, res must be SignInResponse (has requiresMFA or is AuthResponse)
+      if ("requiresMFA" in res && res.requiresMFA) {
         showToast("info", "Verification code sent", "Check your email for the 6-digit code.");
         const hint = res.hint ?? maskEmail(data.email);
         await new Promise((r) => setTimeout(r, 800));
@@ -60,20 +61,23 @@ export default function SignInPage() {
         return;
       }
 
-      localStorage.setItem(TOKEN_KEY, res.token);
-      showToast("success", "Welcome back!", `Good to see you, ${res.user.firstName}.`);
-      await new Promise((r) => setTimeout(r, 1400));
-      
-      // Route based on user role/tier per SRS Section 3
-      const role = res.user.role;
-      
-      if (role === "super_admin" || role === "finance" || role === "compliance" || role === "support" || role === "engineer") {
-        router.push("/platform");
-      } else if (role === "sub_merchant_admin" || role === "sub_merchant_viewer") {
-        router.push("/sub-merchant");
-      } else {
-        // Merchant roles - check onboarding status per SRS MD-002
-        router.push("/merchant");
+      // At this point, res is guaranteed to be AuthResponse with token and user
+      if ("token" in res && "user" in res) {
+        localStorage.setItem(TOKEN_KEY, res.token);
+        showToast("success", "Welcome back!", `Good to see you, ${res.user.firstName}.`);
+        await new Promise((r) => setTimeout(r, 1400));
+        
+        // Route based on user role/tier per SRS Section 3
+        const role = res.user.role;
+        
+        if (role === "super_admin" || role === "finance" || role === "compliance" || role === "support" || role === "engineer") {
+          router.push("/platform");
+        } else if (role === "sub_merchant_admin" || role === "sub_merchant_viewer") {
+          router.push("/sub-merchant");
+        } else {
+          // Merchant roles - check onboarding status per SRS MD-002
+          router.push("/merchant");
+        }
       }
     } catch (err) {
       logger.error("Sign in failed", err, { email: data.email });
