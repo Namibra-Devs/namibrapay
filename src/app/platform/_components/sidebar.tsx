@@ -23,6 +23,7 @@ import { useRole, usePermission, ROLE_PERMISSIONS } from "@/hooks/use-role";
 import { ROLE_LABELS, ROLE_COLORS } from "@/lib/constants";
 import { useState } from "react";
 import { mockAlerts } from "@/lib/mock-data";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navItems = [
   { to: "/platform", label: "Overview", icon: LayoutDashboard, permission: null },
@@ -47,6 +48,7 @@ export default function PlatformSidebar() {
   );
 
   return (
+    <TooltipProvider>
     <aside
       className={cn(
         "hidden md:flex flex-col h-screen top-0 transition-all duration-300 ease-in-out z-40 relative",
@@ -84,9 +86,9 @@ export default function PlatformSidebar() {
           const isActive = to === "/platform"
             ? pathname === "/platform" || pathname === "/platform/"
             : pathname.startsWith(to);
-          return (
+          
+          const linkContent = (
             <Link
-              key={to}
               href={to}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-150 group",
@@ -95,7 +97,6 @@ export default function PlatformSidebar() {
                   ? "bg-sidebar-accent text-sidebar-foreground"
                   : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
               )}
-              title={collapsed ? label : undefined}
             >
               <Icon className="size-4 shrink-0" />
               {!collapsed && <span className="truncate">{label}</span>}
@@ -104,7 +105,7 @@ export default function PlatformSidebar() {
                 <span className="ml-auto size-1.5 h-0.5 w-10 rounded-full bg-brand-teal shrink-0" />
               )}
               {collapsed && isActive && (
-                <span className="absolute right-1 size-1 rounded-full bg-brand-teal" />
+                <span className="absolute right-1 size-1.5 rounded-full bg-brand-teal" />
               )}
               {!collapsed && label === "Overview" && unreadAlerts > 0 && (
                 <span className="ml-auto bg-brand-pink/30 text-[#c0392b] text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-brand-pink/50">
@@ -113,37 +114,72 @@ export default function PlatformSidebar() {
               )}
             </Link>
           );
+          
+          return collapsed ? (
+            <Tooltip key={to} delayDuration={0}>
+              <TooltipTrigger asChild>
+                {linkContent}
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={8}>
+                {label}
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <div key={to}>{linkContent}</div>
+          );
         })}
       </nav>
 
       {/* Bottom */}
       <div className="border-t border-sidebar-border p-2 space-y-1 shrink-0 bg-sidebar relative z-10">
         {/* Alerts */}
-        <button
-          className={cn(
-            "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-            "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent",
-            collapsed && "justify-center"
-          )}
-          title={collapsed ? "Alerts" : undefined}
-        >
-          <div className="relative shrink-0">
-            <Bell className="size-4" />
-            {unreadAlerts > 0 && (
-              <span className="absolute -top-1 -right-1 size-2 rounded-full bg-brand-pink" />
+        {collapsed ? (
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <button
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                  "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent",
+                  "justify-center"
+                )}
+              >
+                <div className="relative shrink-0">
+                  <Bell className="size-4" />
+                  {unreadAlerts > 0 && (
+                    <span className="absolute -top-1 -right-1 size-2 rounded-full bg-brand-pink" />
+                  )}
+                </div>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={8}>
+              Alerts
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <button
+            className={cn(
+              "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
             )}
-          </div>
-          {!collapsed && <span>Alerts</span>}
-          {!collapsed && unreadAlerts > 0 && (
-            <span className="ml-auto text-[10px] font-bold bg-brand-pink/20 text-[#c0392b] px-1.5 py-0.5 rounded-full border border-brand-pink/50">
-              {unreadAlerts}
-            </span>
-          )}
-        </button>
+          >
+            <div className="relative shrink-0">
+              <Bell className="size-4" />
+              {unreadAlerts > 0 && (
+                <span className="absolute -top-1 -right-1 size-2 rounded-full bg-brand-pink" />
+              )}
+            </div>
+            <span>Alerts</span>
+            {unreadAlerts > 0 && (
+              <span className="ml-auto text-[10px] font-bold bg-brand-pink/20 text-[#c0392b] px-1.5 py-0.5 rounded-full border border-brand-pink/50">
+                {unreadAlerts}
+              </span>
+            )}
+          </button>
+        )}
 
         {/* User */}
         <div className={cn(
-          "flex items-center gap-2.5 px-3 py-2.5 rounded-lg",
+          "flex items-center gap-2.5 px-3 py-2.5 rounded-md",
           collapsed && "justify-center"
         )}>
           <div className="size-7 rounded-full bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center shrink-0">
@@ -163,22 +199,38 @@ export default function PlatformSidebar() {
         </div>
 
         {/* Collapse toggle */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className={cn(
-            "w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs",
-            "text-sidebar-foreground/30 hover:text-sidebar-foreground/60 hover:bg-sidebar-accent transition-colors"
-          )}
-        >
-          {collapsed ? <ChevronRight className="size-3.5" /> : (
-            <>
-              <ChevronLeft className="size-3.5" />
-              <span>Collapse</span>
-            </>
-          )}
-        </button>
+        {collapsed ? (
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => setCollapsed(!collapsed)}
+                className={cn(
+                  "w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs",
+                  "text-sidebar-foreground/30 hover:text-sidebar-foreground/60 hover:bg-sidebar-accent transition-colors"
+                )}
+              >
+                <ChevronRight className="size-3.5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={8}>
+              Expand
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className={cn(
+              "w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs",
+              "text-sidebar-foreground/30 hover:text-sidebar-foreground/60 hover:bg-sidebar-accent transition-colors"
+            )}
+          >
+            <ChevronLeft className="size-3.5" />
+            <span>Collapse</span>
+          </button>
+        )}
       </div>
     </aside>
+    </TooltipProvider>
   );
 }
 
