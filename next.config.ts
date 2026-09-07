@@ -14,7 +14,13 @@ const nextConfig: NextConfig = {
   // Ensure Next.js resolves .tsx files for component imports
   pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
   
-  // Configure webpack to properly resolve modules
+  // Turbopack configuration for Next.js 16+
+  turbopack: {
+    // Empty config to acknowledge we're using Turbopack
+    // Module resolution works by default in Turbopack
+  },
+  
+  // Configure webpack for backwards compatibility (only used if --webpack flag is passed)
   webpack: (config, { isServer }) => {
     // Add module resolution rules
     config.resolve.modules = [
