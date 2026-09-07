@@ -1,4 +1,5 @@
-export { useUser, useAuth } from "@usehercules/auth/react";
+// Placeholder for Hercules auth - install @usehercules/auth to use
+// export { useUser, useAuth } from "@usehercules/auth/react";
 
 import { useState, useEffect } from 'react';
 
@@ -12,4 +13,8 @@ export function useAuth() {
   }, []);
 
   return { user, loading };
+}
+
+export function useUser() {
+  return { user: null };
 }

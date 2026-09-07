@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Toggle as TogglePrimitive } from "radix-ui";
+// import { Toggle as TogglePrimitive } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 
@@ -26,16 +26,27 @@ const toggleVariants = cva(
   },
 );
 
+// Placeholder - install @radix-ui/react-toggle to use
 function Toggle({
   className,
   variant,
   size,
+  pressed,
+  onPressedChange,
   ...props
-}: React.ComponentProps<typeof TogglePrimitive.Root> &
-  VariantProps<typeof toggleVariants>) {
+}: {
+  className?: string;
+  variant?: "default" | "outline";
+  size?: "default" | "sm" | "lg";
+  pressed?: boolean;
+  onPressedChange?: (pressed: boolean) => void;
+  [key: string]: any;
+}) {
   return (
-    <TogglePrimitive.Root
-      data-slot="toggle"
+    <button
+      type="button"
+      data-state={pressed ? "on" : "off"}
+      onClick={() => onPressedChange?.(!pressed)}
       className={cn(toggleVariants({ variant, size, className }))}
       {...props}
     />
