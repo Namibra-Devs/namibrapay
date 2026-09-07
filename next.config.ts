@@ -14,20 +14,8 @@ const nextConfig: NextConfig = {
   // Ensure Next.js resolves .tsx files for component imports
   pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
   
-  // Turbopack configuration for Next.js 16+
-  turbopack: {
-    // Empty config to acknowledge we're using Turbopack
-    // Module resolution works by default in Turbopack
-  },
-  
-  // Configure webpack for backwards compatibility (only used if --webpack flag is passed)
+  // Configure webpack for better module resolution (no Turbopack config)
   webpack: (config, { isServer }) => {
-    // Add module resolution rules
-    config.resolve.modules = [
-      ...(config.resolve.modules || []),
-      'node_modules',
-    ];
-    
     // Ensure proper extension resolution order
     config.resolve.extensions = [
       '.tsx',
@@ -35,14 +23,7 @@ const nextConfig: NextConfig = {
       '.jsx',
       '.js',
       '.json',
-      '.mjs',
     ];
-    
-    // Allow .tsx files to be resolved without extension
-    config.resolve.extensionAlias = {
-      '.js': ['.tsx', '.ts', '.jsx', '.js'],
-      '.mjs': ['.mts', '.mjs'],
-    };
     
     return config;
   },

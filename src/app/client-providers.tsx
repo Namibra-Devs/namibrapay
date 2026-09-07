@@ -1,7 +1,7 @@
 "use client";
 
 import { RoleProvider } from "@/hooks/use-role";
-import { ToastProvider } from "@/components/ui/toast.tsx";
+import { ToastProvider } from "@/components/ui/toast";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {

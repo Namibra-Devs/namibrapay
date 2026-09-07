@@ -7,12 +7,12 @@ import {
   Mail, Smartphone, TrendingUp, Percent, Calendar, Edit, UserPlus,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast.tsx";
+import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Select } from "@/components/ui/form-field";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 import { usePermission } from "@/hooks/use-role";
-import CustomSelect from "@/components/ui/select.tsx";
+import CustomSelect from "@/components/ui/select";
 
 // ── Tabs ────────────────────────────────────────────────────────────────────
 type Tab = "fees" | "limits" | "payouts" | "team" | "notifications" | "system";

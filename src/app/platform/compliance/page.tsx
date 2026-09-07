@@ -21,7 +21,7 @@ import {
 } from "@/lib/compliance-mock-data";
 import type { KycApplication, KycDocument } from "@/lib/compliance-mock-data";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast.tsx";
+import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Textarea } from "@/components/ui/form-field";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 

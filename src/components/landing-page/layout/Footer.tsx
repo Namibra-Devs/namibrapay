@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Logo from "@/components/ui/logo.tsx";
+import Logo from "@/components/ui/logo";
 
 const solutions = [
   { label: "Payment Gateway", href: "#" },

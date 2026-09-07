@@ -20,10 +20,10 @@ import {
 import type { PrefundRequest, PayoutBatch, ReconciliationEntry } from "@/lib/treasury-mock-data";
 import { mockChartData } from "@/lib/mock-data";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast.tsx";
+import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Textarea } from "@/components/ui/form-field";
 import DatePicker from "@/components/ui/date-picker";
-import CustomSelect from "@/components/ui/select.tsx";
+import CustomSelect from "@/components/ui/select";
 
 // ── Tabs ────────────────────────────────────────────────────────────────────
 type Tab = "overview" | "prefunding" | "reconciliation" | "payouts" | "fee_ledger" | "reports";

@@ -10,9 +10,9 @@ import {
   MapPin, Smartphone, Info,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast.tsx";
+import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Textarea } from "@/components/ui/form-field";
-import CustomSelect from "@/components/ui/select.tsx";
+import CustomSelect from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { formatDate, formatGHS } from "@/lib/constants";
 import { usePermission } from "@/hooks/use-role";

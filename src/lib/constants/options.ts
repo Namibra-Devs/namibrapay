@@ -1,4 +1,4 @@
-import type { SelectOption } from "@/components/ui/select.tsx";
+import type { SelectOption } from "@/components/ui/select";
 
 // ── Country Options ──────────────────────────────────────────────
 

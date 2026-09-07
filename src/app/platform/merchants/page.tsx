@@ -15,10 +15,10 @@ import { mockMerchants } from "@/lib/mock-data";
 import type { Merchant } from "@/lib/mock-data";
 import { usePermission } from "@/hooks/use-role";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast.tsx";
+import { useToast } from "@/components/ui/toast";
 import { FormField, Input, Select } from "@/components/ui/form-field";
 import PhoneInput from "@/components/ui/phone-input";
-import CustomSelect from "@/components/ui/select.tsx";
+import CustomSelect from "@/components/ui/select";
 
 // ── Extended merchant detail data ──────────────────────────────────────────
 type FeeSchedule = { label: string; rate: string; cap: string };
