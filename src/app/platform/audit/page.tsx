@@ -144,58 +144,64 @@ export default function AuditLogPage() {
         {/* Filter Panel */}
         {showFilters && (
           <div className="mt-3 p-4 bg-muted/30 border border-border rounded-xl">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Event Type Filter */}
               <div>
                 <label className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Event Type</label>
-                <select
+                <CustomSelect
                   value={selectedEventType}
-                  onChange={(e) => setSelectedEventType(e.target.value as AuditEventType | "all")}
-                  className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
-                >
-                  <option value="all">All Types</option>
-                  <option value="security_event">Security Event</option>
-                  <option value="user_action">User Action</option>
-                  <option value="system_event">System Event</option>
-                  <option value="approval_action">Approval Action</option>
-                  <option value="config_change">Config Change</option>
-                  <option value="data_access">Data Access</option>
-                </select>
+                  onChange={(v) => setSelectedEventType(v as AuditEventType | "all")}
+                  options={[
+                    { value: "all", label: "All Types" },
+                    { value: "security_event", label: "Security Event" },
+                    { value: "user_action", label: "User Action" },
+                    { value: "system_event", label: "System Event" },
+                    { value: "approval_action", label: "Approval Action" },
+                    { value: "config_change", label: "Config Change" },
+                    { value: "data_access", label: "Data Access" },
+                  ]}
+                  placeholder="Select event type..."
+                  triggerClassName="rounded-xl"
+                />
               </div>
 
               {/* Category Filter */}
               <div>
                 <label className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Category</label>
-                <select
+                <CustomSelect
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value as AuditCategory | "all")}
-                  className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
-                >
-                  <option value="all">All Categories</option>
-                  <option value="authentication">Authentication</option>
-                  <option value="user_management">User Management</option>
-                  <option value="transaction">Transaction</option>
-                  <option value="compliance">Compliance</option>
-                  <option value="provider">Provider</option>
-                  <option value="settlement">Settlement</option>
-                  <option value="support">Support</option>
-                  <option value="system">System</option>
-                </select>
+                  onChange={(v) => setSelectedCategory(v as AuditCategory | "all")}
+                  options={[
+                    { value: "all", label: "All Categories" },
+                    { value: "authentication", label: "Authentication" },
+                    { value: "user_management", label: "User Management" },
+                    { value: "transaction", label: "Transaction" },
+                    { value: "compliance", label: "Compliance" },
+                    { value: "provider", label: "Provider" },
+                    { value: "settlement", label: "Settlement" },
+                    { value: "support", label: "Support" },
+                    { value: "system", label: "System" },
+                  ]}
+                  placeholder="Select category..."
+                  triggerClassName="rounded-xl"
+                />
               </div>
 
               {/* Severity Filter */}
               <div>
                 <label className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Severity</label>
-                <select
+                <CustomSelect
                   value={selectedSeverity}
-                  onChange={(e) => setSelectedSeverity(e.target.value as AuditSeverity | "all")}
-                  className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
-                >
-                  <option value="all">All Severities</option>
-                  <option value="critical">Critical</option>
-                  <option value="warning">Warning</option>
-                  <option value="info">Info</option>
-                </select>
+                  onChange={(v) => setSelectedSeverity(v as AuditSeverity | "all")}
+                  options={[
+                    { value: "all", label: "All Severities" },
+                    { value: "critical", label: "Critical" },
+                    { value: "warning", label: "Warning" },
+                    { value: "info", label: "Info" },
+                  ]}
+                  placeholder="Select severity..."
+                  triggerClassName="rounded-xl"
+                />
               </div>
             </div>
 

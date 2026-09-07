@@ -35,6 +35,7 @@ export default function DatePicker({
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
+  const [openUpward, setOpenUpward] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
@@ -74,9 +75,20 @@ export default function DatePicker({
   const handleOpen = () => {
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const calendarHeight = 380; // Approximate height of the calendar dropdown
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+
+      // Check if there's enough space below
+      const shouldOpenUpward = spaceBelow < calendarHeight && spaceAbove > spaceBelow;
+
+      setOpenUpward(shouldOpenUpward);
       setPos({ 
-        top: rect.bottom + 8, 
-        left: rect.left,
+        top: shouldOpenUpward 
+          ? rect.top + window.scrollY - calendarHeight - 8
+          : rect.bottom + window.scrollY + 8, 
+        left: rect.left + window.scrollX,
         width: rect.width
       });
     }
@@ -202,20 +214,26 @@ export default function DatePicker({
       {mounted && createPortal(
         <AnimatePresence>
           {open && (
-            <motion.div
-              ref={dropdownRef}
-              initial={{ opacity: 0, y: -6, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -6, scale: 0.97 }}
-              transition={{ duration: 0.14, ease: "easeOut" }}
-              style={{ 
-                position: "fixed", 
-                top: pos.top, 
-                left: pos.left,
-                width: Math.max(pos.width, 280)
-              }}
-              className="bg-card border border-border rounded-xl shadow-xl p-3 z-9999"
-            >
+            <>
+              {/* Invisible backdrop */}
+              <div
+                className="fixed inset-0 z-[9998]"
+                onClick={() => setOpen(false)}
+              />
+              <motion.div
+                ref={dropdownRef}
+                initial={{ opacity: 0, y: openUpward ? 6 : -6, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: openUpward ? 6 : -6, scale: 0.97 }}
+                transition={{ duration: 0.14, ease: "easeOut" }}
+                style={{ 
+                  position: "fixed", 
+                  top: pos.top, 
+                  left: pos.left,
+                  width: Math.max(pos.width, 280)
+                }}
+                className="bg-card border border-border rounded-xl shadow-xl p-3 z-[9999]"
+              >
               {/* Month/Year Navigation */}
               <div className="flex items-center justify-between mb-3">
                 <button
@@ -314,6 +332,7 @@ export default function DatePicker({
                 )}
               </div>
             </motion.div>
+            </>
           )}
         </AnimatePresence>,
         document.body
