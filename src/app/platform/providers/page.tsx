@@ -7,7 +7,7 @@ import {
   AlertCircle, ChevronRight, Shield, Zap, BarChart2, GitBranch, XCircle, Plus, Info,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/Toast";
 import { FormField, Input, Textarea, Select } from "@/components/ui/form-field";
 import DatePicker from "@/components/ui/date-picker";
 import { cn } from "@/lib/utils";

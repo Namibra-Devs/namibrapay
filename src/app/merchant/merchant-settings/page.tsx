@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { Building2, CreditCard, Bell, Shield, ToggleLeft, AlertTriangle, Check } from "lucide-react";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/Toast";
 import PhoneInput from "@/components/ui/phone-input";
 
 export default function MerchantSettingsPage() {

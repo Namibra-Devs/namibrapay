@@ -7,7 +7,7 @@ import {
   Mail, Smartphone, TrendingUp, Percent, Calendar, Edit, UserPlus,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/Toast";
 import { FormField, Input, Select } from "@/components/ui/form-field";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";

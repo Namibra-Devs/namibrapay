@@ -27,7 +27,7 @@ import type { MerchantTransaction } from "@/lib/merchant-mock-data";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import TransactionDetail from "../_components/transaction-details-modal";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/Toast";
 import DatePicker from "@/components/ui/date-picker";
 import { FormField, Input, Select } from "@/components/ui/form-field";
 

@@ -10,7 +10,7 @@ import {
   MapPin, Smartphone, Info,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/Toast";
 import { FormField, Input, Textarea } from "@/components/ui/form-field";
 import CustomSelect from "@/components/ui/select";
 import { cn } from "@/lib/utils";
