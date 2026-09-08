@@ -108,7 +108,7 @@ export default function CompliancePage() {
   };
 
   return (
-    <div className="px-6 py-6 space-y-6 pb-24 md:pb-6">
+    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
@@ -135,7 +135,7 @@ export default function CompliancePage() {
         </div>
       </motion.div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-4">
         {/* Step Navigation - Side */}
         <div className="lg:w-64 shrink-0">
           <motion.div

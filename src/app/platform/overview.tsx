@@ -82,7 +82,7 @@ export default function PlatformOverview() {
   const allAlerts = [...unread, ...mockAlerts.filter((a) => a.isRead)];
 
   return (
-    <div className="px-6 py-6 space-y-8 pb-24 md:pb-6">
+    <div className="px-6 py-4 space-y-8 pb-24 md:pb-6">
       {/* Page header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
@@ -145,7 +145,7 @@ export default function PlatformOverview() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.35 }}
-        className="grid grid-cols-1 xl:grid-cols-3 gap-6"
+        className="grid grid-cols-1 xl:grid-cols-3 gap-4"
       >
         <div className="xl:col-span-2">
           <TransactionChart />

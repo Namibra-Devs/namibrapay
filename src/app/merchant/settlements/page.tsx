@@ -34,7 +34,7 @@ export default function SettlementsPage() {
   const { showToast } = useToast();
 
   return (
-    <div className="px-6 py-6 space-y-6 pb-24 md:pb-6">
+    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>Settlements & Payouts</h1>
         <p className="text-sm text-muted-foreground mt-1">Track what you've collected, what's been settled, and what's been paid out.</p>

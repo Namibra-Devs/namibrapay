@@ -76,7 +76,7 @@ export default function TransactionsPage() {
   const activeFilterCount = [statusFilter !== "all", typeFilter !== "all", search !== ""].filter(Boolean).length;
 
   return (
-    <div className="px-6 py-6 space-y-6 pb-24 md:pb-6">
+    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>Transactions</h1>
@@ -270,7 +270,7 @@ export default function TransactionsPage() {
         description="Download your transaction history"
         size="md"
       >
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Info Banner */}
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
             <FileText className="size-5 text-blue-600 shrink-0 mt-0.5" />

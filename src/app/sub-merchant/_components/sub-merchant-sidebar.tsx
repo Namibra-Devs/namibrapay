@@ -90,7 +90,7 @@ export default function SubMerchantSidebar() {
               {!collapsed && <span className="truncate">{label}</span>}
               {/* Active indicator dot at the end */}
               {!collapsed && isActive && (
-                <span className="ml-auto size-1.5 rounded-full bg-brand-teal shrink-0" />
+                <span className="ml-auto size-1.5 h-0.5 w-10 rounded-full bg-brand-teal shrink-0" />
               )}
               {collapsed && isActive && (
                 <span className="absolute right-1 size-1.5 rounded-full bg-brand-teal" />

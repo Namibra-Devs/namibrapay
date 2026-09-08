@@ -65,7 +65,7 @@ export default function MerchantOverview() {
   const successRate = Math.round((successCount / mockMerchantTransactions.length) * 100);
 
   return (
-    <div className="px-6 py-6 space-y-8 pb-24 md:pb-6">
+    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
@@ -111,7 +111,7 @@ export default function MerchantOverview() {
 
       {/* Chart + Recent Transactions */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-        className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+        className="grid grid-cols-1 xl:grid-cols-5 gap-4">
 
         {/* 7-day chart */}
         <div className="xl:col-span-3 bg-card border border-border rounded-2xl p-6">
@@ -150,11 +150,11 @@ export default function MerchantOverview() {
           <div className="xl:col-span-2 bg-card border border-border rounded-2xl p-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-base" style={{ fontFamily: "var(--font-heading)" }}>Recent Transactions</h3>
-              <Link href="/merchant/transactions" className="text-xs text-[#64c6c3] hover:underline flex items-center gap-1">
+              <Link href="/merchant/transactions" className="text-xs text-brand-teal hover:underline flex items-center gap-1">
                 View all <ArrowRight className="size-3" />
               </Link>
             </div>
-            <div className="space-y-2 overflow-y-auto max-h-[240px]">
+            <div className="space-y-2 overflow-y-auto max-h-60">
               {recentTxns.map((txn) => (
                 <div key={txn.id} className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0">
                   <div className="shrink-0">{statusIcons[txn.status]}</div>
@@ -182,7 +182,7 @@ export default function MerchantOverview() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-base" style={{ fontFamily: "var(--font-heading)" }}>Settlement Summary</h2>
-            <Link href="/merchant/settlements" className="text-xs text-[#64c6c3] hover:underline flex items-center gap-1">
+            <Link href="/merchant/settlements" className="text-xs text-brand-teal hover:underline flex items-center gap-1">
               Full report <ArrowRight className="size-3" />
             </Link>
           </div>
@@ -198,7 +198,7 @@ export default function MerchantOverview() {
                 </div>
               </div>
             ))}
-            <div className="bg-[#64c6c3]/5 border border-[#64c6c3]/20 rounded-xl p-4 flex flex-col justify-between">
+            <div className="bg-brand-teal/5 border border-brand-teal/20 rounded-xl p-4 flex flex-col justify-between">
               <p className="text-xs text-[#1a6e6c] font-medium uppercase tracking-wider mb-2">Pending Payout</p>
               <p className="text-lg font-bold text-[#1a6e6c]" style={{ fontFamily: "var(--font-heading)" }}>
                 {formatGHS(mockSettlements.reduce((a, s) => a + s.pendingPayout, 0))}

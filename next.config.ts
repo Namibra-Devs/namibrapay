@@ -14,7 +14,10 @@ const nextConfig: NextConfig = {
   // Ensure Next.js resolves .tsx files for component imports
   pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
   
-  // Configure webpack for better module resolution (no Turbopack config)
+  // Empty turbopack config to acknowledge we're using it in dev mode
+  turbopack: {},
+  
+  // Configure webpack for production builds (when --webpack flag is used)
   webpack: (config, { isServer }) => {
     // Ensure proper extension resolution order
     config.resolve.extensions = [

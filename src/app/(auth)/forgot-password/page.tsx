@@ -116,8 +116,8 @@ export default function ForgotPasswordPage() {
               transition={{ duration: 0.3 }}
               className="flex flex-col items-center py-4 gap-5"
             >
-              <div className="w-20 h-20 rounded-full bg-brand-teal/10 flex items-center justify-center">
-                <MailOpen size={38} className="text-brand-teal" strokeWidth={1.5} />
+              <div className="w-16 h-16 rounded-full bg-brand-teal/10 flex items-center justify-center">
+                <MailOpen size={26} className="text-brand-teal" strokeWidth={1.5} />
               </div>
               <div className="text-center">
                 <p className="text-base font-bold text-gray-900 mb-2 font-heading">
