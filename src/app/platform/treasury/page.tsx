@@ -239,13 +239,13 @@ export default function TreasuryPage() {
       <div className="flex-1 overflow-y-auto p-6">
         {/* ── OVERVIEW ── */}
         {tab === "overview" && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* KPI row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <KpiCard label="UMB Settlement Balance" value={formatGHS(totalSettlementBalance)} sub="Universal Merchant Bank" color="#64c6c3" icon={Banknote} trend="up" />
-              <KpiCard label="Today's Volume" value={formatGHS(4_940_000)} sub="All transactions via UMB" color="#263b8e" icon={TrendingUp} trend="up" />
-              <KpiCard label="Total Fees (30d)" value={formatGHS(totalFees)} sub="Platform + Bank share" color="#fedfb8" icon={DollarSign} trend="neutral" />
-              <KpiCard label="Discrepancies" value={String(discrepancies)} sub="Active reconciliation flags" color={discrepancies > 0 ? "#ef4444" : "#64c6c3"} icon={AlertTriangle} />
+              <KpiCard key="settlement" label="UMB Settlement Balance" value={formatGHS(totalSettlementBalance)} sub="Universal Merchant Bank" color="#64c6c3" icon={Banknote} trend="up" />
+              <KpiCard key="volume" label="Today's Volume" value={formatGHS(4_940_000)} sub="All transactions via UMB" color="#263b8e" icon={TrendingUp} trend="up" />
+              <KpiCard key="fees" label="Total Fees (30d)" value={formatGHS(totalFees)} sub="Platform + Bank share" color="#fedfb8" icon={DollarSign} trend="neutral" />
+              <KpiCard key="discrepancies" label="Discrepancies" value={String(discrepancies)} sub="Active reconciliation flags" color={discrepancies > 0 ? "#ef4444" : "#64c6c3"} icon={AlertTriangle} />
             </div>
 
             {/* Settlement Balance card */}

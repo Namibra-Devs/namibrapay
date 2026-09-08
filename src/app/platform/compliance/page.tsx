@@ -201,7 +201,7 @@ export default function CompliancePage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-5 border-b border-border bg-card/50 shrink-0">
+      <div className="px-6 py-4 border-b border-border bg-card/50 shrink-0">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
@@ -545,7 +545,7 @@ export default function CompliancePage() {
 
         {/* ── AML MONITORING TAB ── */}
         {tab === "aml_monitoring" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {/* Risk Overview Cards */}
             <div className="grid grid-cols-3 gap-4">
               {[
@@ -769,7 +769,7 @@ export default function CompliancePage() {
 
         {/* ── DOCUMENT RETENTION TAB ── */}
         {tab === "retention" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
               {[
@@ -880,7 +880,7 @@ export default function CompliancePage() {
 
         {/* ── REPORTS TAB ── */}
         {tab === "reports" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {/* Export KYC Package */}
             <div className="bg-card border border-border rounded-2xl p-6">
               <div className="flex items-start justify-between mb-4">
@@ -892,7 +892,7 @@ export default function CompliancePage() {
                     Generate complete KYC documentation package for a specific merchant (2-business-day contractual obligation)
                   </p>
                 </div>
-                <Download className="size-8 text-brand-lavender" />
+                <Download className="size-6 text-brand-lavender" />
               </div>
               <button
                 onClick={() => setShowExportModal(true)}
@@ -914,7 +914,7 @@ export default function CompliancePage() {
                       Merchant approval status across all network service providers
                     </p>
                   </div>
-                  <ShieldCheck className="size-8 text-emerald-500" />
+                  <ShieldCheck className="size-6 text-emerald-500" />
                 </div>
               </div>
 

@@ -141,7 +141,7 @@ export default function ProvidersPage() {
       <div className="flex-1 overflow-y-auto p-6">
         {/* ── HEALTH MONITORING TAB ── */}
         {tab === "health" && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Provider Cards Grid */}
             <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
               {mockProviderDetails.map((provider) => {
@@ -296,7 +296,7 @@ export default function ProvidersPage() {
 
         {/* ── ROUTING RULES TAB ── */}
         {tab === "routing" && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Info Banner */}
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
               <div className="flex items-start gap-3">
@@ -414,7 +414,7 @@ export default function ProvidersPage() {
 
         {/* ── CREDENTIALS TAB ── */}
         {tab === "credentials" && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Stats */}
             <div className="grid grid-cols-4 gap-4">
               {[

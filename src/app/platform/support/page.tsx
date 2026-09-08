@@ -119,7 +119,7 @@ export default function SupportPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-5 border-b border-border bg-card/50 shrink-0">
+      <div className="px-6 py-4 border-b border-border bg-card/50 shrink-0">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
@@ -412,7 +412,7 @@ export default function SupportPage() {
 
         {/* ── TRANSACTION SEARCH TAB ── */}
         {tab === "transactions" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {/* Search Bar */}
             <div className="bg-card border border-border rounded-2xl p-5">
               <h2 className="font-semibold text-sm mb-3" style={{ fontFamily: "var(--font-heading)" }}>
@@ -544,7 +544,7 @@ export default function SupportPage() {
 
         {/* ── DISPUTES & REFUNDS TAB ── */}
         {tab === "disputes" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
               {[
@@ -695,7 +695,7 @@ export default function SupportPage() {
 
         {/* ── SLA TRACKER TAB ── */}
         {tab === "sla" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {/* Overview Cards */}
             <div className="grid grid-cols-4 gap-4">
               {mockSlaMetrics.map((sla) => {
@@ -998,7 +998,7 @@ export default function SupportPage() {
 
         {/* ── INCIDENT LOG TAB ── */}
         {tab === "incidents" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {/* Info Banner */}
             <div className="bg-red-50 border border-red-200 rounded-2xl p-5">
               <div className="flex items-start gap-3">

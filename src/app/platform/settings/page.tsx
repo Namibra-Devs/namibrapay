@@ -99,7 +99,7 @@ export default function SettingsPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-5 border-b border-border bg-card/50 shrink-0">
+      <div className="px-6 py-4 border-b border-border bg-card/50 shrink-0">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
@@ -174,7 +174,7 @@ export default function SettingsPage() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-4">
                 {/* Collection Fee */}
                 <div>
                   <label className="block text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
@@ -285,13 +285,13 @@ export default function SettingsPage() {
 
         {/* ── TRANSACTION LIMITS TAB ── */}
         {tab === "limits" && (
-          <div className="max-w-4xl space-y-6">
+          <div className="max-w-4xl space-y-4">
             <div className="bg-card border border-border rounded-2xl p-6">
               <h2 className="text-lg font-bold mb-6" style={{ fontFamily: "var(--font-heading)" }}>
                 Transaction Limits
               </h2>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Single Transaction Limit */}
                 <div>
                   <div className="flex items-center justify-between mb-3">
@@ -495,7 +495,7 @@ export default function SettingsPage() {
                 Notification Preferences
               </h2>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {[
                   { key: "emailNotifications", title: "Email Notifications", description: "Receive email alerts for critical events", icon: Mail },
                   { key: "smsNotifications", title: "SMS Notifications", description: "Receive SMS for high-priority alerts", icon: Smartphone },
@@ -541,7 +541,7 @@ export default function SettingsPage() {
 
         {/* ── SYSTEM CONFIG TAB ── */}
         {tab === "system" && (
-          <div className="max-w-4xl space-y-6">
+          <div className="max-w-4xl space-y-4">
             {/* System Info */}
             <div className="bg-card border border-border rounded-2xl p-6">
               <h2 className="text-lg font-bold mb-6" style={{ fontFamily: "var(--font-heading)" }}>

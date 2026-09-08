@@ -138,7 +138,7 @@ export default function PlatformSidebar() {
             <TooltipTrigger asChild>
               <button
                 className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
                   "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent",
                   "justify-center"
                 )}
@@ -152,13 +152,13 @@ export default function PlatformSidebar() {
               </button>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={8}>
-              Alerts
+              Notification
             </TooltipContent>
           </Tooltip>
         ) : (
           <button
             className={cn(
-              "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              "w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
               "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
             )}
           >
@@ -205,7 +205,7 @@ export default function PlatformSidebar() {
               <button
                 onClick={() => setCollapsed(!collapsed)}
                 className={cn(
-                  "w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs",
+                  "w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs",
                   "text-sidebar-foreground/30 hover:text-sidebar-foreground/60 hover:bg-sidebar-accent transition-colors"
                 )}
               >
@@ -220,7 +220,7 @@ export default function PlatformSidebar() {
           <button
             onClick={() => setCollapsed(!collapsed)}
             className={cn(
-              "w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs",
+              "w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs",
               "text-sidebar-foreground/30 hover:text-sidebar-foreground/60 hover:bg-sidebar-accent transition-colors"
             )}
           >
