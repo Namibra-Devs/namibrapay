@@ -18,7 +18,7 @@ import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/Toast";
 import { FormField, Input, Select } from "@/components/ui/form-field";
 import PhoneInput from "@/components/ui/phone-input";
-import CustomSelect from "@/components/ui/select";
+import CustomSelect from "@/components/ui/Select";
 
 // ── Extended merchant detail data ──────────────────────────────────────────
 type FeeSchedule = { label: string; rate: string; cap: string };

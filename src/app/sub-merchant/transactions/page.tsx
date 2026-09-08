@@ -22,7 +22,7 @@ import { smTransactions, type SmTransaction, type SmTxStatus, type SmTxType } fr
 import { useSubMerchantRole } from "@/hooks/use-sub-merchant-role";
 import { Modal } from "@/components/ui/modal";
 import { FormField, Input, Textarea } from "@/components/ui/form-field";
-import Select from "@/components/ui/select";
+import Select from "@/components/ui/Select";
 import { useToast } from "@/components/ui/Toast";
 import DatePicker from "@/components/ui/date-picker";
 

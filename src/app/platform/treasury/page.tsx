@@ -23,7 +23,7 @@ import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/Toast";
 import { FormField, Input, Textarea } from "@/components/ui/form-field";
 import DatePicker from "@/components/ui/date-picker";
-import CustomSelect from "@/components/ui/select";
+import CustomSelect from "@/components/ui/Select";
 
 // ── Tabs ────────────────────────────────────────────────────────────────────
 type Tab = "overview" | "prefunding" | "reconciliation" | "payouts" | "fee_ledger" | "reports";

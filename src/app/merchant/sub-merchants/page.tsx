@@ -12,7 +12,7 @@ import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/Toast";
 import { FormField, Input, Textarea, Select } from "@/components/ui/form-field";
 import PhoneInput from "@/components/ui/phone-input";
-import CustomSelect from "@/components/ui/select";
+import CustomSelect from "@/components/ui/Select";
 
 const statusConfig = {
   pending: { badge: "bg-amber-50 text-amber-700 border-amber-200", dot: "bg-amber-400" },

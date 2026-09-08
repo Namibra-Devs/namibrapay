@@ -12,7 +12,7 @@ import { FormField, Input, Select } from "@/components/ui/form-field";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 import { usePermission } from "@/hooks/use-role";
-import CustomSelect from "@/components/ui/select";
+import CustomSelect from "@/components/ui/Select";
 
 // ── Tabs ────────────────────────────────────────────────────────────────────
 type Tab = "fees" | "limits" | "payouts" | "team" | "notifications" | "system";

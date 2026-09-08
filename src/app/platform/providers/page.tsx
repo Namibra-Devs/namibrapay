@@ -13,7 +13,7 @@ import DatePicker from "@/components/ui/date-picker";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/constants";
 import { usePermission } from "@/hooks/use-role";
-import CustomSelect from "@/components/ui/select";
+import CustomSelect from "@/components/ui/Select";
 import {
   mockProviderDetails,
   mockProviderCredentials,

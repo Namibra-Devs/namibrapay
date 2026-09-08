@@ -25,7 +25,7 @@ import { useMerchantRole } from "@/hooks/use-merchant-role";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/Toast";
 import { FormField, Input, Select } from "@/components/ui/form-field";
-import CustomSelect from "@/components/ui/select";
+import CustomSelect from "@/components/ui/Select";
 
 type Tab = "keys" | "webhooks" | "sandbox";
 
