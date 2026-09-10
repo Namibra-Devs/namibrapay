@@ -88,22 +88,46 @@ export default function MerchantOverview() {
       <motion.div variants={container} initial="hidden" animate="show"
         className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Collections Today", value: formatGHS(today.collected), sub: `${recentTxns.filter(t => t.type === "collection").length} transactions`, icon: <ArrowDownCircle className="size-4" />, accent: "#64c6c3" },
+          { 
+            label: "Collections Today", 
+            value: formatGHS(today.collected), 
+            sub: `${recentTxns.filter(t => t.type === "collection").length} transactions`, 
+            icon: <ArrowDownCircle className="size-4" />, 
+            accent: "#64c6c3",
+            gradient: true // Mark this card for gradient
+          },
           { label: "Payouts Today", value: formatGHS(today.paidOut === 0 ? 0 : today.paidOut), sub: "0 payouts processed", icon: <ArrowUpCircle className="size-4" />, accent: "#bcbbee" },
           { label: "Available Balance", value: formatGHS(today.pendingPayout), sub: "Pending next payout", icon: <Wallet className="size-4" />, accent: "#fedfb8" },
           { label: "Success Rate", value: `${successRate}%`, sub: "Last 50 transactions", icon: <TrendingUp className="size-4" />, accent: "#a3ffe2" },
         ].map((kpi) => (
           <motion.div key={kpi.label} variants={item}
-            className="bg-card border border-border rounded-2xl p-5 flex flex-col gap-3 hover:border-ring/40 transition-colors">
+            className={cn(
+              "rounded-2xl p-5 flex flex-col gap-3 hover:shadow-lg transition-all duration-300",
+              kpi.gradient 
+                ? "bg-linear-to-br from-brand-teal via-[#4db5b2] to-[#2d9a97] text-white border-0" 
+                : "bg-card border border-border hover:border-ring/40"
+            )}>
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{kpi.label}</span>
-              <div className="size-8 rounded-lg flex items-center justify-center" style={{ background: `${kpi.accent}18` }}>
-                <div style={{ color: kpi.accent }}>{kpi.icon}</div>
+              <span className={cn(
+                "text-[10px] font-medium uppercase tracking-wider",
+                kpi.gradient ? "text-white/90" : "text-muted-foreground"
+              )}>{kpi.label}</span>
+              <div className={cn(
+                "size-8 rounded-lg flex items-center justify-center",
+                kpi.gradient ? "bg-white/20 backdrop-blur-sm" : ""
+              )} style={!kpi.gradient ? { background: `${kpi.accent}18` } : {}}>
+                <div style={{ color: kpi.gradient ? "white" : kpi.accent }}>{kpi.icon}</div>
               </div>
             </div>
             <div>
-              <p className="text-xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{kpi.value}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{kpi.sub}</p>
+              <p className={cn(
+                "text-xl font-bold tracking-tight",
+                kpi.gradient ? "text-white" : ""
+              )} style={{ fontFamily: "var(--font-heading)" }}>{kpi.value}</p>
+              <p className={cn(
+                "text-xs mt-0.5",
+                kpi.gradient ? "text-white/80" : "text-muted-foreground"
+              )}>{kpi.sub}</p>
             </div>
           </motion.div>
         ))}

@@ -24,6 +24,7 @@ const kpis = [
     trend: { value: "+12.4%", positive: true },
     accent: "#64c6c3",
     icon: <Activity className="size-4" />,
+    gradient: true, // Add gradient to this card
   },
   {
     label: "Successful",

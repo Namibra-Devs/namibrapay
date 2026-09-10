@@ -2,31 +2,49 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, ArrowRight, Upload, X, FileText } from "lucide-react";
+import { Loader2, ArrowRight, Upload, X, FileText, Info } from "lucide-react";
 import {
-  kycDocumentsSchema,
+  getKycDocumentsSchema,
   type KYCDocumentsValues,
+  type OwnerDetailsValues,
+  type BusinessDetailsValues,
 } from "@/lib/schemas/auth";
 import { FieldError } from "@/components/ui/field-error";
 import { cn } from "@/lib/utils";
 
 const labelBase = "block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider";
 
+const ID_TYPE_LABELS: Record<string, string> = {
+  passport: "Passport",
+  national_id: "National ID (Ghana Card)",
+  drivers_license: "Driver's License",
+  voter_id: "Voter ID",
+};
+
 interface DocumentsFormProps {
   defaultValues: KYCDocumentsValues | null;
+  ownerData: OwnerDetailsValues | null; // Pass owner data to get ID type
+  businessData: BusinessDetailsValues | null; // Pass business data to check business type
   onBack: () => void;
   onComplete: (data: KYCDocumentsValues) => void;
 }
 
-export default function DocumentsForm({ defaultValues, onBack, onComplete }: DocumentsFormProps) {
+export default function DocumentsForm({ defaultValues, ownerData, businessData, onBack, onComplete }: DocumentsFormProps) {
+  const businessType = businessData?.businessType || "registered";
+  const isRegistered = businessType === "registered";
+  
   const { setValue, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<KYCDocumentsValues>({
-    resolver: zodResolver(kycDocumentsSchema),
+    resolver: zodResolver(getKycDocumentsSchema(businessType)),
     defaultValues: defaultValues || undefined,
   });
 
   const businessCert = watch("businessRegistrationCertificate");
-  const directorId = watch("directorId");
+  const directorIdFront = watch("directorIdFront");
+  const directorIdBack = watch("directorIdBack");
   const proofOfAddress = watch("proofOfAddress");
+
+  const idType = ownerData?.idType || "national_id";
+  const idTypeLabel = ID_TYPE_LABELS[idType] || "ID";
 
   return (
     <form onSubmit={handleSubmit(onComplete)} className="space-y-6">
@@ -37,20 +55,48 @@ export default function DocumentsForm({ defaultValues, onBack, onComplete }: Doc
         <p className="text-sm text-muted-foreground">Upload clear copies of your business documents (PDF, JPG, PNG • Max 5MB)</p>
       </div>
 
+      {/* Info banner for starter businesses */}
+      {!isRegistered && (
+        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+          <Info className="size-4 text-amber-600 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-amber-900">Starter Business Account</p>
+            <p className="text-xs text-amber-700 mt-0.5">
+              Business registration certificate is optional for starter accounts. You can upload it later when you register your business.
+            </p>
+          </div>
+        </div>
+      )}
+
       <FileUploadField
-        label="Business Registration Certificate"
+        label={`Business Registration Certificate${isRegistered ? "" : " (Optional)"}`}
         file={businessCert}
         onChange={(file) => setValue("businessRegistrationCertificate", file as File, { shouldValidate: true })}
         error={errors.businessRegistrationCertificate?.message}
         disabled={isSubmitting}
+        required={isRegistered}
       />
 
+      {/* Director's ID Front */}
       <FileUploadField
-        label="Director's ID (Passport, Driver's License, or National ID)"
-        file={directorId}
-        onChange={(file) => setValue("directorId", file as File, { shouldValidate: true })}
-        error={errors.directorId?.message}
+        label={`${idTypeLabel} - Front Side`}
+        file={directorIdFront}
+        onChange={(file) => setValue("directorIdFront", file as File, { shouldValidate: true })}
+        error={errors.directorIdFront?.message}
         disabled={isSubmitting}
+        helpText="Upload a clear photo of the front side of your ID"
+        required
+      />
+
+      {/* Director's ID Back */}
+      <FileUploadField
+        label={`${idTypeLabel} - Back Side`}
+        file={directorIdBack}
+        onChange={(file) => setValue("directorIdBack", file as File, { shouldValidate: true })}
+        error={errors.directorIdBack?.message}
+        disabled={isSubmitting}
+        helpText="Upload a clear photo of the back side of your ID"
+        required
       />
 
       <FileUploadField
@@ -59,6 +105,8 @@ export default function DocumentsForm({ defaultValues, onBack, onComplete }: Doc
         onChange={(file) => setValue("proofOfAddress", file as File, { shouldValidate: true })}
         error={errors.proofOfAddress?.message}
         disabled={isSubmitting}
+        helpText="Document must be dated within the last 3 months"
+        required
       />
 
       <div className="flex items-center justify-between pt-4 border-t border-border">
@@ -93,12 +141,14 @@ export default function DocumentsForm({ defaultValues, onBack, onComplete }: Doc
 }
 
 // File Upload Component
-function FileUploadField({ label, file, onChange, error, disabled }: {
+function FileUploadField({ label, file, onChange, error, disabled, helpText, required = false }: {
   label: string;
   file?: File;
   onChange: (file: File | null) => void;
   error?: string;
   disabled?: boolean;
+  helpText?: string;
+  required?: boolean;
 }) {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -109,7 +159,10 @@ function FileUploadField({ label, file, onChange, error, disabled }: {
 
   return (
     <div>
-      <label className={labelBase}>{label}</label>
+      <label className={labelBase}>
+        {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
+      </label>
       
       {!file ? (
         <label className={cn(
@@ -122,6 +175,9 @@ function FileUploadField({ label, file, onChange, error, disabled }: {
             Click to upload or drag and drop
           </span>
           <span className="text-xs text-muted-foreground">PDF, JPG, PNG • Max 5MB</span>
+          {helpText && (
+            <span className="text-xs text-muted-foreground mt-1 text-center">{helpText}</span>
+          )}
           <input
             type="file"
             accept=".pdf,.jpg,.jpeg,.png"

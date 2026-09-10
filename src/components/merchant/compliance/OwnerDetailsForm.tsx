@@ -9,10 +9,18 @@ import {
 } from "@/lib/schemas/auth";
 import { FieldError } from "@/components/ui/field-error";
 import PhoneInput from "@/components/ui/phone-input";
+import Select from "@/components/ui/Select";
 import { cn } from "@/lib/utils";
 
 const inputBase = "w-full px-3 py-2.5 text-sm border rounded-xl outline-none transition-all bg-background border-border focus:border-brand-teal/60 focus:ring-2 focus:ring-brand-teal/10 disabled:bg-muted/30 disabled:cursor-not-allowed";
 const labelBase = "block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider";
+
+const ID_TYPE_OPTIONS = [
+  { value: "passport", label: "Passport" },
+  { value: "national_id", label: "National ID (Ghana Card)" },
+  { value: "drivers_license", label: "Driver's License" },
+  { value: "voter_id", label: "Voter ID" },
+];
 
 interface OwnerDetailsFormProps {
   defaultValues: OwnerDetailsValues | null;
@@ -28,10 +36,15 @@ export default function OwnerDetailsForm({ defaultValues, onBack, onComplete }: 
       lastName: "", 
       email: "", 
       phoneCode: "+233", 
-      phone: "", 
+      phone: "",
+      idType: "national_id",
+      idNumber: "",
       isDeveloper: "no" 
     },
   });
+
+  const selectedIdType = watch("idType");
+  const idTypeLabel = ID_TYPE_OPTIONS.find(opt => opt.value === selectedIdType)?.label || "ID";
 
   return (
     <form onSubmit={handleSubmit(onComplete)} className="space-y-6">
@@ -39,7 +52,7 @@ export default function OwnerDetailsForm({ defaultValues, onBack, onComplete }: 
         <h2 className="text-lg font-semibold mb-1" style={{ fontFamily: "var(--font-heading)" }}>
           Owner Verification
         </h2>
-        <p className="text-sm text-muted-foreground">Personal details of the business owner</p>
+        <p className="text-sm text-muted-foreground">Personal details and identification of the business owner</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -88,6 +101,41 @@ export default function OwnerDetailsForm({ defaultValues, onBack, onComplete }: 
           className={cn(errors.phone && "border-red-400 focus-within:ring-red-200")} 
         />
         <FieldError message={errors.phone?.message} />
+      </div>
+
+      {/* ID Type Selection */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="idType" className={labelBase}>ID Type</label>
+          <Select
+            options={ID_TYPE_OPTIONS}
+            value={watch("idType")}
+            onChange={(value) => setValue("idType", value as any, { shouldValidate: true })}
+            placeholder="Select ID type"
+            triggerClassName={cn(
+              "rounded-xl",
+              errors.idType && "border-red-400 focus:ring-red-200"
+            )}
+          />
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            Select the type of identification document you'll upload
+          </p>
+          <FieldError message={errors.idType?.message} />
+        </div>
+
+        <div>
+          <label htmlFor="idNumber" className={labelBase}>
+            {idTypeLabel} Number
+          </label>
+          <input 
+            id="idNumber" 
+            type="text" 
+            placeholder={`Enter your ${idTypeLabel} number`}
+            {...register("idNumber")} 
+            className={cn(inputBase, errors.idNumber && "border-red-400 focus:border-red-400 focus:ring-red-200")} 
+          />
+          <FieldError message={errors.idNumber?.message} />
+        </div>
       </div>
 
       <div>

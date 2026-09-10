@@ -200,7 +200,8 @@ export default function CompliancePage() {
           >
             {currentStep === "business" && (
               <BusinessDetailsForm 
-                defaultValues={businessData} 
+                defaultValues={businessData}
+                businessType={businessData?.businessType || "registered"} // Pass business type
                 onComplete={(data) => handleStepComplete("business", data)} 
               />
             )}
@@ -214,6 +215,8 @@ export default function CompliancePage() {
             {currentStep === "documents" && (
               <DocumentsForm 
                 defaultValues={documentsData}
+                ownerData={ownerData} // Pass owner data to access ID type
+                businessData={businessData} // Pass business data to check business type
                 onBack={() => setCurrentStep("owner")}
                 onComplete={(data) => handleStepComplete("documents", data)} 
               />

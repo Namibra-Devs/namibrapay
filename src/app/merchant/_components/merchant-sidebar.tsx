@@ -24,7 +24,14 @@ import { MERCHANT_ROLE_LABELS } from "@/lib/merchant-constants";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const navItems = [
+type NavItem = {
+  to: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  permission: string;
+};
+
+const navItems: NavItem[] = [
   { to: "/merchant", label: "Overview", icon: LayoutDashboard, permission: "dashboard.view" },
   { to: "/merchant/compliance", label: "Compliance", icon: FileCheck, permission: "settings.view" },
   { to: "/merchant/transactions", label: "Transactions", icon: ArrowLeftRight, permission: "transactions.view" },
@@ -205,26 +212,161 @@ export default function MerchantSidebar() {
 }
 
 export function MerchantBottomNav() {
-  const { can } = useMerchantRole();
+  const { can, role } = useMerchantRole();
   const pathname = usePathname();
-  const visibleItems = navItems.filter((n) => !n.permission || can(n.permission)).slice(0, 5);
+  const [showDrawer, setShowDrawer] = useState(false);
+  
+  // Filter nav items based on permissions
+  const visibleNavItems = navItems.filter((n) => !n.permission || can(n.permission));
+
+  // Bottom nav shows: Overview, Compliance, Transactions, Settlements, and More
+  const bottomNavItems = [
+    visibleNavItems.find(n => n.to === "/merchant"), // Overview
+    visibleNavItems.find(n => n.to === "/merchant/compliance"), // Compliance
+    visibleNavItems.find(n => n.to === "/merchant/transactions"), // Transactions
+    visibleNavItems.find(n => n.to === "/merchant/settlements"), // Settlements
+  ].filter((item): item is NavItem => item !== undefined);
+
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-sidebar border-t border-sidebar-border flex">
-      {visibleItems.map(({ to, label, icon: Icon }) => {
-        const isActive = to === "/merchant" ? pathname === "/merchant" : pathname.startsWith(to);
-        return (
-          <Link key={to} href={to}
-            className={cn("flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors relative",
-              isActive ? "text-sidebar-foreground" : "text-sidebar-foreground/40")}>
-            {/* Active indicator dot for mobile */}
-            {isActive && (
-              <span className="absolute top-0 left-1/2 -translate-x-1/2 size-1 rounded-full bg-brand-teal" />
+    <>
+      {/* Bottom Navigation Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-sidebar border-t border-sidebar-border safe-bottom">
+        <div className="flex items-center">
+          {bottomNavItems.map(({ to, label, icon: Icon }) => {
+            const isActive = to === "/merchant"
+              ? pathname === "/merchant" || pathname === "/merchant/"
+              : pathname.startsWith(to);
+            return (
+              <Link
+                key={to}
+                href={to}
+                className={cn(
+                  "flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors relative",
+                  isActive ? "text-sidebar-foreground" : "text-sidebar-foreground/40"
+                )}
+              >
+                {isActive && (
+                  <span className="absolute top-0 left-1/2 -translate-x-1/2 size-1 rounded-full bg-brand-teal" />
+                )}
+                <Icon className="size-5" />
+                <span className="truncate max-w-15">{label}</span>
+              </Link>
+            );
+          })}
+          
+          {/* More Button */}
+          <button
+            onClick={() => setShowDrawer(true)}
+            className={cn(
+              "flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors",
+              showDrawer ? "text-sidebar-foreground" : "text-sidebar-foreground/40"
             )}
-            <Icon className="size-5" />
-            {label}
-          </Link>
-        );
-      })}
-    </nav>
+          >
+            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="1" />
+              <circle cx="12" cy="5" r="1" />
+              <circle cx="12" cy="19" r="1" />
+            </svg>
+            More
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Drawer Menu */}
+      {showDrawer && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="md:hidden fixed inset-0 bg-black/50 z-60 animate-in fade-in duration-200"
+            onClick={() => setShowDrawer(false)}
+          />
+          
+          {/* Drawer */}
+          <div className="md:hidden fixed inset-y-0 right-0 w-72 max-w-[85vw] bg-sidebar border-l border-sidebar-border z-70 animate-in slide-in-from-right duration-300 flex flex-col">
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between px-4 py-4 border-b border-sidebar-border shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 flex items-center justify-center">
+                  <Image
+                    src="/logo-md.png"
+                    alt="NamibraPay"
+                    width={30}
+                    height={30}
+                    unoptimized
+                  />
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-sidebar-foreground font-semibold text-sm leading-tight truncate" style={{ fontFamily: "var(--font-heading)" }}>
+                    Kwame Organics
+                  </p>
+                  <p className="text-sidebar-foreground/40 text-[10px] uppercase tracking-wider">Merchant</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowDrawer(false)}
+                className="text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors"
+              >
+                <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Navigation Items */}
+            <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+              {visibleNavItems.map(({ to, label, icon: Icon }) => {
+                const isActive = to === "/merchant"
+                  ? pathname === "/merchant" || pathname === "/merchant/"
+                  : pathname.startsWith(to);
+                
+                return (
+                  <Link
+                    key={to}
+                    href={to}
+                    onClick={() => setShowDrawer(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
+                      isActive
+                        ? "bg-sidebar-accent text-sidebar-foreground"
+                        : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                    )}
+                  >
+                    <Icon className="size-4 shrink-0" />
+                    <span className="flex-1">{label}</span>
+                    {isActive && (
+                      <span className="size-1.5 rounded-full bg-brand-teal shrink-0" />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Drawer Footer */}
+            <div className="border-t border-sidebar-border p-3 space-y-2 shrink-0">
+              {/* Notifications Button */}
+              <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors">
+                <Bell className="size-4 shrink-0" />
+                <span className="flex-1 text-left">Notifications</span>
+              </button>
+
+              {/* User Info */}
+              <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-sidebar-accent/50">
+                <div className="size-8 rounded-full bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center shrink-0">
+                  <User className="size-4 text-brand-teal" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sidebar-foreground text-xs font-medium truncate">Kwame Asante</p>
+                  <p className="text-sidebar-foreground/40 text-[10px] truncate">{MERCHANT_ROLE_LABELS[role]}</p>
+                </div>
+                <button className="text-sidebar-foreground/40 hover:text-sidebar-foreground transition-colors" title="Sign out">
+                  <LogOut className="size-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </>
   );
 }

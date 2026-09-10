@@ -45,7 +45,7 @@ export default function SubMerchantSettlementsPage() {
   };
 
   return (
-    <div className="px-6 py-6 space-y-8 pb-24 md:pb-6">
+    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
@@ -108,7 +108,7 @@ export default function SubMerchantSettlementsPage() {
       {/* Fee Structure Info Banner */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
         className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
-        <Info className="size-4 text-blue-600 mt-0.5 flex-shrink-0" />
+        <Info className="size-4 text-blue-600 mt-0.5 shrink-0" />
         <div>
           <p className="text-sm font-medium text-blue-800">Fee Structure</p>
           <p className="text-xs text-blue-600 mt-1">
@@ -241,7 +241,7 @@ export default function SubMerchantSettlementsPage() {
 
                     {/* Fee calculation explanation */}
                     <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-                      <Info className="size-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <Info className="size-4 text-amber-600 mt-0.5 shrink-0" />
                       <div>
                         <p className="text-xs font-medium text-amber-800">How fees are calculated</p>
                         <p className="text-xs text-amber-600 mt-1">

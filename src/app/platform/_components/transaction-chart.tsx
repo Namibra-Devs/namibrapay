@@ -1,6 +1,5 @@
 'use client';
 
-"use client";
 import {
   AreaChart,
   Area,
@@ -14,8 +13,9 @@ import {
 import type { TooltipProps } from "recharts";
 import { formatGHS } from "@/lib/constants";
 import { mockChartData } from "@/lib/mock-data";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import DateRangePicker from "@/components/ui/date-range-picker";
 
 const ranges = ["7d", "14d", "30d", "Custom"] as const;
 type Range = (typeof ranges)[number];
@@ -44,6 +44,67 @@ function CustomTooltip({ active, payload, label }: TooltipProps<number, string> 
 
 export function TransactionChart() {
   const [range, setRange] = useState<Range>("7d");
+  const [showCustom, setShowCustom] = useState(false);
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
+
+  // Filter chart data based on selected range or custom dates
+  const filteredData = useMemo(() => {
+    if (range === "Custom" && customStartDate && customEndDate) {
+      // Filter by custom date range
+      return mockChartData.filter(item => {
+        // Parse the date string (e.g., "05 Sep") and create a comparable date
+        const itemDate = new Date(item.date + " 2026"); // Add year for proper parsing
+        const start = new Date(customStartDate + "T00:00:00");
+        const end = new Date(customEndDate + "T23:59:59");
+        return itemDate >= start && itemDate <= end;
+      });
+    }
+    
+    const days = range === "7d" ? 7 : range === "14d" ? 14 : range === "30d" ? 30 : mockChartData.length;
+    return mockChartData.slice(-days);
+  }, [range, customStartDate, customEndDate]);
+
+  const handleRangeClick = (r: Range) => {
+    if (r === "Custom") {
+      setShowCustom(true);
+      setRange(r);
+    } else {
+      setRange(r);
+      setShowCustom(false);
+      setCustomStartDate("");
+      setCustomEndDate("");
+    }
+  };
+
+  const handleCustomDateChange = (start: string, end: string) => {
+    setCustomStartDate(start);
+    setCustomEndDate(end);
+    setShowCustom(false);
+  };
+
+  const handleCustomCancel = () => {
+    setShowCustom(false);
+    if (!customStartDate || !customEndDate) {
+      setRange("7d");
+    }
+  };
+
+  const formatDateRangeText = () => {
+    if (range === "Custom" && customStartDate && customEndDate) {
+      const start = new Date(customStartDate + "T00:00:00");
+      const end = new Date(customEndDate + "T00:00:00");
+      return `${start.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} - ${end.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}`;
+    }
+    return range !== "Custom" ? `Last ${range}` : "";
+  };
+
+  // Calculate min and max dates for the date picker (based on available mock data)
+  const today = new Date();
+  const minDate = new Date();
+  minDate.setDate(today.getDate() - 29); // 30 days of data
+  const minDateStr = minDate.toISOString().split("T")[0];
+  const maxDateStr = today.toISOString().split("T")[0];
 
   return (
     <div className="bg-card border border-border rounded-2xl p-6">
@@ -52,27 +113,48 @@ export function TransactionChart() {
           <h3 className="font-semibold text-base" style={{ fontFamily: "var(--font-heading)" }}>
             Transaction Volume
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">Successful vs failed transactions</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Successful vs failed transactions {formatDateRangeText() && `(${formatDateRangeText()})`}
+          </p>
         </div>
-        <div className="flex items-center gap-1 bg-muted/60 rounded-lg p-0.5">
-          {ranges.map((r) => (
-            <button
-              key={r}
-              onClick={() => setRange(r)}
-              className={cn(
-                "px-3 py-1.5 rounded-md text-xs font-medium transition-all",
-                range === r
-                  ? "bg-card shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {r}
-            </button>
-          ))}
+        
+        <div className="flex items-center gap-2">
+          {/* Range Selector Buttons */}
+          <div className="flex items-center gap-1 bg-muted/60 rounded-lg p-0.5">
+            {ranges.map((r) => (
+              <button
+                key={r}
+                onClick={() => handleRangeClick(r)}
+                className={cn(
+                  "px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+                  range === r
+                    ? "bg-card shadow-sm text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+          
+          {/* Custom Date Range Picker */}
+          {showCustom && (
+            <div className="w-64">
+              <DateRangePicker
+                startDate={customStartDate}
+                endDate={customEndDate}
+                onChange={handleCustomDateChange}
+                onCancel={handleCustomCancel}
+                placeholder="Select custom range"
+                min={minDateStr}
+                max={maxDateStr}
+              />
+            </div>
+          )}
         </div>
       </div>
       <ResponsiveContainer width="100%" height={220}>
-        <AreaChart data={mockChartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+        <AreaChart data={filteredData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="gradSuccessful" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#64c6c3" stopOpacity={0.25} />

@@ -35,7 +35,6 @@ export default function SubMerchantsPage() {
   const [newSubMerchantEmail, setNewSubMerchantEmail] = useState("");
   const [newSubMerchantPhone, setNewSubMerchantPhone] = useState("");
   const [newSubMerchantAddress, setNewSubMerchantAddress] = useState("");
-  const [newSubMerchantFeeRate, setNewSubMerchantFeeRate] = useState("");
   const [newSubMerchantCategory, setNewSubMerchantCategory] = useState("");
   
   // Edit sub-merchant state
@@ -230,7 +229,6 @@ export default function SubMerchantsPage() {
           setNewSubMerchantEmail("");
           setNewSubMerchantPhone("");
           setNewSubMerchantAddress("");
-          setNewSubMerchantFeeRate("");
           setNewSubMerchantCategory("");
         }}
         title="Add Sub-Merchant"
@@ -313,22 +311,6 @@ export default function SubMerchantsPage() {
             />
           </FormField>
 
-          <FormField
-            label="Fee Rate (%)"
-            required
-            description="Transaction fee percentage (max 3.5%)"
-          >
-            <Input
-              type="number"
-              step="0.1"
-              min="0"
-              max="3.5"
-              value={newSubMerchantFeeRate}
-              onChange={(e) => setNewSubMerchantFeeRate(e.target.value)}
-              placeholder="e.g. 2.5"
-            />
-          </FormField>
-
           {/* Actions */}
           <div className="flex items-center gap-3 pt-4 border-t border-border">
             <button
@@ -338,7 +320,6 @@ export default function SubMerchantsPage() {
                 setNewSubMerchantEmail("");
                 setNewSubMerchantPhone("");
                 setNewSubMerchantAddress("");
-                setNewSubMerchantFeeRate("");
                 setNewSubMerchantCategory("");
               }}
               className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
@@ -351,9 +332,7 @@ export default function SubMerchantsPage() {
                 !newSubMerchantEmail.trim() ||
                 !newSubMerchantPhone.trim() ||
                 !newSubMerchantAddress.trim() ||
-                !newSubMerchantFeeRate ||
-                !newSubMerchantCategory ||
-                parseFloat(newSubMerchantFeeRate) > 3.5
+                !newSubMerchantCategory
               }
               onClick={() => {
                 showToast(
@@ -366,7 +345,6 @@ export default function SubMerchantsPage() {
                 setNewSubMerchantEmail("");
                 setNewSubMerchantPhone("");
                 setNewSubMerchantAddress("");
-                setNewSubMerchantFeeRate("");
                 setNewSubMerchantCategory("");
               }}
               className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"

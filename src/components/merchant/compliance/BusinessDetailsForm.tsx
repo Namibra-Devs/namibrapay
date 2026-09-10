@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight, Info } from "lucide-react";
 import {
   businessDetailsSchema,
   type BusinessDetailsValues,
@@ -17,21 +17,26 @@ const labelBase = "block text-xs font-medium text-muted-foreground mb-1.5 upperc
 
 interface BusinessDetailsFormProps {
   defaultValues: BusinessDetailsValues | null;
+  businessType?: "starter" | "registered"; // Passed from signup
   onComplete: (data: BusinessDetailsValues) => void;
 }
 
-export default function BusinessDetailsForm({ defaultValues, onComplete }: BusinessDetailsFormProps) {
+export default function BusinessDetailsForm({ defaultValues, businessType = "registered", onComplete }: BusinessDetailsFormProps) {
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<BusinessDetailsValues>({
     resolver: zodResolver(businessDetailsSchema),
     defaultValues: defaultValues || { 
       businessName: "", 
       registrationNumber: "", 
+      tinNumber: "",
       country: "", 
       address: "", 
       industry: "", 
-      businessType: "registered" 
+      businessType: businessType // Use passed business type
     },
   });
+
+  const currentBusinessType = watch("businessType");
+  const isRegistered = currentBusinessType === "registered";
 
   return (
     <form onSubmit={handleSubmit(onComplete)} className="space-y-6">
@@ -40,6 +45,24 @@ export default function BusinessDetailsForm({ defaultValues, onComplete }: Busin
           Business Information
         </h2>
         <p className="text-sm text-muted-foreground">Tell us about your business</p>
+      </div>
+
+      {/* Info banner for business type */}
+      <div className={cn(
+        "flex items-start gap-3 border rounded-xl px-4 py-3",
+        isRegistered ? "bg-blue-50 border-blue-200" : "bg-amber-50 border-amber-200"
+      )}>
+        <Info className={cn("size-4 shrink-0 mt-0.5", isRegistered ? "text-blue-600" : "text-amber-600")} />
+        <div className="flex-1 min-w-0">
+          <p className={cn("text-sm font-medium", isRegistered ? "text-blue-900" : "text-amber-900")}>
+            {isRegistered ? "Registered Business Account" : "Starter Business Account"}
+          </p>
+          <p className={cn("text-xs mt-0.5", isRegistered ? "text-blue-700" : "text-amber-700")}>
+            {isRegistered 
+              ? "Registration number and TIN are required for registered businesses" 
+              : "You can complete registration later as you grow your business"}
+          </p>
+        </div>
       </div>
 
       <div>
@@ -54,17 +77,42 @@ export default function BusinessDetailsForm({ defaultValues, onComplete }: Busin
         <FieldError message={errors.businessName?.message} />
       </div>
 
-      <div>
-        <label htmlFor="registrationNumber" className={labelBase}>Business Registration Number</label>
-        <input 
-          id="registrationNumber" 
-          type="text" 
-          placeholder="CS004152023" 
-          {...register("registrationNumber")} 
-          className={cn(inputBase, errors.registrationNumber && "border-red-400 focus:border-red-400 focus:ring-red-200")} 
-        />
-        <FieldError message={errors.registrationNumber?.message} />
-      </div>
+      {/* Conditional Registration Number - Only for Registered Businesses */}
+      {isRegistered && (
+        <div>
+          <label htmlFor="registrationNumber" className={labelBase}>
+            Business Registration Number <span className="text-red-500">*</span>
+          </label>
+          <input 
+            id="registrationNumber" 
+            type="text" 
+            placeholder="CS004152023" 
+            {...register("registrationNumber")} 
+            className={cn(inputBase, errors.registrationNumber && "border-red-400 focus:border-red-400 focus:ring-red-200")} 
+          />
+          <FieldError message={errors.registrationNumber?.message} />
+        </div>
+      )}
+
+      {/* TIN Number - Only for Registered Businesses */}
+      {isRegistered && (
+        <div>
+          <label htmlFor="tinNumber" className={labelBase}>
+            TIN Number (Tax Identification Number) <span className="text-red-500">*</span>
+          </label>
+          <input 
+            id="tinNumber" 
+            type="text" 
+            placeholder="Enter your TIN" 
+            {...register("tinNumber")} 
+            className={cn(inputBase, errors.tinNumber && "border-red-400 focus:border-red-400 focus:ring-red-200")} 
+          />
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            Tax Identification Number issued by the Ghana Revenue Authority
+          </p>
+          <FieldError message={errors.tinNumber?.message} />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -108,28 +156,6 @@ export default function BusinessDetailsForm({ defaultValues, onComplete }: Busin
           className={cn(inputBase, "resize-none", errors.address && "border-red-400 focus:border-red-400 focus:ring-red-200")} 
         />
         <FieldError message={errors.address?.message} />
-      </div>
-
-      <div>
-        <label className={labelBase}>Business Type</label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {[
-            { value: "registered", label: "Registered Business", desc: "Licensed and legally operating" },
-            { value: "starter", label: "Starter Business", desc: "Testing ideas, preparing registration" },
-          ].map((option) => (
-            <label 
-              key={option.value} 
-              className="relative flex items-start gap-3 p-4 border border-border rounded-xl cursor-pointer hover:border-brand-teal/40 transition-colors has-checked:border-brand-teal has-checked:bg-brand-teal/5"
-            >
-              <input type="radio" value={option.value} {...register("businessType")} className="mt-0.5" />
-              <div>
-                <p className="text-sm font-semibold text-foreground">{option.label}</p>
-                <p className="text-xs text-muted-foreground">{option.desc}</p>
-              </div>
-            </label>
-          ))}
-        </div>
-        <FieldError message={errors.businessType?.message} />
       </div>
 
       <div className="flex items-center justify-end pt-4 border-t border-border">

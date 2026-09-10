@@ -278,7 +278,7 @@ export const mockAuditEvents: AuditEvent[] = [
     action: "ROUTING_RULE_APPROVED",
     resource: "routing_rule",
     resourceId: "ROUTE-2024-003",
-    description: "Approved new routing rule: MTN Mobile Money failover to Vodafone",
+    description: "Approved new routing rule: MTN Mobile Money failover to Telecel",
     beforeState: { status: "pending_approval", priority: 2 },
     afterState: {
       status: "active",
@@ -288,7 +288,7 @@ export const mockAuditEvents: AuditEvent[] = [
     },
     metadata: {
       ruleType: "failover",
-      targetProvider: "VODAFONE",
+      targetProvider: "TELECEL",
       fallbackProvider: "AIRTELTIGO",
       createdBy: "USR-PLT-005",
     },
@@ -560,7 +560,7 @@ export const mockAuditEvents: AuditEvent[] = [
     },
     action: "PROVIDER_DEGRADED",
     resource: "payment_provider",
-    resourceId: "PROV-VODAFONE",
+    resourceId: "PROV-TELECEL",
     description: "Provider experiencing degraded performance",
     metadata: {
       successRate: 87.5,

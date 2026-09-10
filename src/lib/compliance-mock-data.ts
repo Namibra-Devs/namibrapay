@@ -38,9 +38,9 @@ export type KycApplication = {
   approvedAt?: string;
   providerApprovals?: {
     mtn: boolean;
-    vodafone: boolean;
+    telecel: boolean;
     airtel: boolean;
-    gip: boolean;
+    umb: boolean;
   };
 };
 
@@ -263,9 +263,9 @@ export const mockKycApplications: KycApplication[] = [
     approvedAt: new Date(Date.now() - 432000000).toISOString(),
     providerApprovals: {
       mtn: true,
-      vodafone: true,
+      telecel: true,
       airtel: true,
-      gip: false,
+      umb: false,
     },
   },
   {

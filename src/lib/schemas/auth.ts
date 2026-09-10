@@ -92,8 +92,13 @@ export const businessDetailsSchema = z.object({
   
   registrationNumber: z
     .string()
-    .min(1, "Business registration number is required.")
-    .max(50, "Registration number is too long."),
+    .max(50, "Registration number is too long.")
+    .optional(),
+  
+  tinNumber: z
+    .string()
+    .max(50, "TIN number is too long.")
+    .optional(),
   
   country: z.string().min(1, "Country is required."),
   
@@ -107,6 +112,24 @@ export const businessDetailsSchema = z.object({
   businessType: z.enum(["starter", "registered"], {
     message: "Please select your business type.",
   }),
+}).refine((data) => {
+  // For registered businesses, registration number is required
+  if (data.businessType === "registered" && !data.registrationNumber) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Business registration number is required for registered businesses.",
+  path: ["registrationNumber"],
+}).refine((data) => {
+  // For registered businesses, TIN number is required
+  if (data.businessType === "registered" && !data.tinNumber) {
+    return false;
+  }
+  return true;
+}, {
+  message: "TIN number is required for registered businesses.",
+  path: ["tinNumber"],
 });
 
 // Step 2: Owner Details
@@ -133,35 +156,99 @@ export const ownerDetailsSchema = z.object({
     .min(5, "Enter a valid phone number.")
     .regex(/^[\d\s\-()+]+$/, "Phone number can only contain digits."),
 
+  idType: z.enum(["passport", "national_id", "drivers_license", "voter_id"], {
+    message: "Please select your ID type.",
+  }),
+
+  idNumber: z
+    .string()
+    .min(5, "ID number must be at least 5 characters.")
+    .max(50, "ID number is too long.")
+    .regex(/^[A-Z0-9-]+$/i, "ID number can only contain letters, numbers, and hyphens."),
+
   isDeveloper: z.enum(["yes", "no"], {
     message: "Please answer this question.",
   }),
 });
 
-// Step 3: KYC Documents
-export const kycDocumentsSchema = z.object({
-  businessRegistrationCertificate: fileSchema,
-  directorId: fileSchema,
+// Step 3: KYC Documents (base schema)
+const kycDocumentsBaseSchema = z.object({
+  businessRegistrationCertificate: fileSchema.optional(),
+  directorIdFront: fileSchema,
+  directorIdBack: fileSchema,
   proofOfAddress: fileSchema,
 });
 
+// Dynamic KYC Documents Schema with business type validation
+export const kycDocumentsSchema = kycDocumentsBaseSchema;
+
+// Function to get KYC schema with business type validation
+export const getKycDocumentsSchema = (businessType?: "starter" | "registered") => {
+  return kycDocumentsBaseSchema.refine((data) => {
+    // For registered businesses, business registration certificate is required
+    if (businessType === "registered" && !data.businessRegistrationCertificate) {
+      return false;
+    }
+    return true;
+  }, {
+    message: "Business registration certificate is required for registered businesses.",
+    path: ["businessRegistrationCertificate"],
+  });
+};
+
 // Step 4: Payout Account
 export const payoutAccountSchema = z.object({
-  bankName: z
-    .string()
-    .min(1, "Bank name is required.")
-    .max(100, "Bank name is too long."),
+  payoutType: z.enum(["bank", "mobile_money"], {
+    message: "Please select a payout method.",
+  }),
   
-  accountNumber: z
-    .string()
-    .min(8, "Account number must be at least 8 digits.")
-    .max(20, "Account number is too long.")
-    .regex(/^[\d]+$/, "Account number can only contain digits."),
+  // Bank fields (required if payoutType is "bank")
+  bankName: z.string().max(100, "Bank name is too long.").optional(),
+  accountNumber: z.string().max(20, "Account number is too long.").optional(),
+  accountName: z.string().max(100, "Account name is too long.").optional(),
   
-  accountName: z
-    .string()
-    .min(2, "Account name is required.")
-    .max(100, "Account name is too long."),
+  // Mobile Money fields (required if payoutType is "mobile_money")
+  mobileMoneyProvider: z.enum(["mtn", "telecel", "airteltigo"], {
+    message: "Please select a mobile money provider.",
+  }).optional(),
+  mobileMoneyNumber: z.string().max(15, "Mobile number is too long.").optional(),
+  mobileMoneyName: z.string().max(100, "Account name is too long.").optional(),
+}).refine((data) => {
+  // If bank is selected, bank fields are required
+  if (data.payoutType === "bank") {
+    return !!(data.bankName && data.accountNumber && data.accountName);
+  }
+  return true;
+}, {
+  message: "All bank account fields are required.",
+  path: ["bankName"],
+}).refine((data) => {
+  // If bank is selected, validate account number format
+  if (data.payoutType === "bank" && data.accountNumber) {
+    return /^[\d]+$/.test(data.accountNumber) && data.accountNumber.length >= 8;
+  }
+  return true;
+}, {
+  message: "Account number must be at least 8 digits.",
+  path: ["accountNumber"],
+}).refine((data) => {
+  // If mobile money is selected, provider and number are required
+  if (data.payoutType === "mobile_money") {
+    return !!(data.mobileMoneyProvider && data.mobileMoneyNumber && data.mobileMoneyName);
+  }
+  return true;
+}, {
+  message: "All mobile money fields are required.",
+  path: ["mobileMoneyProvider"],
+}).refine((data) => {
+  // If mobile money is selected, validate phone number format
+  if (data.payoutType === "mobile_money" && data.mobileMoneyNumber) {
+    return /^[\d]+$/.test(data.mobileMoneyNumber) && data.mobileMoneyNumber.length >= 10;
+  }
+  return true;
+}, {
+  message: "Mobile number must be at least 10 digits.",
+  path: ["mobileMoneyNumber"],
 });
 
 // Step 5: Security

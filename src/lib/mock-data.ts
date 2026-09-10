@@ -176,9 +176,9 @@ export const mockAlerts: Alert[] = [
   },
 ];
 
-export const mockChartData = Array.from({ length: 7 }, (_, i) => {
+export const mockChartData = Array.from({ length: 30 }, (_, i) => {
   const date = new Date();
-  date.setDate(date.getDate() - (6 - i));
+  date.setDate(date.getDate() - (29 - i));
   return {
     date: date.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }),
     successful: Math.floor(Math.random() * 8000 + 4000),

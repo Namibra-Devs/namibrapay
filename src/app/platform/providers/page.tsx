@@ -69,6 +69,22 @@ export default function ProvidersPage() {
   const [maintenanceDuration, setMaintenanceDuration] = useState("");
   const [maintenanceNotifyMerchants, setMaintenanceNotifyMerchants] = useState(true);
   
+  // Configure Provider modal
+  const [showConfigureProviderModal, setShowConfigureProviderModal] = useState(false);
+  const [configProviderApiUrl, setConfigProviderApiUrl] = useState("");
+  const [configProviderTimeout, setConfigProviderTimeout] = useState("");
+  const [configProviderRetries, setConfigProviderRetries] = useState("");
+  
+  // Add Routing Rule modal
+  const [showAddRoutingRuleModal, setShowAddRoutingRuleModal] = useState(false);
+  const [newRuleName, setNewRuleName] = useState("");
+  const [newRuleType, setNewRuleType] = useState("");
+  const [newRuleTarget, setNewRuleTarget] = useState("");
+  const [newRuleFallback, setNewRuleFallback] = useState("");
+  const [newRulePriority, setNewRulePriority] = useState("");
+  const [newRuleCondition, setNewRuleCondition] = useState("");
+  const [newRuleDescription, setNewRuleDescription] = useState("");
+  
   const { showToast } = useToast();
 
   if (!canView) {
@@ -219,7 +235,15 @@ export default function ProvidersPage() {
                   </p>
                 </div>
                 {canEdit && (
-                  <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all">
+                  <button 
+                    onClick={() => {
+                      setShowConfigureProviderModal(true);
+                      setConfigProviderApiUrl(selectedProvider.apiBaseUrl);
+                      setConfigProviderTimeout("30");
+                      setConfigProviderRetries("3");
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                  >
                     <Settings className="size-4" /> Configure
                   </button>
                 )}
@@ -313,7 +337,10 @@ export default function ProvidersPage() {
             {/* Add Rule Button */}
             {canEdit && (
               <div className="flex justify-end">
-                <button className="flex items-center gap-2 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all">
+                <button 
+                  onClick={() => setShowAddRoutingRuleModal(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
+                >
                   <GitBranch className="size-4" /> Add Routing Rule
                 </button>
               </div>
@@ -1152,6 +1179,351 @@ export default function ProvidersPage() {
               className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Schedule Maintenance
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ── Configure Provider Modal ── */}
+      <Modal
+        isOpen={showConfigureProviderModal}
+        onClose={() => {
+          setShowConfigureProviderModal(false);
+          setConfigProviderApiUrl("");
+          setConfigProviderTimeout("");
+          setConfigProviderRetries("");
+        }}
+        title="Configure Provider"
+        description={`Advanced settings for ${selectedProvider.name}`}
+        size="md"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+            <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-blue-900 mb-1">Provider Configuration</p>
+              <p className="text-sm text-blue-700">
+                Update API endpoints, timeout settings, and retry logic. Changes will be applied immediately.
+              </p>
+            </div>
+          </div>
+
+          {/* Current Provider Info */}
+          <div className="bg-muted/30 rounded-xl p-4">
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Provider</p>
+                <p className="font-semibold">{selectedProvider.name}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Short Code</p>
+                <p className="font-mono font-semibold">{selectedProvider.shortCode}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">API Version</p>
+                <p className="font-mono">{selectedProvider.apiVersion}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Status</p>
+                <p className="font-semibold capitalize">{selectedProvider.status}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* API Base URL */}
+          <FormField
+            label="API Base URL"
+            required
+            description="Production endpoint for provider API"
+          >
+            <Input
+              type="url"
+              value={configProviderApiUrl}
+              onChange={(e) => setConfigProviderApiUrl(e.target.value)}
+              placeholder="https://api.provider.com/v1"
+            />
+          </FormField>
+
+          {/* Timeout and Retries */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              label="Timeout (seconds)"
+              required
+              description="API request timeout"
+            >
+              <Input
+                type="number"
+                value={configProviderTimeout}
+                onChange={(e) => setConfigProviderTimeout(e.target.value)}
+                placeholder="30"
+                min="5"
+                max="120"
+              />
+            </FormField>
+            <FormField
+              label="Max Retries"
+              required
+              description="Failed request retries"
+            >
+              <Input
+                type="number"
+                value={configProviderRetries}
+                onChange={(e) => setConfigProviderRetries(e.target.value)}
+                placeholder="3"
+                min="0"
+                max="5"
+              />
+            </FormField>
+          </div>
+
+          {/* Fee Schedule */}
+          <div className="bg-card border border-border rounded-xl p-4">
+            <h3 className="text-sm font-semibold mb-3">Current Fee Schedule</h3>
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <span className="text-muted-foreground">Collection Rate</span>
+                <p className="font-semibold mt-0.5">{selectedProvider.feeSchedule.collectionRate}%</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Collection Cap</span>
+                <p className="font-semibold mt-0.5">GHS {selectedProvider.feeSchedule.collectionCap}</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Payout Rate</span>
+                <p className="font-semibold mt-0.5">{selectedProvider.feeSchedule.payoutRate}%</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Payout Cap</span>
+                <p className="font-semibold mt-0.5">GHS {selectedProvider.feeSchedule.payoutCap}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Warning */}
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-700">
+              Configuration changes will affect all transactions for this provider. Test in sandbox before applying to production.
+            </p>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowConfigureProviderModal(false);
+                setConfigProviderApiUrl("");
+                setConfigProviderTimeout("");
+                setConfigProviderRetries("");
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!configProviderApiUrl.trim() || !configProviderTimeout || !configProviderRetries}
+              onClick={() => {
+                showToast("success", "Configuration Updated", `${selectedProvider.name} settings have been updated successfully`);
+                setShowConfigureProviderModal(false);
+                setConfigProviderApiUrl("");
+                setConfigProviderTimeout("");
+                setConfigProviderRetries("");
+              }}
+              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Save Configuration
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ── Add Routing Rule Modal ── */}
+      <Modal
+        isOpen={showAddRoutingRuleModal}
+        onClose={() => {
+          setShowAddRoutingRuleModal(false);
+          setNewRuleName("");
+          setNewRuleType("");
+          setNewRuleTarget("");
+          setNewRuleFallback("");
+          setNewRulePriority("");
+          setNewRuleCondition("");
+          setNewRuleDescription("");
+        }}
+        title="Add Routing Rule"
+        description="Create a new transaction routing rule"
+        size="lg"
+      >
+        <div className="space-y-6">
+          {/* Info Banner */}
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+            <Shield className="size-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-900 mb-1">Approval Required</p>
+              <p className="text-sm text-amber-700">
+                New routing rules require Super Admin approval before going live. The rule will be created in "Pending Approval" status.
+              </p>
+            </div>
+          </div>
+
+          {/* Rule Name */}
+          <FormField
+            label="Rule Name"
+            required
+            description="Descriptive name for this routing rule"
+          >
+            <Input
+              type="text"
+              value={newRuleName}
+              onChange={(e) => setNewRuleName(e.target.value)}
+              placeholder="e.g., Telecel Failover for MTN Outage"
+            />
+          </FormField>
+
+          {/* Rule Type and Priority */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              label="Rule Type"
+              required
+              description="Category of routing logic"
+            >
+              <CustomSelect
+                value={newRuleType}
+                onChange={setNewRuleType}
+                options={[
+                  { value: "channel_based", label: "Channel Based" },
+                  { value: "cost_based", label: "Cost Based" },
+                  { value: "success_rate", label: "Success Rate" },
+                  { value: "failover", label: "Failover" },
+                  { value: "default", label: "Default" },
+                ]}
+                placeholder="Select rule type..."
+              />
+            </FormField>
+            <FormField
+              label="Priority"
+              required
+              description="Lower numbers = higher priority"
+            >
+              <Input
+                type="number"
+                value={newRulePriority}
+                onChange={(e) => setNewRulePriority(e.target.value)}
+                placeholder="1"
+                min="1"
+                max="100"
+              />
+            </FormField>
+          </div>
+
+          {/* Target Provider */}
+          <FormField
+            label="Target Provider"
+            required
+            description="Primary provider for this rule"
+          >
+            <CustomSelect
+              value={newRuleTarget}
+              onChange={setNewRuleTarget}
+              options={mockProviderDetails.map(p => ({ value: p.shortCode, label: p.name }))}
+              placeholder="Select target provider..."
+            />
+          </FormField>
+
+          {/* Fallback Provider (optional) */}
+          <FormField
+            label="Fallback Provider"
+            description="Optional backup provider if primary fails"
+          >
+            <CustomSelect
+              value={newRuleFallback}
+              onChange={setNewRuleFallback}
+              options={[
+                { value: "", label: "None" },
+                ...mockProviderDetails.filter(p => p.shortCode !== newRuleTarget).map(p => ({ value: p.shortCode, label: p.name }))
+              ]}
+              placeholder="Select fallback provider..."
+            />
+          </FormField>
+
+          {/* Condition */}
+          <FormField
+            label="Routing Condition"
+            description="Optional: Condition expression (e.g., amount > 1000, channel === 'MTN MoMo')"
+          >
+            <Input
+              type="text"
+              value={newRuleCondition}
+              onChange={(e) => setNewRuleCondition(e.target.value)}
+              placeholder="e.g., channel === 'MTN MoMo' OR amount > 1000"
+            />
+          </FormField>
+
+          {/* Description */}
+          <FormField
+            label="Description"
+            required
+            description="Explain what this rule does and why it's needed"
+          >
+            <Textarea
+              rows={3}
+              value={newRuleDescription}
+              onChange={(e) => setNewRuleDescription(e.target.value)}
+              placeholder="Describe the purpose and logic of this routing rule..."
+            />
+          </FormField>
+
+          {/* Preview */}
+          {newRuleName && newRuleType && newRuleTarget && (
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <p className="text-xs font-semibold text-blue-900 mb-2">Rule Preview</p>
+              <div className="space-y-1 text-sm text-blue-800">
+                <p><span className="font-semibold">{newRuleName}</span> (Priority {newRulePriority || "?"}) - {newRuleType.replace(/_/g, " ")}</p>
+                <p>Target: <span className="font-mono">{newRuleTarget}</span></p>
+                {newRuleFallback && <p>Fallback: <span className="font-mono">{newRuleFallback}</span></p>}
+                {newRuleCondition && <p className="font-mono text-xs">Condition: {newRuleCondition}</p>}
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <button
+              onClick={() => {
+                setShowAddRoutingRuleModal(false);
+                setNewRuleName("");
+                setNewRuleType("");
+                setNewRuleTarget("");
+                setNewRuleFallback("");
+                setNewRulePriority("");
+                setNewRuleCondition("");
+                setNewRuleDescription("");
+              }}
+              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={!newRuleName.trim() || !newRuleType || !newRuleTarget || !newRulePriority || !newRuleDescription.trim()}
+              onClick={() => {
+                showToast(
+                  "success",
+                  "Routing Rule Created",
+                  `${newRuleName} has been created and is pending Super Admin approval`
+                );
+                setShowAddRoutingRuleModal(false);
+                setNewRuleName("");
+                setNewRuleType("");
+                setNewRuleTarget("");
+                setNewRuleFallback("");
+                setNewRulePriority("");
+                setNewRuleCondition("");
+                setNewRuleDescription("");
+              }}
+              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Create Rule
             </button>
           </div>
         </div>
