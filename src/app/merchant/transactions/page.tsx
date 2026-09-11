@@ -76,16 +76,16 @@ export default function TransactionsPage() {
   const activeFilterCount = [statusFilter !== "all", typeFilter !== "all", search !== ""].filter(Boolean).length;
 
   return (
-    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
+    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>Transactions</h1>
-        <p className="text-sm text-muted-foreground mt-1">All collections and payouts for your account.</p>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>Transactions</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">All collections and payouts for your account.</p>
       </motion.div>
 
       {/* Toolbar */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-        className="flex flex-wrap items-center gap-3">
+        className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-3">
         {/* Search */}
         <div className="relative flex-1 min-w-50">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
@@ -93,7 +93,7 @@ export default function TransactionsPage() {
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Search by reference or phone..."
-            className="w-full pl-9 pr-4 py-2.5 text-sm bg-card border border-border rounded-xl outline-none focus:border-brand-teal/60 focus:ring-2 focus:ring-brand-teal/10 transition-all"
+            className="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm bg-card border border-border rounded-xl outline-none focus:border-brand-teal/60 focus:ring-2 focus:ring-brand-teal/10 transition-all"
           />
           {search && (
             <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
@@ -102,46 +102,48 @@ export default function TransactionsPage() {
           )}
         </div>
 
-        {/* Filter toggle */}
-        <button
-          onClick={() => setFiltersOpen(!filtersOpen)}
-          className={cn(
-            "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all",
-            filtersOpen ? "bg-brand-teal/10 border-brand-teal/40 text-[#1a6e6c]" : "bg-card border-border hover:border-ring/50"
-          )}
-        >
-          <Filter className="size-3.5" />
-          Filters
-          {activeFilterCount > 0 && (
-            <span className="bg-brand-teal text-white size-4 rounded-full text-[10px] font-bold flex items-center justify-center">
-              {activeFilterCount}
-            </span>
-          )}
-          <ChevronDown className={cn("size-3.5 transition-transform", filtersOpen && "rotate-180")} />
-        </button>
-
-        {/* Export */}
-        {can("transactions.export") && (
-          <button 
-            onClick={() => setShowExportModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all"
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Filter toggle */}
+          <button
+            onClick={() => setFiltersOpen(!filtersOpen)}
+            className={cn(
+              "flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 rounded-xl border text-xs sm:text-sm font-medium transition-all flex-1 sm:flex-initial",
+              filtersOpen ? "bg-brand-teal/10 border-brand-teal/40 text-[#1a6e6c]" : "bg-card border-border hover:border-ring/50"
+            )}
           >
-            <Download className="size-3.5" />
-            Export
+            <Filter className="size-3.5" />
+            <span className="hidden sm:inline">Filters</span>
+            {activeFilterCount > 0 && (
+              <span className="bg-brand-teal text-white size-4 rounded-full text-[10px] font-bold flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
+            <ChevronDown className={cn("size-3.5 transition-transform", filtersOpen && "rotate-180")} />
           </button>
-        )}
+
+          {/* Export */}
+          {can("transactions.export") && (
+            <button 
+              onClick={() => setShowExportModal(true)}
+              className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 rounded-xl border border-border text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all flex-1 sm:flex-initial"
+            >
+              <Download className="size-3.5" />
+              <span className="hidden sm:inline">Export</span>
+            </button>
+          )}
+        </div>
       </motion.div>
 
       {/* Filter Panel */}
       {filtersOpen && (
         <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
-          className="flex flex-wrap gap-4 p-4 bg-muted/30 border border-border rounded-xl">
+          className="flex flex-col gap-4 p-4 bg-muted/30 border border-border rounded-xl">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</label>
+            <label className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</label>
             <div className="flex gap-2 flex-wrap">
               {["all", "success", "failed", "pending", "processing", "reversed"].map((s) => (
                 <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
-                  className={cn("px-3 py-1.5 rounded-lg text-xs font-medium border transition-all capitalize",
+                  className={cn("px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-medium border transition-all capitalize",
                     statusFilter === s ? "bg-brand-teal/10 border-brand-teal/40 text-[#1a6e6c]" : "bg-card border-border hover:bg-muted/50")}>
                   {s === "all" ? "All" : s}
                 </button>
@@ -149,11 +151,11 @@ export default function TransactionsPage() {
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</label>
+            <label className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</label>
             <div className="flex gap-2">
               {["all", "collection", "payout"].map((t) => (
                 <button key={t} onClick={() => { setTypeFilter(t); setPage(1); }}
-                  className={cn("px-3 py-1.5 rounded-lg text-xs font-medium border transition-all capitalize",
+                  className={cn("px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-medium border transition-all capitalize",
                     typeFilter === t ? "bg-brand-teal/10 border-brand-teal/40 text-[#1a6e6c]" : "bg-card border-border hover:bg-muted/50")}>
                   {t === "all" ? "All" : t}
                 </button>
@@ -165,26 +167,26 @@ export default function TransactionsPage() {
 
       {/* Table */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-        className="bg-card border border-border rounded-2xl overflow-hidden">
+        className="bg-card border border-border rounded-xl sm:rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-225">
             <thead>
               <tr className="border-b border-border bg-muted/30">
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Reference</th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Date / Time</th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Type</th>
-                <th className="text-right px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Amount</th>
-                <th className="text-right px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Fee</th>
-                <th className="text-right px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Net</th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-                <th className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Payer / Beneficiary</th>
-                <th className="px-4 py-3" />
+                <th className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Reference</th>
+                <th className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Date / Time</th>
+                <th className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Type</th>
+                <th className="text-right px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Amount</th>
+                <th className="text-right px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Fee</th>
+                <th className="text-right px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Net</th>
+                <th className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Payer / Beneficiary</th>
+                <th className="px-3 sm:px-4 py-2.5 sm:py-3" />
               </tr>
             </thead>
             <tbody>
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-16 text-center text-muted-foreground text-sm">
+                  <td colSpan={9} className="px-4 py-16 text-center text-muted-foreground text-xs sm:text-sm">
                     No transactions found for the selected filters.
                   </td>
                 </tr>
@@ -196,28 +198,28 @@ export default function TransactionsPage() {
                       className={cn("border-b border-border/50 last:border-0 hover:bg-muted/20 cursor-pointer transition-colors",
                         i % 2 === 0 ? "" : "bg-muted/10")}
                       onClick={() => setSelectedTxn(txn)}>
-                      <td className="px-4 py-3 font-mono text-xs text-foreground">{txn.reference}</td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{formatDate(txn.createdAt)}</td>
-                      <td className="px-4 py-3">
-                        <span className={cn("text-xs px-2 py-1 rounded-lg font-medium capitalize",
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 font-mono text-[10px] sm:text-xs text-foreground">{txn.reference}</td>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">{formatDate(txn.createdAt)}</td>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3">
+                        <span className={cn("text-[10px] sm:text-xs px-1.5 sm:px-2 py-1 rounded-lg font-medium capitalize whitespace-nowrap",
                           txn.type === "collection" ? "bg-brand-teal/10 text-[#1a6e6c]" : "bg-brand-lavender/10 text-[#5c3d9e]")}>
                           {txn.type}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right font-semibold text-xs">{formatGHS(txn.amount)}</td>
-                      <td className="px-4 py-3 text-right text-xs text-muted-foreground">{formatGHS(txn.fee)}</td>
-                      <td className="px-4 py-3 text-right text-xs font-medium">{formatGHS(txn.net)}</td>
-                      <td className="px-4 py-3">
-                        <span className={cn("flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium", sc.badge)}>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-right font-semibold text-[10px] sm:text-xs">{formatGHS(txn.amount)}</td>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-right text-[10px] sm:text-xs text-muted-foreground">{formatGHS(txn.fee)}</td>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-right text-[10px] sm:text-xs font-medium">{formatGHS(txn.net)}</td>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3">
+                        <span className={cn("flex items-center gap-1.5 w-fit px-1.5 sm:px-2 py-1 rounded-full border text-[10px] sm:text-[11px] font-medium whitespace-nowrap", sc.badge)}>
                           {sc.icon}
                           {txn.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">{txn.payerIdentifier}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-muted-foreground">{txn.payerIdentifier}</td>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3">
                         <button className="p-1.5 rounded-lg hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-colors"
                           onClick={(e) => { e.stopPropagation(); setSelectedTxn(txn); }}>
-                          <Eye className="size-3.5" />
+                          <Eye className="size-3 sm:size-3.5" />
                         </button>
                       </td>
                     </tr>
@@ -229,21 +231,21 @@ export default function TransactionsPage() {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/10">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-3 sm:px-4 py-3 border-t border-border bg-muted/10">
+          <div className="flex items-center gap-2 text-[10px] sm:text-xs text-muted-foreground">
             <span>Rows per page:</span>
             <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
-              className="bg-card border border-border rounded-lg px-2 py-1 text-xs text-foreground">
+              className="bg-card border border-border rounded-lg px-2 py-1 text-[10px] sm:text-xs text-foreground">
               {PAGE_SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
             <span className="ml-2">{filtered.length} total</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between sm:justify-end gap-2">
             <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
               className="p-1.5 rounded-lg border border-border disabled:opacity-40 hover:bg-muted/50 transition-colors">
               <ChevronLeft className="size-3.5" />
             </button>
-            <span className="text-xs font-medium px-2">Page {page} of {totalPages || 1}</span>
+            <span className="text-[10px] sm:text-xs font-medium px-2">Page {page} of {totalPages || 1}</span>
             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
               className="p-1.5 rounded-lg border border-border disabled:opacity-40 hover:bg-muted/50 transition-colors">
               <ChevronRight className="size-3.5" />

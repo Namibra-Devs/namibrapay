@@ -56,9 +56,7 @@ export default function CompliancePage() {
   const handleStepComplete = (step: Step, data: any) => {
     if (!completedSteps.includes(step)) {
       setCompletedSteps([...completedSteps, step]);
-    }
-
-    if (step === "business") {
+    }    if (step === "business") {
       setBusinessData(data);
       setCurrentStep("owner");
     } else if (step === "owner") {

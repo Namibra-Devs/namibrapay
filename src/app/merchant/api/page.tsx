@@ -64,20 +64,20 @@ export default function ApiPage() {
   ];
 
   return (
-    <div className="px-6 py-6 space-y-6 pb-24 md:pb-6">
+    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6 pb-20 md:pb-6">
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-          className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>API & Webhooks</h1>
-            <p className="text-sm text-muted-foreground mt-1">Manage your integration credentials, webhook endpoints, and test your setup.</p>
+          className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>API & Webhooks</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">Manage your integration credentials, webhook endpoints, and test your setup.</p>
           </div>
         </motion.div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 bg-muted/50 rounded-xl p-1 w-fit">
+        <div className="flex items-center gap-1 bg-muted/50 rounded-xl p-1 w-full sm:w-fit overflow-x-auto scrollbar-none">
           {tabs.map(({ key, label, icon: Icon }) => (
             <button key={key} onClick={() => setTab(key)}
-              className={cn("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              className={cn("flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap",
                 tab === key ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground")}>
               <Icon className="size-3.5" />
               {label}

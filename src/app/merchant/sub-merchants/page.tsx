@@ -73,17 +73,17 @@ export default function SubMerchantsPage() {
   };
 
   return (
-    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
+    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-6">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-        className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>Sub-Merchants</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage your sub-accounts — each operates under your merchant agreement.</p>
+        className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>Sub-Merchants</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">Manage your sub-accounts — each operates under your merchant agreement.</p>
         </div>
         {can("submerchants.create") && (
           <button onClick={() => setShowCreate(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all shrink-0">
-            <Plus className="size-4" />
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0 w-full sm:w-auto">
+            <Plus className="size-3.5 sm:size-4" />
             Add Sub-Merchant
           </button>
         )}
@@ -91,7 +91,7 @@ export default function SubMerchantsPage() {
 
       {/* Stats row */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: "Total", value: mockSubMerchants.length, color: "text-foreground" },
           { label: "Active", value: mockSubMerchants.filter(s => s.status === "active").length, color: "text-emerald-600" },

@@ -34,21 +34,21 @@ export default function SettlementsPage() {
   const { showToast } = useToast();
 
   return (
-    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
+    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-6">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>Settlements & Payouts</h1>
-        <p className="text-sm text-muted-foreground mt-1">Track what you've collected, what's been settled, and what's been paid out.</p>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>Settlements & Payouts</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">Track what you've collected, what's been settled, and what's been paid out.</p>
       </motion.div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-muted/50 rounded-xl p-1 w-fit">
+      <div className="flex items-center gap-1 bg-muted/50 rounded-xl p-1 w-full sm:w-fit overflow-x-auto scrollbar-none">
         {([
           { key: "summary", label: "Summary" },
           { key: "payouts", label: "Payout History" },
           ...(can("settlements.reconcile") ? [{ key: "reconcile" as const, label: "Reconciliation" }] : []),
         ] as { key: Tab; label: string }[]).map(({ key, label }) => (
           <button key={key} onClick={() => setTab(key)}
-            className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-all",
+            className={cn("px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap",
               tab === key ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground")}>
             {label}
           </button>
@@ -58,18 +58,18 @@ export default function SettlementsPage() {
       {/* Summary Tab */}
       {tab === "summary" && (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {mockSettlements.map((s) => (
-              <div key={s.id} className="bg-card border border-border rounded-2xl p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{s.periodLabel}</p>
+              <div key={s.id} className="bg-card border border-border rounded-xl sm:rounded-2xl p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">{s.periodLabel}</p>
                   {can("settlements.export") && (
                     <button className="p-1.5 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors">
-                      <Download className="size-3.5" />
+                      <Download className="size-3 sm:size-3.5" />
                     </button>
                   )}
                 </div>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(s.collected)}</p>
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-3 sm:mb-4" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(s.collected)}</p>
                 <div className="space-y-2">
                   {[
                     { label: "Gross collected", val: s.collected, color: "text-foreground" },
@@ -78,7 +78,7 @@ export default function SettlementsPage() {
                     { label: "Paid out", val: s.paidOut, color: "text-foreground" },
                     { label: "Pending payout", val: s.pendingPayout, color: "text-amber-600" },
                   ].map((row) => (
-                    <div key={row.label} className="flex justify-between text-xs">
+                    <div key={row.label} className="flex justify-between text-[10px] sm:text-xs">
                       <span className="text-muted-foreground">{row.label}</span>
                       <span className={cn("font-medium", row.color)}>
                         {row.prefix ?? ""}{formatGHS(row.val)}

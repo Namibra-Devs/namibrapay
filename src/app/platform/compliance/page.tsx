@@ -552,37 +552,37 @@ export default function CompliancePage() {
 
         {/* ── AML MONITORING TAB ── */}
         {tab === "aml_monitoring" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-20 md:pb-6 space-y-4">
             {/* Risk Overview Cards */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               {[
                 { label: "Open Flags", value: String(mockAmlFlags.filter(f => f.status === "open").length), color: "#ef4444", icon: AlertTriangle },
                 { label: "Investigating", value: String(mockAmlFlags.filter(f => f.status === "investigating").length), color: "#f59e0b", icon: Clock },
                 { label: "High Risk Merchants", value: String(mockRiskScores.filter(r => r.level === "high").length), color: "#dc2626", icon: ShieldAlert },
               ].map(({ label, value, color, icon: Icon }) => (
-                <div key={label} className="bg-card border border-border rounded-2xl p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
-                    <div className="size-8 rounded-lg flex items-center justify-center" style={{ background: `${color}18` }}>
-                      <Icon className="size-4" style={{ color }} />
+                <div key={label} className="bg-card border border-border rounded-xl sm:rounded-2xl p-4 sm:p-5">
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <span className="text-[10px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
+                    <div className="size-7 sm:size-8 rounded-lg flex items-center justify-center" style={{ background: `${color}18` }}>
+                      <Icon className="size-3.5 sm:size-4" style={{ color }} />
                     </div>
                   </div>
-                  <p className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
+                  <p className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
                 </div>
               ))}
             </div>
 
             {/* AML Flags List */}
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3 mb-4">
+                <h2 className="text-sm sm:text-base font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
                   AML Flags ({filteredAmlFlags.length})
                 </h2>
-                <div className="flex items-center gap-2 text-xs">
+                <div className="flex items-center gap-2 text-[10px] sm:text-xs overflow-x-auto scrollbar-none">
                   <button 
                     onClick={() => setAmlFilter("all")}
                     className={cn(
-                      "px-2.5 py-1 rounded-lg border transition-all",
+                      "px-2 sm:px-2.5 py-1 rounded-lg border transition-all whitespace-nowrap shrink-0",
                       amlFilter === "all" 
                         ? "bg-foreground text-background border-foreground" 
                         : "bg-card border-border hover:bg-muted/50"
@@ -593,7 +593,7 @@ export default function CompliancePage() {
                   <button 
                     onClick={() => setAmlFilter("open")}
                     className={cn(
-                      "px-2.5 py-1 rounded-lg border transition-all",
+                      "px-2 sm:px-2.5 py-1 rounded-lg border transition-all whitespace-nowrap shrink-0",
                       amlFilter === "open" 
                         ? "bg-foreground text-background border-foreground" 
                         : "bg-card border-border hover:bg-muted/50"
@@ -604,7 +604,7 @@ export default function CompliancePage() {
                   <button 
                     onClick={() => setAmlFilter("critical")}
                     className={cn(
-                      "px-2.5 py-1 rounded-lg border transition-all",
+                      "px-2 sm:px-2.5 py-1 rounded-lg border transition-all whitespace-nowrap shrink-0",
                       amlFilter === "critical" 
                         ? "bg-foreground text-background border-foreground" 
                         : "bg-card border-border hover:bg-muted/50"
@@ -615,7 +615,7 @@ export default function CompliancePage() {
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {filteredAmlFlags.map((flag) => {
                   const severityConfig = {
                     critical: { color: "bg-red-50 text-red-700 border-red-200", icon: AlertTriangle },
@@ -635,55 +635,55 @@ export default function CompliancePage() {
                   const Icon = statusConfig.icon;
 
                   return (
-                    <div key={flag.id} className={cn("bg-card border rounded-2xl p-5", 
+                    <div key={flag.id} className={cn("bg-card border rounded-xl sm:rounded-2xl p-4 sm:p-5", 
                       flag.severity === "critical" ? "border-red-200/60 shadow-sm" : "border-border")}>
-                      <div className="flex items-start justify-between gap-4 mb-3">
-                        <div className="flex items-start gap-3 flex-1 min-w-0">
-                          <div className={cn("size-9 rounded-xl flex items-center justify-center shrink-0",
+                      <div className="flex items-start justify-between gap-3 sm:gap-4 mb-3">
+                        <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+                          <div className={cn("size-8 sm:size-9 rounded-xl flex items-center justify-center shrink-0",
                             flag.severity === "critical" ? "bg-red-100" : flag.severity === "high" ? "bg-orange-100" : "bg-amber-100")}>
-                            <AlertTriangle className={cn("size-4",
+                            <AlertTriangle className={cn("size-3.5 sm:size-4",
                               flag.severity === "critical" ? "text-red-600" : flag.severity === "high" ? "text-orange-600" : "text-amber-600")} />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 flex-wrap mb-1">
-                              <p className="font-semibold text-sm">{flag.merchantName}</p>
-                              <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium uppercase shrink-0", severityConfig.color)}>
+                            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-1">
+                              <p className="font-semibold text-xs sm:text-sm truncate">{flag.merchantName}</p>
+                              <span className={cn("inline-flex items-center gap-1 text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium uppercase shrink-0", severityConfig.color)}>
                                 {flag.severity}
                               </span>
-                              <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", statusConfig.color)}>
+                              <span className={cn("inline-flex items-center gap-1 text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium shrink-0", statusConfig.color)}>
                                 <Icon className="size-2.5" />{statusConfig.label}
                               </span>
                             </div>
-                            <p className="text-xs text-muted-foreground mb-2">
+                            <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">
                               {flag.flagType.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())} · Flagged {new Date(flag.flaggedAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
                             </p>
-                            <p className="text-sm">{flag.description}</p>
+                            <p className="text-xs sm:text-sm">{flag.description}</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Metadata */}
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground mt-3 pt-3 border-t border-border/50">
+                      <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs text-muted-foreground mt-3 pt-3 border-t border-border/50 flex-wrap">
                         {flag.metadata.transactionCount && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 shrink-0">
                             <Hash className="size-3" />
                             {flag.metadata.transactionCount} txns
                           </span>
                         )}
                         {flag.metadata.totalAmount && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 shrink-0">
                             <DollarSign className="size-3" />
                             {formatGHS(flag.metadata.totalAmount)}
                           </span>
                         )}
                         {flag.metadata.timeWindow && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 shrink-0">
                             <Clock className="size-3" />
                             {flag.metadata.timeWindow}
                           </span>
                         )}
                         {flag.assignedTo && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 shrink-0">
                             <User className="size-3" />
                             {flag.assignedTo}
                           </span>
@@ -692,11 +692,11 @@ export default function CompliancePage() {
 
                       {/* Resolution */}
                       {flag.resolution && flag.status === "closed" && (
-                        <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
-                          <p className="text-xs font-semibold text-emerald-900 mb-1">Resolution</p>
-                          <p className="text-xs text-emerald-700">{flag.resolution}</p>
+                        <div className="mt-3 p-2.5 sm:p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                          <p className="text-[10px] sm:text-xs font-semibold text-emerald-900 mb-1">Resolution</p>
+                          <p className="text-[10px] sm:text-xs text-emerald-700">{flag.resolution}</p>
                           {flag.closedAt && (
-                            <p className="text-xs text-emerald-600 mt-1">Closed {formatDate(flag.closedAt)}</p>
+                            <p className="text-[10px] sm:text-xs text-emerald-600 mt-1">Closed {formatDate(flag.closedAt)}</p>
                           )}
                         </div>
                       )}
@@ -776,33 +776,33 @@ export default function CompliancePage() {
 
         {/* ── DOCUMENT RETENTION TAB ── */}
         {tab === "retention" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-20 md:pb-6 space-y-4">
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {[
                 { label: "Total Documents", value: String(mockRetentionDocuments.length), color: "#64c6c3", icon: FileText },
                 { label: "Expiring Soon (<1yr)", value: String(mockRetentionDocuments.filter(d => d.daysUntilExpiry < 365).length), color: "#f59e0b", icon: Clock },
                 { label: "Total Storage", value: `${(mockRetentionDocuments.reduce((sum, d) => sum + d.fileSize, 0) / (1024 * 1024)).toFixed(1)} MB`, color: "#263b8e", icon: Download },
               ].map(({ label, value, color, icon: Icon }) => (
-                <div key={label} className="bg-card border border-border rounded-2xl p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
-                    <div className="size-8 rounded-lg flex items-center justify-center" style={{ background: `${color}18` }}>
-                      <Icon className="size-4" style={{ color }} />
+                <div key={label} className="bg-card border border-border rounded-xl sm:rounded-2xl p-4 sm:p-5">
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <span className="text-[10px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
+                    <div className="size-7 sm:size-8 rounded-lg flex items-center justify-center" style={{ background: `${color}18` }}>
+                      <Icon className="size-3.5 sm:size-4" style={{ color }} />
                     </div>
                   </div>
-                  <p className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
+                  <p className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
                 </div>
               ))}
             </div>
 
             {/* Info Banner */}
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
-              <div className="flex items-start gap-3">
-                <ShieldCheck className="size-5 text-blue-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-semibold text-blue-900 mb-1">6-Year Document Retention Policy</p>
-                  <p className="text-sm text-blue-700">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl sm:rounded-2xl p-4 sm:p-5">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <ShieldCheck className="size-4 sm:size-5 text-blue-600 shrink-0 mt-0.5" />
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-semibold text-blue-900 mb-1">6-Year Document Retention Policy</p>
+                  <p className="text-xs sm:text-sm text-blue-700">
                     All KYC documents are retained for 6 years from onboarding date as per Bank of Ghana Payment Systems Act 2019 and AML/CFT regulations. Documents are automatically archived after expiry.
                   </p>
                 </div>
@@ -811,75 +811,77 @@ export default function CompliancePage() {
 
             {/* Document List */}
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <h2 className="text-sm sm:text-base font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
                   Retention Tracker ({mockRetentionDocuments.length} documents)
                 </h2>
                 <button 
                   onClick={() => {
                     showToast("success", "Export Started", "Retention report is being generated. Download will start shortly.");
                   }}
-                  className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all"
+                  className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-border rounded-xl text-[10px] sm:text-xs font-medium hover:bg-muted/50 transition-all self-start sm:self-auto"
                 >
-                  <Download className="size-3.5" /> Export Report
+                  <Download className="size-3 sm:size-3.5" /> Export Report
                 </button>
               </div>
 
-              <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/30">
-                      {["Merchant", "Document Type", "Retention Start", "Expiry Date", "Days Until Expiry", "File Size", ""].map((h) => (
-                        <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mockRetentionDocuments.map((doc) => {
-                      const isExpiringSoon = doc.daysUntilExpiry < 365;
-                      const isExpired = doc.daysUntilExpiry < 0;
+              <div className="bg-card border border-border rounded-xl sm:rounded-2xl overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-225">
+                    <thead>
+                      <tr className="border-b border-border bg-muted/30">
+                        {["Merchant", "Document Type", "Retention Start", "Expiry Date", "Days Until Expiry", "File Size", ""].map((h) => (
+                          <th key={h} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mockRetentionDocuments.map((doc) => {
+                        const isExpiringSoon = doc.daysUntilExpiry < 365;
+                        const isExpired = doc.daysUntilExpiry < 0;
 
-                      return (
-                        <tr key={doc.id} className={cn("border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors",
-                          isExpiringSoon && !isExpired && "bg-amber-50/30")}>
-                          <td className="pl-5 pr-4 py-3.5">
-                            <p className="text-sm font-medium">{doc.merchantName}</p>
-                          </td>
-                          <td className="px-4 py-3.5">
-                            <div className="flex items-center gap-2">
-                              <FileText className="size-3.5 text-muted-foreground" />
-                              <span className="text-sm">{getDocumentTypeLabel(doc.documentType)}</span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3.5 text-sm">
-                            {new Date(doc.retentionStart).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
-                          </td>
-                          <td className="px-4 py-3.5 text-sm font-medium">
-                            {new Date(doc.retentionExpiry).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
-                          </td>
-                          <td className="px-4 py-3.5">
-                            <span className={cn("text-sm font-medium",
-                              isExpired ? "text-muted-foreground" : isExpiringSoon ? "text-amber-600" : "text-foreground")}>
-                              {isExpired ? "Expired" : `${doc.daysUntilExpiry} days`}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3.5 text-sm text-muted-foreground font-mono">
-                            {formatFileSize(doc.fileSize)}
-                          </td>
-                          <td className="px-4 py-3.5">
-                            <button 
-                              onClick={() => setViewingRetentionDoc(doc)}
-                              className="p-1.5 hover:bg-muted rounded-lg transition-all"
-                              title="View document"
-                            >
-                              <Eye className="size-3.5 text-muted-foreground" />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                        return (
+                          <tr key={doc.id} className={cn("border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors",
+                            isExpiringSoon && !isExpired && "bg-amber-50/30")}>
+                            <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-3 sm:py-3.5">
+                              <p className="text-xs sm:text-sm font-medium">{doc.merchantName}</p>
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                              <div className="flex items-center gap-2">
+                                <FileText className="size-3 sm:size-3.5 text-muted-foreground" />
+                                <span className="text-xs sm:text-sm">{getDocumentTypeLabel(doc.documentType)}</span>
+                              </div>
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm">
+                              {new Date(doc.retentionStart).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-medium">
+                              {new Date(doc.retentionExpiry).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                              <span className={cn("text-xs sm:text-sm font-medium",
+                                isExpired ? "text-muted-foreground" : isExpiringSoon ? "text-amber-600" : "text-foreground")}>
+                                {isExpired ? "Expired" : `${doc.daysUntilExpiry} days`}
+                              </span>
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm text-muted-foreground font-mono">
+                              {formatFileSize(doc.fileSize)}
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                              <button 
+                                onClick={() => setViewingRetentionDoc(doc)}
+                                className="p-1.5 hover:bg-muted rounded-lg transition-all"
+                                title="View document"
+                              >
+                                <Eye className="size-3 sm:size-3.5 text-muted-foreground" />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -887,55 +889,55 @@ export default function CompliancePage() {
 
         {/* ── REPORTS TAB ── */}
         {tab === "reports" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-20 md:pb-6 space-y-4">
             {/* Export KYC Package */}
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-bold mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+            <div className="bg-card border border-border rounded-xl sm:rounded-2xl p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 mb-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base sm:text-lg font-bold mb-1" style={{ fontFamily: "var(--font-heading)" }}>
                     Export KYC Documentation Package
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Generate complete KYC documentation package for a specific merchant (2-business-day contractual obligation)
                   </p>
                 </div>
-                <Download className="size-6 text-brand-lavender" />
+                <Download className="size-5 sm:size-6 text-brand-lavender shrink-0" />
               </div>
               <button
                 onClick={() => setShowExportModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all"
+                className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-xs sm:text-sm font-medium transition-all w-full sm:w-auto"
               >
-                <Download className="size-4" /> Export Package
+                <Download className="size-3.5 sm:size-4" /> Export Package
               </button>
             </div>
 
             {/* ── Per-Provider Compliance Matrix (PD-033) ── */}
-            <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <div className="p-6 pb-0">
-                <div className="flex items-start justify-between mb-6">
+            <div className="bg-card border border-border rounded-xl sm:rounded-2xl overflow-hidden">
+              <div className="p-4 sm:p-6 pb-0">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4 sm:mb-6">
                   <div>
-                    <h3 className="text-lg font-bold mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+                    <h3 className="text-base sm:text-lg font-bold mb-1" style={{ fontFamily: "var(--font-heading)" }}>
                       Provider Approval Matrix
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Merchant approval status across all network service providers
                     </p>
                   </div>
-                  <ShieldCheck className="size-6 text-emerald-500" />
+                  <ShieldCheck className="size-5 sm:size-6 text-emerald-500 shrink-0" />
                 </div>
               </div>
 
               {/* Matrix Table */}
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm min-w-175">
                   <thead>
                     <tr className="border-b border-border bg-muted/30">
-                      <th className="text-left py-3 px-4 font-semibold text-muted-foreground sticky left-0 bg-muted/30">Merchant</th>
-                      <th className="text-center py-3 px-4 font-semibold text-muted-foreground">MTN</th>
-                      <th className="text-center py-3 px-4 font-semibold text-muted-foreground">Vodafone</th>
-                      <th className="text-center py-3 px-4 font-semibold text-muted-foreground">AirtelTigo</th>
-                      <th className="text-center py-3 px-4 font-semibold text-muted-foreground">Gip</th>
-                      <th className="text-right py-3 px-4 font-semibold text-muted-foreground">Approved</th>
+                      <th className="text-left py-2.5 sm:py-3 px-3 sm:px-4 text-[10px] sm:text-[11px] font-semibold text-muted-foreground sticky left-0 bg-muted/30">Merchant</th>
+                      <th className="text-center py-2.5 sm:py-3 px-3 sm:px-4 text-[10px] sm:text-[11px] font-semibold text-muted-foreground">MTN</th>
+                      <th className="text-center py-2.5 sm:py-3 px-3 sm:px-4 text-[10px] sm:text-[11px] font-semibold text-muted-foreground">Vodafone</th>
+                      <th className="text-center py-2.5 sm:py-3 px-3 sm:px-4 text-[10px] sm:text-[11px] font-semibold text-muted-foreground">AirtelTigo</th>
+                      <th className="text-center py-2.5 sm:py-3 px-3 sm:px-4 text-[10px] sm:text-[11px] font-semibold text-muted-foreground">Gip</th>
+                      <th className="text-right py-2.5 sm:py-3 px-3 sm:px-4 text-[10px] sm:text-[11px] font-semibold text-muted-foreground">Approved</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -953,9 +955,9 @@ export default function CompliancePage() {
 
                       const statusIcon = (status: string) => {
                         switch (status) {
-                          case "approved": return <CheckCircle className="size-5 text-emerald-600" />;
-                          case "pending": return <Clock className="size-5 text-amber-600" />;
-                          case "rejected": return <XCircle className="size-5 text-red-600" />;
+                          case "approved": return <CheckCircle className="size-4 sm:size-5 text-emerald-600" />;
+                          case "pending": return <Clock className="size-4 sm:size-5 text-amber-600" />;
+                          case "rejected": return <XCircle className="size-4 sm:size-5 text-red-600" />;
                           case "not_submitted": return <span className="text-muted-foreground">—</span>;
                           default: return null;
                         }
@@ -967,22 +969,22 @@ export default function CompliancePage() {
                         
                         return (
                           <tr key={merchant.id} className="border-b border-border hover:bg-muted/30 transition-colors">
-                            <td className="py-3 px-4 font-medium sticky left-0 bg-card">{merchant.name}</td>
-                            <td className="py-3 px-4">
+                            <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-medium sticky left-0 bg-card">{merchant.name}</td>
+                            <td className="py-2.5 sm:py-3 px-3 sm:px-4">
                               <div className="flex justify-center">{statusIcon(merchant.mtn)}</div>
                             </td>
-                            <td className="py-3 px-4">
+                            <td className="py-2.5 sm:py-3 px-3 sm:px-4">
                               <div className="flex justify-center">{statusIcon(merchant.vodafone)}</div>
                             </td>
-                            <td className="py-3 px-4">
+                            <td className="py-2.5 sm:py-3 px-3 sm:px-4">
                               <div className="flex justify-center">{statusIcon(merchant.airteltigo)}</div>
                             </td>
-                            <td className="py-3 px-4">
+                            <td className="py-2.5 sm:py-3 px-3 sm:px-4">
                               <div className="flex justify-center">{statusIcon(merchant.gip)}</div>
                             </td>
-                            <td className="py-3 px-4 text-right">
+                            <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-right">
                               <span className={cn(
-                                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
+                                "inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-medium",
                                 approvedCount === 4 ? "bg-emerald-50 text-emerald-700" :
                                 approvedCount >= 2 ? "bg-amber-50 text-amber-700" :
                                 "bg-red-50 text-red-700"
@@ -999,20 +1001,20 @@ export default function CompliancePage() {
               </div>
 
               {/* Legend */}
-              <div className="px-6 pb-6 pt-3 border-t border-border flex items-center gap-6 text-xs">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="size-4 text-emerald-600" />
+              <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-3 border-t border-border flex flex-wrap items-center gap-4 sm:gap-6 text-[10px] sm:text-xs">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <CheckCircle className="size-3.5 sm:size-4 text-emerald-600" />
                   <span className="text-muted-foreground">Approved</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="size-4 text-amber-600" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Clock className="size-3.5 sm:size-4 text-amber-600" />
                   <span className="text-muted-foreground">Pending Review</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <XCircle className="size-4 text-red-600" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <XCircle className="size-3.5 sm:size-4 text-red-600" />
                   <span className="text-muted-foreground">Rejected</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   <span className="text-muted-foreground">—</span>
                   <span className="text-muted-foreground">Not Submitted</span>
                 </div>
