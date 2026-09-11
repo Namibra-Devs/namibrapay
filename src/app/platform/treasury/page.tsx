@@ -88,7 +88,7 @@ function KpiCard({ label, value, sub, color, icon: Icon, trend }: {
       </div>
       <div>
         <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
-        <p className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
+        <p className="text-md sm:text-xl md:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
         <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{sub}</p>
       </div>
     </div>
@@ -613,13 +613,13 @@ export default function TreasuryPage() {
               </button>
             </div>
 
-            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border rounded-xl sm:rounded-2xl overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm min-w-200">
                   <thead>
                     <tr className="border-b border-border bg-muted/30">
                       {["Date", "Provider", "Collections", "Payouts", "Fees", "Status", ""].map((h, idx) => (
-                        <th key={`reconc-header-${idx}`} className="text-left px-3 sm:px-4 py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5 whitespace-nowrap">{h}</th>
+                        <th key={`reconc-header-${idx}`} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-3 sm:first:pl-4 md:first:pl-5 whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -633,56 +633,56 @@ export default function TreasuryPage() {
                       <>
                         <tr key={entry.id} className={cn("border-b border-border/50 last:border-0 transition-colors",
                           entry.status === "discrepancy" ? "bg-red-50/30" : "hover:bg-muted/20")}>
-                          <td className="pl-5 pr-4 py-3.5 text-sm font-medium">{entry.date}</td>
-                          <td className="px-4 py-3.5">
-                            <span className="px-2 py-0.5 text-[11px] font-bold rounded font-mono bg-muted/60">{entry.provider}</span>
+                          <td className="pl-3 sm:pl-4 md:pl-5 pr-3 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-medium">{entry.date}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                            <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-[11px] font-bold rounded font-mono bg-muted/60 whitespace-nowrap">{entry.provider}</span>
                           </td>
-                          <td className="px-4 py-3.5">
-                            <p className="text-sm font-medium">{formatGHS(entry.actualCollections)}</p>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                            <p className="text-xs sm:text-sm font-medium">{formatGHS(entry.actualCollections)}</p>
                             {collDiff !== 0 && (
-                              <p className={cn("text-[10px] font-medium", collDiff < 0 ? "text-red-500" : "text-emerald-500")}>
+                              <p className={cn("text-[9px] sm:text-[10px] font-medium", collDiff < 0 ? "text-red-500" : "text-emerald-500")}>
                                 {collDiff < 0 ? "−" : "+"}{formatGHS(Math.abs(collDiff))}
                               </p>
                             )}
                           </td>
-                          <td className="px-4 py-3.5 text-sm">{formatGHS(entry.actualPayouts)}</td>
-                          <td className="px-4 py-3.5 text-sm">{formatGHS(entry.actualFees)}</td>
-                          <td className="px-4 py-3.5">
-                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm">{formatGHS(entry.actualPayouts)}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm">{formatGHS(entry.actualFees)}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                            <span className={cn("inline-flex items-center gap-1 text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium whitespace-nowrap", cfg.color)}>
                               <Icon className="size-2.5" />{cfg.label}
                             </span>
                           </td>
-                          <td className="px-4 py-3.5">
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
                             {entry.status === "discrepancy" && (
                               <button onClick={() => setExpandedReconc(isExpanded ? null : entry.id)}
-                                className="flex items-center gap-1 text-xs text-brand-navy hover:underline">
-                                Details {isExpanded ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
+                                className="flex items-center gap-1 text-[10px] sm:text-xs text-brand-navy hover:underline whitespace-nowrap">
+                                Details {isExpanded ? <ChevronUp className="size-2.5 sm:size-3" /> : <ChevronDown className="size-2.5 sm:size-3" />}
                               </button>
                             )}
                           </td>
                         </tr>
                         {isExpanded && entry.status === "discrepancy" && (
                           <tr key={`${entry.id}-exp`} className="bg-red-50/50 border-b border-red-100">
-                            <td colSpan={7} className="px-5 py-4">
-                              <div className="flex items-start justify-between gap-4">
-                                <div className="flex items-start gap-3">
+                            <td colSpan={7} className="px-3 sm:px-4 md:px-5 py-3 sm:py-4">
+                              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                                <div className="flex items-start gap-2 sm:gap-3">
                                   <AlertTriangle className="size-4 text-red-500 shrink-0 mt-0.5" />
                                   <div className="space-y-1">
-                                    <p className="text-sm font-semibold text-red-700">
+                                    <p className="text-xs sm:text-sm font-semibold text-red-700">
                                       Discrepancy: {entry.discrepancyAmount !== undefined ? formatGHS(entry.discrepancyAmount) : "—"}
                                     </p>
-                                    <p className="text-sm text-red-600">{entry.discrepancyCause}</p>
+                                    <p className="text-xs sm:text-sm text-red-600">{entry.discrepancyCause}</p>
                                     <div className="flex items-center gap-2 mt-2">
-                                      <p className="text-xs text-muted-foreground">Expected: {formatGHS(entry.expectedCollections)}</p>
+                                      <p className="text-[10px] sm:text-xs text-muted-foreground">Expected: {formatGHS(entry.expectedCollections)}</p>
                                       <span className="text-muted-foreground">·</span>
-                                      <p className="text-xs text-muted-foreground">Actual: {formatGHS(entry.actualCollections)}</p>
+                                      <p className="text-[10px] sm:text-xs text-muted-foreground">Actual: {formatGHS(entry.actualCollections)}</p>
                                     </div>
                                   </div>
                                 </div>
                                 {canApprove && (
                                   <button
                                     onClick={() => setShowFlagModal(entry)}
-                                    className="flex items-center gap-2 px-3 py-2 rounded-lg border border-red-300 bg-red-50 text-red-700 text-xs font-medium hover:bg-red-100 transition-all shrink-0"
+                                    className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-red-300 bg-red-50 text-red-700 text-xs font-medium hover:bg-red-100 transition-all shrink-0 w-full sm:w-auto"
                                   >
                                     <Flag className="size-3.5" /> Flag for Investigation
                                   </button>
