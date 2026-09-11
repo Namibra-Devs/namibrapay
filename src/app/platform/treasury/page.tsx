@@ -1021,28 +1021,28 @@ export default function TreasuryPage() {
         description="Set warning and critical balance levels for UMB settlement account"
         size="lg"
       >
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Info Banner */}
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-            <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4 flex items-start gap-2 sm:gap-3">
+            <Info className="size-4 sm:size-5 text-blue-600 shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-blue-900 mb-1">Automated Alerts</p>
-              <p className="text-sm text-blue-700">
+              <p className="text-xs sm:text-sm font-semibold text-blue-900 mb-1">Automated Alerts</p>
+              <p className="text-xs sm:text-sm text-blue-700">
                 When balances drop below these thresholds, the system will send email/SMS alerts to Finance team members.
               </p>
             </div>
           </div>
 
           {/* Provider Thresholds */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {Object.entries(thresholds).map(([provider, values]) => {
               const providerName = provider.toUpperCase();
               return (
-                <div key={provider} className="border border-border rounded-xl p-4">
-                  <h3 className="text-sm font-bold mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+                <div key={provider} className="border border-border rounded-xl p-3 sm:p-4">
+                  <h3 className="text-xs sm:text-sm font-bold mb-3" style={{ fontFamily: "var(--font-heading)" }}>
                     {providerName}
                   </h3>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <FormField label="Warning Level (GHS)" required description="Amber alert">
                       <Input
                         type="number"
@@ -1074,10 +1074,10 @@ export default function TreasuryPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => setShowThresholdModal(false)}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-4 py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
@@ -1086,7 +1086,7 @@ export default function TreasuryPage() {
                 showToast("success", "Thresholds Updated", "Balance alert thresholds have been saved.");
                 setShowThresholdModal(false);
               }}
-              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
+              className="w-full sm:flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-xs sm:text-sm font-medium transition-all order-1 sm:order-2"
             >
               Save Changes
             </button>

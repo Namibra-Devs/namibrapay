@@ -693,13 +693,13 @@ export default function MerchantsPage() {
         description="Onboard a new merchant business. KYC approval required before activation."
         size="md"
       >
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Info Banner */}
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-            <Building2 className="size-5 text-blue-600 shrink-0 mt-0.5" />
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4 flex items-start gap-2 sm:gap-3">
+            <Building2 className="size-4 sm:size-5 text-blue-600 shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-blue-900 mb-1">Two-Step Process</p>
-              <p className="text-sm text-blue-700">
+              <p className="text-xs sm:text-sm font-semibold text-blue-900 mb-1">Two-Step Process</p>
+              <p className="text-xs sm:text-sm text-blue-700">
                 Creating the account will generate login credentials. The merchant must complete KYC verification with Compliance before processing transactions.
               </p>
             </div>
@@ -748,7 +748,7 @@ export default function MerchantsPage() {
           </FormField>
 
           {/* Contact Details */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <FormField
               label="Owner Email"
               required
@@ -789,15 +789,15 @@ export default function MerchantsPage() {
           </FormField>
 
           {/* Warning */}
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
-            <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
-            <p className="text-sm text-amber-700">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 sm:p-4 flex items-start gap-2 sm:gap-3">
+            <AlertTriangle className="size-4 sm:size-5 text-amber-600 shrink-0 mt-0.5" />
+            <p className="text-xs sm:text-sm text-amber-700">
               The merchant will receive an email invitation to set their password and complete onboarding. KYC documents must be reviewed by Compliance before the account goes live.
             </p>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => {
                 setShowCreateModal(false);
@@ -808,7 +808,7 @@ export default function MerchantsPage() {
                 setNewMerchantAddress("");
                 setNewMerchantIndustry("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-4 py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
@@ -824,7 +824,7 @@ export default function MerchantsPage() {
                 setNewMerchantAddress("");
                 setNewMerchantIndustry("");
               }}
-              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs sm:text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
             >
               Create & Send Invite
             </button>
@@ -840,13 +840,13 @@ export default function MerchantsPage() {
         description={selected ? `Set custom fee rates for ${selected.name}` : ""}
         size="lg"
       >
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Info Banner */}
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
-            <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 sm:p-4 flex items-start gap-2 sm:gap-3">
+            <AlertTriangle className="size-4 sm:size-5 text-amber-600 shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-amber-900 mb-1">Changes Require Confirmation</p>
-              <p className="text-sm text-amber-700">
+              <p className="text-xs sm:text-sm font-semibold text-amber-900 mb-1">Changes Require Confirmation</p>
+              <p className="text-xs sm:text-sm text-amber-700">
                 Fee schedule changes are logged in the audit trail and take effect immediately. Merchants will be notified via email.
               </p>
             </div>
@@ -854,10 +854,10 @@ export default function MerchantsPage() {
 
           {/* Collections Section */}
           <div>
-            <h3 className="text-sm font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h3 className="text-xs sm:text-sm font-bold mb-3 sm:mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Collection Fees
             </h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               <FormField label="Rate (%)" required>
                 <Input
                   type="number"
@@ -890,10 +890,10 @@ export default function MerchantsPage() {
 
           {/* Payouts Section */}
           <div>
-            <h3 className="text-sm font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h3 className="text-xs sm:text-sm font-bold mb-3 sm:mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Payout Fees
             </h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               <FormField label="Rate (%)" required>
                 <Input
                   type="number"
@@ -938,10 +938,10 @@ export default function MerchantsPage() {
 
           {/* Fee Examples */}
           <div>
-            <h3 className="text-sm font-bold mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+            <h3 className="text-xs sm:text-sm font-bold mb-3" style={{ fontFamily: "var(--font-heading)" }}>
               Fee Examples
             </h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[100, 1000, 10000].map((amount) => {
                 const collectionFee = Math.max(
                   Math.min((amount * parseFloat(feeConfig.collectionRate)) / 100, parseFloat(feeConfig.collectionCap)),
@@ -971,10 +971,10 @@ export default function MerchantsPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => setShowFeeModal(false)}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-4 py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
@@ -983,7 +983,7 @@ export default function MerchantsPage() {
                 showToast("success", "Fee Schedule Updated", `Changes saved for ${selected?.name}`);
                 setShowFeeModal(false);
               }}
-              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
+              className="w-full sm:flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-xs sm:text-sm font-medium transition-all order-1 sm:order-2"
             >
               Save Changes
             </button>
