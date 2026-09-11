@@ -95,13 +95,13 @@ export default function SettlementsPage() {
       {/* Payout History Tab */}
       {tab === "payouts" && (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-card border border-border rounded-2xl overflow-hidden">
+          className="bg-card border border-border rounded-xl sm:rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-200">
               <thead>
                 <tr className="border-b border-border bg-muted/30">
                   {["Date", "Amount", "Destination", "Transactions", "Status"].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
+                    <th key={h} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -110,15 +110,15 @@ export default function SettlementsPage() {
                   const sc = payoutStatusConfig[p.status];
                   return (
                     <tr key={p.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
-                      <td className="px-4 py-3 text-xs whitespace-nowrap">{formatDate(p.date)}</td>
-                      <td className="px-4 py-3 font-semibold text-sm">{formatGHS(p.amount)}</td>
-                      <td className="px-4 py-3 text-xs">
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs whitespace-nowrap">{formatDate(p.date)}</td>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-xs sm:text-sm">{formatGHS(p.amount)}</td>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs">
                         <p className="font-medium">{p.destinationBank}</p>
                         <p className="text-muted-foreground font-mono">{p.destinationAccount}</p>
                       </td>
-                      <td className="px-4 py-3 text-xs text-center">{p.txnCount}</td>
-                      <td className="px-4 py-3">
-                        <span className={cn("flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium", sc.badge)}>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-center">{p.txnCount}</td>
+                      <td className="px-3 sm:px-4 py-2.5 sm:py-3">
+                        <span className={cn("flex items-center gap-1 sm:gap-1.5 w-fit px-1.5 sm:px-2 py-1 rounded-full border text-[10px] sm:text-[11px] font-medium whitespace-nowrap", sc.badge)}>
                           <div className={cn("size-1.5 rounded-full", sc.dot)} />
                           {p.status}
                         </span>
@@ -150,13 +150,13 @@ export default function SettlementsPage() {
               </button>
             )}
           </div>
-          <div className="bg-card border border-border rounded-2xl overflow-hidden">
+          <div className="bg-card border border-border rounded-xl sm:rounded-2xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm min-w-225">
                 <thead>
                   <tr className="border-b border-border bg-muted/30">
                     {["Period", "Collected", "Fees", "Net Settled", "Paid Out", "Pending", "Variance", "Status"].map((h) => (
-                      <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
+                      <th key={h} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -171,13 +171,13 @@ export default function SettlementsPage() {
                         "border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors",
                         hasDiscrepancy && "bg-red-50/30"
                       )}>
-                        <td className="px-4 py-3 font-medium text-xs">{s.periodLabel}</td>
-                        <td className="px-4 py-3 text-xs font-semibold">{formatGHS(s.collected)}</td>
-                        <td className="px-4 py-3 text-xs text-destructive">-{formatGHS(s.fees)}</td>
-                        <td className="px-4 py-3 text-xs text-emerald-600 font-semibold">{formatGHS(s.netSettled)}</td>
-                        <td className="px-4 py-3 text-xs">{formatGHS(s.paidOut)}</td>
-                        <td className="px-4 py-3 text-xs text-amber-600">{formatGHS(s.pendingPayout)}</td>
-                        <td className="px-4 py-3 text-xs">
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 font-medium text-[10px] sm:text-xs whitespace-nowrap">{s.periodLabel}</td>
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs font-semibold">{formatGHS(s.collected)}</td>
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-destructive">-{formatGHS(s.fees)}</td>
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-emerald-600 font-semibold">{formatGHS(s.netSettled)}</td>
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs">{formatGHS(s.paidOut)}</td>
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-amber-600">{formatGHS(s.pendingPayout)}</td>
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs">
                           <span className={cn("font-semibold", 
                             isBalanced ? "text-emerald-600" : 
                             hasDiscrepancy ? "text-red-600" : "text-amber-600"
@@ -185,20 +185,20 @@ export default function SettlementsPage() {
                             {isBalanced ? "—" : formatGHS(Math.abs(variance))}
                           </span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 sm:px-4 py-2.5 sm:py-3">
                           {isBalanced ? (
-                            <span className="flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium bg-emerald-50 text-emerald-700 border-emerald-200">
-                              <CheckCircle className="size-3" />
+                            <span className="flex items-center gap-1 sm:gap-1.5 w-fit px-1.5 sm:px-2 py-1 rounded-full border text-[10px] sm:text-[11px] font-medium bg-emerald-50 text-emerald-700 border-emerald-200 whitespace-nowrap">
+                              <CheckCircle className="size-2.5 sm:size-3" />
                               Balanced
                             </span>
                           ) : hasDiscrepancy ? (
-                            <span className="flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium bg-red-50 text-red-700 border-red-200">
-                              <AlertTriangle className="size-3" />
+                            <span className="flex items-center gap-1 sm:gap-1.5 w-fit px-1.5 sm:px-2 py-1 rounded-full border text-[10px] sm:text-[11px] font-medium bg-red-50 text-red-700 border-red-200 whitespace-nowrap">
+                              <AlertTriangle className="size-2.5 sm:size-3" />
                               Discrepancy
                             </span>
                           ) : (
-                            <span className="flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium bg-amber-50 text-amber-700 border-amber-200">
-                              <Info className="size-3" />
+                            <span className="flex items-center gap-1 sm:gap-1.5 w-fit px-1.5 sm:px-2 py-1 rounded-full border text-[10px] sm:text-[11px] font-medium bg-amber-50 text-amber-700 border-amber-200 whitespace-nowrap">
+                              <Info className="size-2.5 sm:size-3" />
                               Review
                             </span>
                           )}
@@ -212,11 +212,11 @@ export default function SettlementsPage() {
           </div>
 
           {/* Reconciliation Info */}
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-            <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4 flex items-start gap-2 sm:gap-3">
+            <Info className="size-4 sm:size-5 text-blue-600 shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-blue-900 mb-1">Settlement Reconciliation</p>
-              <p className="text-sm text-blue-700">
+              <p className="text-xs sm:text-sm font-semibold text-blue-900 mb-1">Settlement Reconciliation</p>
+              <p className="text-xs sm:text-sm text-blue-700">
                 Variance indicates the difference between net settled amount and total payouts (paid out + pending). 
                 Small variances under GH₵1 are considered balanced. Contact support for discrepancies over GH₵100.
               </p>

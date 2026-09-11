@@ -86,13 +86,13 @@ export default function SubMerchantOverviewPage() {
   const availableBalance = smPayouts[0]?.net || 0;
 
   return (
-    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
+    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
           Good morning, Kofi
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
           Here's what's happening with <span className="font-medium text-foreground">Kofi Craft Ghana</span> today.
         </p>
       </motion.div>
@@ -104,14 +104,14 @@ export default function SubMerchantOverviewPage() {
           animate={{ opacity: 1, y: 0 }} 
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3 }}
-          className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3"
+          className="flex items-start gap-2 sm:gap-3 bg-blue-50 border border-blue-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3"
         >
-          <div className="size-10 rounded-lg bg-blue-100 border border-blue-200 flex items-center justify-center shrink-0">
-            <Eye className="size-5 text-blue-600" />
+          <div className="size-8 sm:size-10 rounded-lg bg-blue-100 border border-blue-200 flex items-center justify-center shrink-0">
+            <Eye className="size-4 sm:size-5 text-blue-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-blue-800">You're in Viewer mode</p>
-            <p className="text-xs text-blue-600 mt-1">
+            <p className="text-xs sm:text-sm font-semibold text-blue-800">You're in Viewer mode</p>
+            <p className="text-[10px] sm:text-xs text-blue-600 mt-1">
               You have read-only access to view transactions, settlements, and reports. You cannot raise disputes, manage team members, or change settings. Contact your admin for elevated permissions.
             </p>
           </div>
@@ -256,21 +256,21 @@ export default function SubMerchantOverviewPage() {
 
       {/* Recent Transactions */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-        className="bg-card border border-border rounded-2xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-          <h2 className="text-sm font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
+        className="bg-card border border-border rounded-xl sm:rounded-2xl overflow-hidden">
+        <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-border flex items-center justify-between">
+          <h2 className="text-xs sm:text-sm font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
             Recent Transactions
           </h2>
-          <a href="/sub-merchant/transactions" className="text-xs text-[#1a7a5e] hover:underline font-medium">
+          <a href="/sub-merchant/transactions" className="text-[10px] sm:text-xs text-[#1a7a5e] hover:underline font-medium">
             View all →
           </a>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-225">
             <thead>
               <tr className="border-b border-border bg-muted/30">
                 {["Reference", "Date/Time", "Amount", "Fee", "Net", "Status", "Customer"].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5 last:pr-5">
+                  <th key={h} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5 last:pr-4 sm:last:pr-5 whitespace-nowrap">
                     {h}
                   </th>
                 ))}
@@ -284,23 +284,23 @@ export default function SubMerchantOverviewPage() {
                     i % 2 === 0 ? "" : "bg-muted/10"
                   )}
                 >
-                  <td className="pl-5 pr-4 py-3 font-mono text-xs">{txn.reference}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                  <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-2.5 sm:py-3 font-mono text-[10px] sm:text-xs">{txn.reference}</td>
+                  <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
                     {formatDate(txn.date)}
                   </td>
-                  <td className="px-4 py-3 text-xs font-semibold">{formatGHS(txn.grossAmount)}</td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatGHS(txn.fee)}</td>
-                  <td className="px-4 py-3 text-xs font-medium">{formatGHS(txn.net)}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs font-semibold">{formatGHS(txn.grossAmount)}</td>
+                  <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-muted-foreground">{formatGHS(txn.fee)}</td>
+                  <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs font-medium">{formatGHS(txn.net)}</td>
+                  <td className="px-3 sm:px-4 py-2.5 sm:py-3">
                     <span className={cn(
-                      "flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium",
+                      "flex items-center gap-1 sm:gap-1.5 w-fit px-1.5 sm:px-2 py-1 rounded-full border text-[10px] sm:text-[11px] font-medium whitespace-nowrap",
                       statusBadge[txn.status]
                     )}>
                       {statusIcons[txn.status]}
                       {txn.status}
                     </span>
                   </td>
-                  <td className="pl-4 pr-5 py-3 text-xs text-muted-foreground">{txn.customerName}</td>
+                  <td className="pl-3 sm:pl-4 pr-4 sm:pr-5 py-2.5 sm:py-3 text-[10px] sm:text-xs text-muted-foreground">{txn.customerName}</td>
                 </tr>
               ))}
             </tbody>

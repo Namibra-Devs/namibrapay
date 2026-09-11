@@ -45,20 +45,20 @@ export default function SubMerchantSettlementsPage() {
   };
 
   return (
-    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
+    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
           Settlements
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
           View your settlement history and fee breakdown
         </p>
       </motion.div>
 
       {/* Settlement Summary - SM-020 */}
       <motion.div variants={container} initial="hidden" animate="show"
-        className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { 
             label: "Available Balance", 
@@ -119,9 +119,9 @@ export default function SubMerchantSettlementsPage() {
 
       {/* Payout History - SM-020 & SM-021 */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-        className="bg-card border border-border rounded-2xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-border">
-          <h2 className="text-sm font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
+        className="bg-card border border-border rounded-xl sm:rounded-2xl overflow-hidden">
+        <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-border">
+          <h2 className="text-xs sm:text-sm font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
             Payout History
           </h2>
         </div>
@@ -136,34 +136,34 @@ export default function SubMerchantSettlementsPage() {
             return (
               <div key={payout.id} className={cn(i % 2 === 0 ? "" : "bg-muted/10")}>
                 {/* Payout summary row */}
-                <div className="px-5 py-4 flex items-center justify-between hover:bg-muted/20 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="size-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center">
-                      <CheckCircle2 className="size-5 text-emerald-600" />
+                <div className="px-4 sm:px-5 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-muted/20 transition-colors">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="size-8 sm:size-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="size-4 sm:size-5 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold">Payout {payout.id.toUpperCase()}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{formatDate(payout.date)}</p>
+                      <p className="text-xs sm:text-sm font-semibold">Payout {payout.id.toUpperCase()}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{formatDate(payout.date)}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-6">
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground mb-1">Gross Amount</p>
-                      <p className="text-sm font-semibold">{formatGHS(payout.amount)}</p>
+                  <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-6">
+                    <div className="text-left sm:text-right">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Gross Amount</p>
+                      <p className="text-xs sm:text-sm font-semibold">{formatGHS(payout.amount)}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground mb-1">Total Fees</p>
-                      <p className="text-sm text-muted-foreground">- {formatGHS(totalFee)}</p>
+                    <div className="text-left sm:text-right">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Total Fees</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">- {formatGHS(totalFee)}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground mb-1">Net Payout</p>
-                      <p className="text-sm font-bold text-emerald-600">{formatGHS(payout.net)}</p>
+                    <div className="text-left sm:text-right">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Net Payout</p>
+                      <p className="text-xs sm:text-sm font-bold text-emerald-600">{formatGHS(payout.net)}</p>
                     </div>
                     <button
                       onClick={() => setExpandedPayout(isExpanded ? null : payout.id)}
-                      className="p-2 rounded-lg border border-border hover:bg-muted/50 transition-colors"
+                      className="p-2 rounded-lg border border-border hover:bg-muted/50 transition-colors shrink-0"
                     >
-                      {isExpanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+                      {isExpanded ? <ChevronUp className="size-3.5 sm:size-4" /> : <ChevronDown className="size-3.5 sm:size-4" />}
                     </button>
                   </div>
                 </div>
@@ -175,38 +175,38 @@ export default function SubMerchantSettlementsPage() {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="px-5 pb-5 space-y-4"
+                    className="px-4 sm:px-5 pb-4 sm:pb-5 space-y-4"
                   >
                     {/* Fee breakdown summary */}
-                    <div className="bg-muted/30 rounded-xl p-4 space-y-3">
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Fee Breakdown</p>
-                      <div className="grid grid-cols-3 gap-4">
+                    <div className="bg-muted/30 rounded-xl p-3 sm:p-4 space-y-3">
+                      <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">Fee Breakdown</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1">Platform Fee (1.5%)</p>
-                          <p className="text-sm font-semibold">{formatGHS(platformFee)}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Platform Fee (1.5%)</p>
+                          <p className="text-xs sm:text-sm font-semibold">{formatGHS(platformFee)}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1">Parent Merchant Fee (2.0%)</p>
-                          <p className="text-sm font-semibold text-[#5c3d9e]">{formatGHS(parentMerchantFee)}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Parent Merchant Fee (2.0%)</p>
+                          <p className="text-xs sm:text-sm font-semibold text-[#5c3d9e]">{formatGHS(parentMerchantFee)}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1">Total Fees (3.5%)</p>
-                          <p className="text-sm font-bold">{formatGHS(totalFee)}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Total Fees (3.5%)</p>
+                          <p className="text-xs sm:text-sm font-bold">{formatGHS(totalFee)}</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Per-transaction breakdown - SM-021 */}
                     <div>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                      <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                         Transaction Breakdown ({transactions.length} transactions)
                       </p>
                       <div className="overflow-x-auto border border-border rounded-xl">
-                        <table className="w-full text-sm">
+                        <table className="w-full text-sm min-w-175">
                           <thead>
                             <tr className="border-b border-border bg-muted/30">
                               {["Reference", "Date", "Gross", "Platform Fee", "Parent Fee", "Net"].map((h) => (
-                                <th key={h} className="text-left px-3 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 last:pr-4">
+                                <th key={h} className="text-left px-2 sm:px-3 py-2 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-3 sm:first:pl-4 last:pr-3 sm:last:pr-4 whitespace-nowrap">
                                   {h}
                                 </th>
                               ))}
@@ -223,14 +223,14 @@ export default function SubMerchantSettlementsPage() {
                                   "border-b border-border/50 last:border-0",
                                   idx % 2 === 0 ? "" : "bg-muted/10"
                                 )}>
-                                  <td className="pl-4 pr-3 py-2 font-mono text-xs">{txn.reference}</td>
-                                  <td className="px-3 py-2 text-xs text-muted-foreground whitespace-nowrap">
+                                  <td className="pl-3 sm:pl-4 pr-2 sm:pr-3 py-2 font-mono text-[10px] sm:text-xs">{txn.reference}</td>
+                                  <td className="px-2 sm:px-3 py-2 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
                                     {formatDate(txn.date)}
                                   </td>
-                                  <td className="px-3 py-2 text-xs font-semibold">{formatGHS(txn.grossAmount)}</td>
-                                  <td className="px-3 py-2 text-xs text-muted-foreground">{formatGHS(txnPlatformFee)}</td>
-                                  <td className="px-3 py-2 text-xs text-[#5c3d9e] font-medium">{formatGHS(txnParentFee)}</td>
-                                  <td className="pl-3 pr-4 py-2 text-xs font-semibold">{formatGHS(txnNet)}</td>
+                                  <td className="px-2 sm:px-3 py-2 text-[10px] sm:text-xs font-semibold">{formatGHS(txn.grossAmount)}</td>
+                                  <td className="px-2 sm:px-3 py-2 text-[10px] sm:text-xs text-muted-foreground">{formatGHS(txnPlatformFee)}</td>
+                                  <td className="px-2 sm:px-3 py-2 text-[10px] sm:text-xs text-[#5c3d9e] font-medium">{formatGHS(txnParentFee)}</td>
+                                  <td className="pl-2 sm:pl-3 pr-3 sm:pr-4 py-2 text-[10px] sm:text-xs font-semibold">{formatGHS(txnNet)}</td>
                                 </tr>
                               );
                             })}

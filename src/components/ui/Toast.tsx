@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import { CheckCircle, XCircle, AlertTriangle, Info, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "motion/react";
 
 type ToastType = "success" | "error" | "warning" | "info";
 
@@ -58,13 +59,13 @@ export function useToast() {
 
 // Toast Container Component
 function ToastContainer({ toasts, removeToast }: { toasts: Toast[]; removeToast: (id: string) => void }) {
-  if (toasts.length === 0) return null;
-
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md">
-      {toasts.map((toast) => (
-        <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
-      ))}
+    <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-4 z-50 flex flex-col gap-2 w-auto sm:max-w-md pointer-events-none">
+      <AnimatePresence mode="popLayout">
+        {toasts.map((toast) => (
+          <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
+        ))}
+      </AnimatePresence>
     </div>
   );
 }
@@ -82,23 +83,35 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   const Icon = style.icon;
 
   return (
-    <div className={cn(
-      "flex items-start gap-3 p-4 rounded-xl border shadow-lg animate-in slide-in-from-right",
-      style.bg, style.border
-    )}>
-      <Icon className={cn("size-5 shrink-0 mt-0.5", style.iconColor)} />
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: -20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 100, scale: 0.95 }}
+      transition={{ 
+        type: "spring", 
+        stiffness: 500, 
+        damping: 30,
+        layout: { duration: 0.2 }
+      }}
+      className={cn(
+        "flex items-start gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border shadow-lg pointer-events-auto",
+        style.bg, style.border
+      )}
+    >
+      <Icon className={cn("size-4 sm:size-5 shrink-0 mt-0.5", style.iconColor)} />
       <div className="flex-1 min-w-0">
-        <p className={cn("text-sm font-semibold", style.text)}>{toast.title}</p>
+        <p className={cn("text-xs sm:text-sm font-semibold", style.text)}>{toast.title}</p>
         {toast.description && (
-          <p className={cn("text-sm mt-0.5", style.text)}>{toast.description}</p>
+          <p className={cn("text-xs sm:text-sm mt-0.5", style.text)}>{toast.description}</p>
         )}
       </div>
       <button
         onClick={() => onRemove(toast.id)}
         className={cn("shrink-0 p-1 hover:bg-black/5 rounded transition-colors", style.text)}
       >
-        <X className="size-4" />
+        <X className="size-3.5 sm:size-4" />
       </button>
-    </div>
+    </motion.div>
   );
 }

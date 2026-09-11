@@ -107,32 +107,32 @@ export default function SubMerchantTeamPage() {
   };
 
   return (
-    <div className="px-6 py-6 space-y-4 pb-24 md:pb-4">
+    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-4">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
             Team
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             {teamMembers.length} team member{teamMembers.length !== 1 ? "s" : ""}
           </p>
         </div>
         {can("team.manage") ? (
           <button
             onClick={() => setShowInviteModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#1a7a5e] text-white rounded-xl text-sm font-medium hover:bg-[#1a7a5e]/90 transition-colors"
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 bg-[#1a7a5e] text-white rounded-xl text-xs sm:text-sm font-medium hover:bg-[#1a7a5e]/90 transition-colors w-full sm:w-auto"
           >
-            <UserPlus className="size-4" />
+            <UserPlus className="size-3.5 sm:size-4" />
             Invite Viewer
           </button>
         ) : (
           <button
             onClick={() => showToast("info", "Action Restricted", "Only Admins can invite team members. Contact your admin for assistance.")}
-            className="flex items-center gap-2 px-4 py-2.5 bg-muted text-muted-foreground rounded-xl text-sm font-medium cursor-not-allowed"
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 bg-muted text-muted-foreground rounded-xl text-xs sm:text-sm font-medium cursor-not-allowed w-full sm:w-auto"
             title="Admin permission required"
           >
-            <UserPlus className="size-4" />
+            <UserPlus className="size-3.5 sm:size-4" />
             Invite Viewer
           </button>
         )}
@@ -163,13 +163,13 @@ export default function SubMerchantTeamPage() {
       )}
 
       {/* Team Members Table - SM-030 */}
-      <div className="bg-card border border-border rounded-2xl overflow-hidden">
+      <div className="bg-card border border-border rounded-xl sm:rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-200">
             <thead>
               <tr className="border-b border-border bg-muted/30">
                 {["Name", "Email", "Role", "Invite Status", "Last Login", "Actions"].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5 last:pr-5">
+                  <th key={h} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5 last:pr-4 sm:last:pr-5 whitespace-nowrap">
                     {h}
                   </th>
                 ))}
@@ -178,9 +178,9 @@ export default function SubMerchantTeamPage() {
             <tbody>
               {teamMembers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center">
-                    <Users className="size-12 text-muted-foreground/40 mx-auto mb-3" />
-                    <p className="text-muted-foreground font-medium">No team members yet</p>
+                  <td colSpan={6} className="px-4 sm:px-5 py-12 text-center">
+                    <Users className="size-10 sm:size-12 text-muted-foreground/40 mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground font-medium">No team members yet</p>
                     <p className="text-xs text-muted-foreground mt-1">Invite viewers to collaborate on your account</p>
                   </td>
                 </tr>
@@ -193,46 +193,46 @@ export default function SubMerchantTeamPage() {
                       i % 2 === 0 ? "" : "bg-muted/10"
                     )}
                   >
-                    <td className="pl-5 pr-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="size-10 rounded-xl bg-brand-mint/20 border border-brand-mint/40 flex items-center justify-center">
-                          <Users className="size-5 text-[#1a7a5e]" />
+                    <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-2.5 sm:py-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="size-8 sm:size-10 rounded-xl bg-brand-mint/20 border border-brand-mint/40 flex items-center justify-center shrink-0">
+                          <Users className="size-4 sm:size-5 text-[#1a7a5e]" />
                         </div>
-                        <div>
-                          <p className="text-sm font-semibold">{member.name}</p>
+                        <div className="min-w-0">
+                          <p className="text-xs sm:text-sm font-semibold truncate">{member.name}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{member.email}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-muted-foreground">{member.email}</td>
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3">
                       <span className={cn(
-                        "inline-flex items-center gap-1.5 px-2 py-1 rounded-full border text-[11px] font-medium",
+                        "inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-1 rounded-full border text-[10px] sm:text-[11px] font-medium whitespace-nowrap",
                         SUB_MERCHANT_ROLE_COLORS[member.role]
                       )}>
-                        {member.role === "sub_admin" ? <Shield className="size-3" /> : <Eye className="size-3" />}
+                        {member.role === "sub_admin" ? <Shield className="size-2.5 sm:size-3" /> : <Eye className="size-2.5 sm:size-3" />}
                         {SUB_MERCHANT_ROLE_LABELS[member.role]}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3">
                       <span className={cn(
-                        "flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium",
+                        "flex items-center gap-1 sm:gap-1.5 w-fit px-1.5 sm:px-2 py-1 rounded-full border text-[10px] sm:text-[11px] font-medium whitespace-nowrap",
                         inviteStatusBadge[member.inviteStatus]
                       )}>
                         {inviteStatusIcon[member.inviteStatus]}
                         {member.inviteStatus}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
                       {member.lastLogin ? formatDate(member.lastLogin) : "Never"}
                     </td>
-                    <td className="pl-4 pr-5 py-3">
+                    <td className="pl-3 sm:pl-4 pr-4 sm:pr-5 py-2.5 sm:py-3">
                       {can("team.manage") && member.role !== "sub_admin" && (
                         <button
                           onClick={() => handleRemove(member)}
-                          className="p-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+                          className="p-1.5 sm:p-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
                           title="Remove member"
                         >
-                          <Trash2 className="size-4" />
+                          <Trash2 className="size-3.5 sm:size-4" />
                         </button>
                       )}
                     </td>

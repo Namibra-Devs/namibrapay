@@ -140,30 +140,30 @@ export default function SubMerchantTransactionsPage() {
   };
 
   return (
-    <div className="px-6 py-6 space-y-4 pb-24 md:pb-4">
+    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-4">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
             Transactions
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             {filteredTxns.length} transaction{filteredTxns.length !== 1 ? "s" : ""} found
           </p>
         </div>
         {can("transactions.export") && (
           <button
             onClick={() => setShowExport(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#1a7a5e] text-white rounded-xl text-sm font-medium hover:bg-[#1a7a5e]/90 transition-colors"
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 bg-[#1a7a5e] text-white rounded-xl text-xs sm:text-sm font-medium hover:bg-[#1a7a5e]/90 transition-colors w-full sm:w-auto"
           >
-            <Download className="size-4" />
+            <Download className="size-3.5 sm:size-4" />
             Export
           </button>
         )}
       </div>
 
       {/* Filters - SM-010 */}
-      <div className="bg-card border border-border rounded-2xl p-5 space-y-4">
+      <div className="bg-card border border-border rounded-xl sm:rounded-2xl p-4 sm:p-5 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Search */}
           <div className="lg:col-span-2">

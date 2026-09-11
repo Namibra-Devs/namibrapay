@@ -107,13 +107,13 @@ export default function SubMerchantSettingsPage() {
   };
 
   return (
-    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
+    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
           Settings
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
           Manage your business profile and notification preferences
         </p>
       </motion.div>

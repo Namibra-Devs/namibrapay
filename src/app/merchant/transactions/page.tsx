@@ -85,9 +85,9 @@ export default function TransactionsPage() {
 
       {/* Toolbar */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-        className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-3">
+        className="flex items-center gap-2">
         {/* Search */}
-        <div className="relative flex-1 min-w-50">
+        <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
           <input
             value={search}
@@ -102,36 +102,34 @@ export default function TransactionsPage() {
           )}
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Filter toggle */}
-          <button
-            onClick={() => setFiltersOpen(!filtersOpen)}
-            className={cn(
-              "flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 rounded-xl border text-xs sm:text-sm font-medium transition-all flex-1 sm:flex-initial",
-              filtersOpen ? "bg-brand-teal/10 border-brand-teal/40 text-[#1a6e6c]" : "bg-card border-border hover:border-ring/50"
-            )}
-          >
-            <Filter className="size-3.5" />
-            <span className="hidden sm:inline">Filters</span>
-            {activeFilterCount > 0 && (
-              <span className="bg-brand-teal text-white size-4 rounded-full text-[10px] font-bold flex items-center justify-center">
-                {activeFilterCount}
-              </span>
-            )}
-            <ChevronDown className={cn("size-3.5 transition-transform", filtersOpen && "rotate-180")} />
-          </button>
-
-          {/* Export */}
-          {can("transactions.export") && (
-            <button 
-              onClick={() => setShowExportModal(true)}
-              className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 rounded-xl border border-border text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all flex-1 sm:flex-initial"
-            >
-              <Download className="size-3.5" />
-              <span className="hidden sm:inline">Export</span>
-            </button>
+        {/* Filter toggle */}
+        <button
+          onClick={() => setFiltersOpen(!filtersOpen)}
+          className={cn(
+            "flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 rounded-xl border text-xs sm:text-sm font-medium transition-all shrink-0",
+            filtersOpen ? "bg-brand-teal/10 border-brand-teal/40 text-[#1a6e6c]" : "bg-card border-border hover:border-ring/50"
           )}
-        </div>
+        >
+          <Filter className="size-3.5" />
+          <span className="hidden sm:inline">Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="bg-brand-teal text-white size-4 rounded-full text-[10px] font-bold flex items-center justify-center">
+              {activeFilterCount}
+            </span>
+          )}
+          <ChevronDown className={cn("size-3.5 transition-transform hidden sm:inline", filtersOpen && "rotate-180")} />
+        </button>
+
+        {/* Export */}
+        {can("transactions.export") && (
+          <button 
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 rounded-xl border border-border text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all shrink-0"
+          >
+            <Download className="size-3.5" />
+            <span className="hidden sm:inline">Export</span>
+          </button>
+        )}
       </motion.div>
 
       {/* Filter Panel */}
