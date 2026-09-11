@@ -127,7 +127,7 @@ export default function MerchantSettingsPage() {
           </div>
           {can("payout.change_bank") && (
             <div className="space-y-3">
-              <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-2">
+              <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 flex items-start gap-2">
                 <AlertTriangle className="size-4 text-amber-500 shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-800">Bank account changes require NamibraPay Compliance approval and take 2–5 business days to take effect.</p>
               </div>

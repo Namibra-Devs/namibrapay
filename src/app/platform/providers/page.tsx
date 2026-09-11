@@ -105,29 +105,30 @@ export default function ProvidersPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-5 border-b border-border bg-card/50 shrink-0">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border bg-card/50 shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate" style={{ fontFamily: "var(--font-heading)" }}>
               Provider Engineering
             </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              Health monitoring · Routing rules · Credential management · API configuration
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+              <span className="hidden sm:inline">Health monitoring · Routing rules · Credential management · API configuration</span>
+              <span className="sm:hidden">Health · Routing · Credentials</span>
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-xs font-medium">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-[10px] sm:text-xs font-medium">
               <CheckCircle className="size-3" />
               {operationalCount} operational
             </span>
             {degradedCount > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-[10px] sm:text-xs font-medium">
                 <AlertTriangle className="size-3" />
                 {degradedCount} degraded
               </span>
             )}
             {pendingRules > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-[10px] sm:text-xs font-medium">
                 <Clock className="size-3" />
                 {pendingRules} rule{pendingRules > 1 ? "s" : ""} pending
               </span>
@@ -139,9 +140,10 @@ export default function ProvidersPage() {
         <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
           {TABS.map((t) => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={cn("px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all",
+              className={cn("px-3 sm:px-3.5 py-2 rounded-xl text-[10px] sm:text-xs font-medium whitespace-nowrap transition-all shrink-0",
                 tab === t.id ? "bg-card shadow-sm border border-border text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted/40")}>
-              {t.label}
+              <span className="hidden sm:inline">{t.label}</span>
+              <span className="sm:hidden">{t.label.replace(" Monitoring", "").replace(" Rules", "")}</span>
               {t.id === "routing" && pendingRules > 0 && (
                 <span className="ml-1.5 px-1.5 py-0.5 bg-amber-500 text-white rounded-full text-[9px] font-bold">{pendingRules}</span>
               )}
@@ -443,77 +445,78 @@ export default function ProvidersPage() {
         {tab === "credentials" && (
           <div className="space-y-4">
             {/* Stats */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {[
                 { label: "Total Credentials", value: String(mockProviderCredentials.length), color: "#64c6c3", icon: Key },
                 { label: "Active", value: String(mockProviderCredentials.filter(c => c.status === "active").length), color: "#10b981", icon: CheckCircle },
                 { label: "Expiring Soon", value: String(mockProviderCredentials.filter(c => c.status === "expiring_soon").length), color: "#f59e0b", icon: AlertTriangle },
                 { label: "Expired", value: String(mockProviderCredentials.filter(c => c.status === "expired").length), color: "#ef4444", icon: XCircle },
               ].map(({ label, value, color, icon: Icon }) => (
-                <div key={label} className="bg-card border border-border rounded-2xl p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
-                    <div className="size-8 rounded-lg flex items-center justify-center" style={{ background: `${color}18` }}>
-                      <Icon className="size-4" style={{ color }} />
+                <div key={label} className="bg-card border border-border rounded-2xl p-4 sm:p-5">
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <span className="text-[10px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
+                    <div className="size-7 sm:size-8 rounded-lg flex items-center justify-center" style={{ background: `${color}18` }}>
+                      <Icon className="size-3.5 sm:size-4" style={{ color }} />
                     </div>
                   </div>
-                  <p className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
+                  <p className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
                 </div>
               ))}
             </div>
 
             {/* Credentials Table */}
             <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border bg-muted/30">
-                    {["Provider", "Credential", "Type", "Status", "Last Rotated", "Expires", "Schedule", ""].map((h) => (
-                      <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {mockProviderCredentials.map((cred) => {
-                    const statusCfg = getCredentialStatusColor(cred.status);
-                    const isExpired = cred.status === "expired";
-                    const isExpiring = cred.status === "expiring_soon";
-                    
-                    return (
-                      <tr key={cred.id} className={cn("border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors",
-                        (isExpired || isExpiring) && "bg-red-50/30")}>
-                        <td className="pl-5 pr-4 py-3.5">
-                          <span className="text-sm font-medium">{cred.providerName.split(" ")[0]}</span>
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <p className="text-sm font-medium">{cred.label}</p>
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <span className="px-2 py-0.5 bg-muted rounded text-xs font-mono">
-                            {cred.credentialType.replace(/_/g, " ")}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", statusCfg)}>
-                            {cred.status === "active" ? <CheckCircle className="size-2.5" /> :
-                             cred.status === "expiring_soon" ? <Clock className="size-2.5" /> :
-                             <AlertTriangle className="size-2.5" />}
-                            {cred.status.replace(/_/g, " ")}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3.5 text-xs text-muted-foreground">
-                          {new Date(cred.lastRotated).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <p className="text-sm">{new Date(cred.expiresAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</p>
-                          <p className={cn("text-xs", isExpired ? "text-red-600" : isExpiring ? "text-amber-600" : "text-muted-foreground")}>
-                            {isExpired ? "Expired" : `${cred.daysUntilExpiry} days`}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3.5 text-xs text-muted-foreground">
-                          {cred.rotationSchedule}
-                        </td>
-                        <td className="px-4 py-3.5">
-                          {canEdit && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm min-w-250">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/30">
+                      {["Provider", "Credential", "Type", "Status", "Last Rotated", "Expires", "Schedule", ""].map((h) => (
+                        <th key={h} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5 whitespace-nowrap">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {mockProviderCredentials.map((cred) => {
+                      const statusCfg = getCredentialStatusColor(cred.status);
+                      const isExpired = cred.status === "expired";
+                      const isExpiring = cred.status === "expiring_soon";
+                      
+                      return (
+                        <tr key={cred.id} className={cn("border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors",
+                          (isExpired || isExpiring) && "bg-red-50/30")}>
+                          <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-3 sm:py-3.5">
+                            <span className="text-xs sm:text-sm font-medium">{cred.providerName.split(" ")[0]}</span>
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                            <p className="text-xs sm:text-sm font-medium truncate max-w-40">{cred.label}</p>
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                            <span className="px-1.5 sm:px-2 py-0.5 bg-muted rounded text-[10px] sm:text-xs font-mono whitespace-nowrap">
+                              {cred.credentialType.replace(/_/g, " ")}
+                            </span>
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium whitespace-nowrap", statusCfg)}>
+                              {cred.status === "active" ? <CheckCircle className="size-2.5" /> :
+                               cred.status === "expiring_soon" ? <Clock className="size-2.5" /> :
+                               <AlertTriangle className="size-2.5" />}
+                              {cred.status.replace(/_/g, " ")}
+                            </span>
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
+                            {new Date(cred.lastRotated).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                            <p className="text-xs sm:text-sm whitespace-nowrap">{new Date(cred.expiresAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                            <p className={cn("text-[10px] sm:text-xs", isExpired ? "text-red-600" : isExpiring ? "text-amber-600" : "text-muted-foreground")}>
+                              {isExpired ? "Expired" : `${cred.daysUntilExpiry} days`}
+                            </p>
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
+                            {cred.rotationSchedule}
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                            {canEdit && (
                             <button 
                               onClick={() => setShowRotateCredentialModal(cred)}
                               className="p-1.5 hover:bg-muted rounded-lg transition-all"
@@ -528,6 +531,7 @@ export default function ProvidersPage() {
                   })}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}

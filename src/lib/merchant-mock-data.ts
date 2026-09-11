@@ -1,5 +1,18 @@
 import type { MerchantRole } from "@/lib/merchant-constants";
 
+export type MerchantProfile = {
+  id: string;
+  businessName: string;
+  contactEmail: string;
+  accountStatus: "active" | "suspended" | "pending_verification" | "deactivated";
+  isVerified: boolean;
+  complianceStatus: "complete" | "incomplete" | "pending";
+  hasPendingActions: boolean;
+  pendingActionsCount: number;
+  kycStatus: "approved" | "pending" | "rejected" | "not_submitted";
+  lastComplianceCheck: string;
+};
+
 export type MerchantTransaction = {
   id: string;
   reference: string;
@@ -163,3 +176,23 @@ export const mockMerchantChartData = Array.from({ length: 7 }, (_, i) => {
     txnCount: Math.floor(seededRandom(i * 29) * 500 + 100),
   };
 });
+
+// Mock Merchant Profile
+export const mockMerchantProfile: MerchantProfile = {
+  id: "merchant-001",
+  businessName: "Kwame Organics Ltd",
+  contactEmail: "kwame@kwameorganics.com",
+  accountStatus: "active",
+  isVerified: true,
+  complianceStatus: "complete",
+  hasPendingActions: false,
+  pendingActionsCount: 0,
+  kycStatus: "approved",
+  lastComplianceCheck: new Date(BASE_TIME - 86400000 * 7).toISOString(),
+};
+
+// You can change these values to test different scenarios:
+// - accountStatus: "pending_verification" | "suspended" | "deactivated"
+// - complianceStatus: "incomplete" | "pending"
+// - hasPendingActions: true
+// - kycStatus: "pending" | "rejected" | "not_submitted"

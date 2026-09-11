@@ -127,10 +127,16 @@ export default function SubMerchantOverviewPage() {
 
       {/* Account Status Banner - SM-002 */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-        className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
-        <div className="size-2 rounded-full bg-emerald-400" />
-        <p className="text-sm font-medium text-emerald-800">Account active · No pending actions</p>
-        <span className="ml-auto text-xs text-emerald-600">Sub-merchant account</span>
+        className="flex items-center gap-2 sm:gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3">
+        <div className="size-2 rounded-full bg-emerald-400 shrink-0" />
+        <p className="text-xs sm:text-sm font-medium text-emerald-800 truncate">
+          <span className="hidden sm:inline">Account active · No pending actions</span>
+          <span className="sm:hidden">Active · No pending actions</span>
+        </p>
+        <span className="ml-auto text-[10px] sm:text-xs text-emerald-600 whitespace-nowrap shrink-0">
+          <span className="hidden sm:inline">Sub-merchant</span>
+          <span className="sm:hidden">Sub-merch</span>
+        </span>
       </motion.div>
 
       {/* KPI Cards - SM-001 */}
@@ -169,30 +175,30 @@ export default function SubMerchantOverviewPage() {
         ].map((kpi) => (
           <motion.div key={kpi.label} variants={item}
             className={cn(
-              "rounded-2xl p-5 flex flex-col gap-3 transition-all duration-300",
+              "rounded-2xl p-4 sm:p-5 flex flex-col gap-2.5 sm:gap-3 transition-all duration-300",
               kpi.gradient 
                 ? "bg-linear-to-br from-brand-teal via-[#4db5b2] to-[#2d9a97] text-white border-0 hover:shadow-lg" 
                 : "bg-card border border-border hover:border-ring/40"
             )}>
             <div className="flex items-center justify-between">
               <span className={cn(
-                "text-[10px] font-medium uppercase tracking-wider",
+                "text-[10px] sm:text-xs font-medium uppercase tracking-wider",
                 kpi.gradient ? "text-white/90" : "text-muted-foreground"
               )}>{kpi.label}</span>
               <div className={cn(
-                "size-8 rounded-lg flex items-center justify-center",
+                "size-7 sm:size-8 rounded-lg flex items-center justify-center",
                 kpi.gradient ? "bg-white/20 backdrop-blur-sm" : ""
               )} style={!kpi.gradient ? { background: `${kpi.accent}18` } : {}}>
-                <div style={{ color: kpi.gradient ? "white" : kpi.accent }}>{kpi.icon}</div>
+                <div className="[&>svg]:size-3.5 sm:[&>svg]:size-4" style={{ color: kpi.gradient ? "white" : kpi.accent }}>{kpi.icon}</div>
               </div>
             </div>
             <div>
               <p className={cn(
-                "text-2xl font-bold mb-0.5",
+                "text-lg sm:text-xl md:text-2xl font-bold mb-0.5",
                 kpi.gradient ? "text-white" : ""
               )} style={{ fontFamily: "var(--font-heading)" }}>{kpi.value}</p>
               <p className={cn(
-                "text-[11px]",
+                "text-[10px] sm:text-[11px]",
                 kpi.gradient ? "text-white/80" : "text-muted-foreground"
               )}>{kpi.sub}</p>
             </div>

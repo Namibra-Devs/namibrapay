@@ -244,9 +244,9 @@ export default function ApiPage() {
       {/* Sandbox */}
       {tab === "sandbox" && can("api.manage") && (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center gap-3">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
             <AlertTriangle className="size-4 text-amber-500 shrink-0" />
-            <p className="text-sm text-amber-800 font-medium">Sandbox mode — no real money moves. All transactions are simulated.</p>
+            <p className="text-xs sm:text-sm text-amber-800 font-medium">Sandbox mode — no real money moves. All transactions are simulated.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[

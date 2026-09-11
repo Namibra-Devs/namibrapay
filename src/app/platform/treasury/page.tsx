@@ -73,23 +73,23 @@ function KpiCard({ label, value, sub, color, icon: Icon, trend }: {
   label: string; value: string; sub: string; color: string; icon: React.ElementType; trend?: "up" | "down" | "neutral";
 }) {
   return (
-    <div className="bg-card border border-border rounded-2xl p-5 flex flex-col gap-3">
+    <div className="bg-card border border-border rounded-2xl p-4 sm:p-5 flex flex-col gap-2.5 sm:gap-3">
       <div className="flex items-center justify-between">
-        <div className="size-10 rounded-xl flex items-center justify-center" style={{ background: `${color}18` }}>
-          <Icon className="size-4" style={{ color }} />
+        <div className="size-8 sm:size-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${color}18` }}>
+          <Icon className="size-3.5 sm:size-4" style={{ color }} />
         </div>
         {trend && (
-          <span className={cn("text-[11px] font-medium flex items-center gap-0.5",
+          <span className={cn("text-[10px] sm:text-[11px] font-medium flex items-center gap-0.5",
             trend === "up" ? "text-emerald-600" : trend === "down" ? "text-red-500" : "text-muted-foreground")}>
-            {trend === "up" ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
-            vs yesterday
+            {trend === "up" ? <TrendingUp className="size-2.5 sm:size-3" /> : <TrendingDown className="size-2.5 sm:size-3" />}
+            <span className="hidden sm:inline">vs yesterday</span>
           </span>
         )}
       </div>
       <div>
-        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
-        <p className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
+        <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
+        <p className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{sub}</p>
       </div>
     </div>
   );
@@ -188,39 +188,41 @@ export default function TreasuryPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-5 border-b border-border bg-card/50 shrink-0">
-        <div className="flex items-center justify-between mb-4">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border bg-card/50 shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
               Treasury & Finance
             </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              Settlement balance monitoring · Reconciliation · Payouts · Fee Ledger
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+              <span className="hidden sm:inline">Settlement balance monitoring · Reconciliation · Payouts · Fee Ledger</span>
+              <span className="sm:hidden">Balance · Reconciliation · Payouts</span>
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto">
             {canApprove && pendingPrefunds > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-[10px] sm:text-xs font-medium whitespace-nowrap">
                 <Clock className="size-3" />
-                {pendingPrefunds} prefund{pendingPrefunds > 1 ? "s" : ""} pending
+                {pendingPrefunds} prefund{pendingPrefunds > 1 ? "s" : ""}
               </span>
             )}
             {canApprove && pendingBatches > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-[10px] sm:text-xs font-medium whitespace-nowrap">
                 <Clock className="size-3" />
-                {pendingBatches} batch{pendingBatches > 1 ? "es" : ""} pending
+                {pendingBatches} batch{pendingBatches > 1 ? "es" : ""}
               </span>
             )}
           </div>
         </div>
 
         {/* Tab bar */}
-        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none -mx-2 px-2">
           {TABS.map((t) => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={cn("px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all",
+              className={cn("px-3 sm:px-3.5 py-2 rounded-xl text-[10px] sm:text-xs font-medium whitespace-nowrap transition-all shrink-0",
                 tab === t.id ? "bg-card shadow-sm border border-border text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted/40")}>
-              {t.label}
+              <span className="hidden sm:inline">{t.label}</span>
+              <span className="sm:hidden">{t.label.replace("Settlement ", "").replace(" Ledger", "")}</span>
               {t.id === "prefunding" && pendingPrefunds > 0 && (
                 <span className="ml-1.5 px-1.5 py-0.5 bg-amber-500 text-white rounded-full text-[9px] font-bold">{pendingPrefunds}</span>
               )}
@@ -236,7 +238,7 @@ export default function TreasuryPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-24 md:pb-6">
         {/* ── OVERVIEW ── */}
         {tab === "overview" && (
           <div className="space-y-4">
@@ -326,17 +328,18 @@ export default function TreasuryPage() {
             </div>
 
             {/* ── Float Utilization Report (PD-026) ── */}
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-start justify-between mb-6">
+            <div className="bg-card border border-border rounded-2xl p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 sm:mb-6 gap-3">
                 <div>
-                  <h2 className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                  <h2 className="text-base sm:text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
                     Float Utilization Report
                   </h2>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Prefunded float amount, daily average utilization, and peak usage for UMB settlement account
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                    <span className="hidden sm:inline">Prefunded float amount, daily average utilization, and peak usage for UMB settlement account</span>
+                    <span className="sm:hidden">Float usage for UMB settlement</span>
                   </p>
                 </div>
-                <BarChart2 className="size-8 text-brand-teal" />
+                <BarChart2 className="size-6 sm:size-8 text-brand-teal shrink-0" />
               </div>
 
               {/* UMB Float Card */}
@@ -379,31 +382,31 @@ export default function TreasuryPage() {
 
                         {/* Prefunded Amount */}
                         <div className="bg-muted/30 rounded-lg p-3">
-                          <p className="text-xs text-muted-foreground mb-1">Prefunded Float Amount</p>
-                          <p className="text-2xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Prefunded Float Amount</p>
+                          <p className="text-xl sm:text-2xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
                             {formatGHS(provider.prefundedAmount)}
                           </p>
                         </div>
 
                         {/* Metrics Grid */}
-                        <div className="grid grid-cols-3 gap-3 text-xs">
+                        <div className="grid grid-cols-3 gap-2 sm:gap-3 text-xs">
                           <div>
-                            <p className="text-muted-foreground mb-1">Avg Daily</p>
-                            <p className="font-bold">{formatGHS(provider.dailyAvgUtilization)}</p>
+                            <p className="text-muted-foreground mb-1 text-[10px] sm:text-xs">Avg Daily</p>
+                            <p className="font-bold text-xs sm:text-sm">{formatGHS(provider.dailyAvgUtilization)}</p>
                             <p className="text-[10px] text-muted-foreground mt-0.5">
                               {utilizationPercent.toFixed(0)}% used
                             </p>
                           </div>
                           <div>
-                            <p className="text-muted-foreground mb-1">Peak Usage</p>
-                            <p className="font-bold">{formatGHS(provider.peakUtilization)}</p>
+                            <p className="text-muted-foreground mb-1 text-[10px] sm:text-xs">Peak Usage</p>
+                            <p className="font-bold text-xs sm:text-sm">{formatGHS(provider.peakUtilization)}</p>
                             <p className="text-[10px] text-muted-foreground mt-0.5">
                               {peakPercent.toFixed(0)}% peak
                             </p>
                           </div>
                           <div>
-                            <p className="text-muted-foreground mb-1">Idle Float</p>
-                            <p className="font-bold">{formatGHS(provider.idleFloat)}</p>
+                            <p className="text-muted-foreground mb-1 text-[10px] sm:text-xs">Idle Float</p>
+                            <p className="font-bold text-xs sm:text-sm">{formatGHS(provider.idleFloat)}</p>
                             <p className="text-[10px] text-muted-foreground mt-0.5">
                               {idlePercent.toFixed(0)}% idle
                             </p>
@@ -480,41 +483,41 @@ export default function TreasuryPage() {
               </div>
 
               {/* Summary Stats */}
-              <div className="pt-6 border-t border-border grid grid-cols-4 gap-4">
+              <div className="pt-6 border-t border-border grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 <div className="text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Total Prefunded</p>
-                  <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Total Prefunded</p>
+                  <p className="text-base sm:text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
                     {formatGHS(4_500_000)}
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Avg Daily Usage</p>
-                  <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Avg Daily Usage</p>
+                  <p className="text-base sm:text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
                     {formatGHS(3_200_000)}
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Peak Usage</p>
-                  <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Peak Usage</p>
+                  <p className="text-base sm:text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
                     {formatGHS(4_100_000)}
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Idle Float</p>
-                  <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Idle Float</p>
+                  <p className="text-base sm:text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>
                     {formatGHS(400_000)}
                   </p>
                 </div>
               </div>
 
               {/* Info Banner */}
-              <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-                <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+              <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4 flex items-start gap-2 sm:gap-3">
+                <Info className="size-4 sm:size-5 text-blue-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-blue-900 mb-1">Float Optimization</p>
-                  <p className="text-sm text-blue-700">
-                    Optimal utilization is 60-85%. High utilization indicates potential shortages. High idle float suggests over-prefunding. 
-                    Review weekly and adjust prefund amounts accordingly.
+                  <p className="text-xs sm:text-sm font-semibold text-blue-900 mb-1">Float Optimization</p>
+                  <p className="text-xs sm:text-sm text-blue-700">
+                    Optimal utilization is 60-85%. <span className="hidden sm:inline">High utilization indicates potential shortages. High idle float suggests over-prefunding. 
+                    Review weekly and adjust prefund amounts accordingly.</span>
                   </p>
                 </div>
               </div>
@@ -525,11 +528,11 @@ export default function TreasuryPage() {
         {/* ── SETTLEMENT PREFUNDING ── */}
         {tab === "prefunding" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">Track and approve UMB settlement prefunding requests.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <p className="text-xs sm:text-sm text-muted-foreground">Track and approve UMB settlement prefunding requests.</p>
               {canApprove && (
                 <button onClick={() => setShowPrefundModal(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all">
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0">
                   <Plus className="size-4" /> New Request
                 </button>
               )}
@@ -542,45 +545,45 @@ export default function TreasuryPage() {
                 const Icon = cfg.icon;
                 const isPending = req.status === "pending";
                 return (
-                  <div key={req.id} className={cn("bg-card border rounded-2xl p-5", isPending && canApprove ? "border-amber-200/60 shadow-sm" : "border-border")}>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-start gap-3">
-                        <div className="size-9 rounded-xl bg-brand-navy/10 flex items-center justify-center shrink-0">
-                          <Banknote className="size-4 text-brand-navy" />
+                  <div key={req.id} className={cn("bg-card border rounded-2xl p-4 sm:p-5", isPending && canApprove ? "border-amber-200/60 shadow-sm" : "border-border")}>
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <div className="size-8 sm:size-9 rounded-xl bg-brand-navy/10 flex items-center justify-center shrink-0">
+                          <Banknote className="size-3.5 sm:size-4 text-brand-navy" />
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <p className="font-semibold text-sm">{req.provider}</p>
-                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                            <p className="font-semibold text-xs sm:text-sm truncate">{req.provider}</p>
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium shrink-0", cfg.color)}>
                               <Icon className="size-2.5" />{cfg.label}
                             </span>
                           </div>
-                          <p className="text-xs text-muted-foreground">
-                            Requested by <span className="text-foreground font-medium">{req.requestedBy}</span> · {formatDate(req.requestedAt)}
+                          <p className="text-[10px] sm:text-xs text-muted-foreground">
+                            <span className="hidden sm:inline">Requested by </span><span className="text-foreground font-medium">{req.requestedBy}</span> · {formatDate(req.requestedAt)}
                           </p>
                           {req.approvedBy && (
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-[10px] sm:text-xs text-muted-foreground">
                               {req.status === "rejected" ? "Rejected" : "Approved"} by <span className="text-foreground font-medium">{req.approvedBy}</span>
                               {req.approvedAt ? ` · ${formatDate(req.approvedAt)}` : ""}
                             </p>
                           )}
                           {req.notes && (
-                            <p className="text-xs text-muted-foreground mt-1.5 italic">"{req.notes}"</p>
+                            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1.5 italic line-clamp-2">"{req.notes}"</p>
                           )}
                         </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-lg font-bold text-brand-navy" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(req.amount)}</p>
+                      <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 shrink-0">
+                        <p className="text-base sm:text-lg font-bold text-brand-navy" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(req.amount)}</p>
                         {isPending && canApprove && (
-                          <div className="flex items-center gap-2 mt-2.5">
+                          <div className="flex items-center gap-2">
                             <button
                               onClick={() => setApprovalModal({ type: "prefund", id: req.id, action: "reject" })}
-                              className="px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-xs font-medium hover:bg-red-50 transition-all">
+                              className="px-2.5 sm:px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-[10px] sm:text-xs font-medium hover:bg-red-50 transition-all">
                               Reject
                             </button>
                             <button
                               onClick={() => setApprovalModal({ type: "prefund", id: req.id, action: "approve" })}
-                              className="px-3 py-1.5 rounded-lg bg-brand-navy hover:bg-[#1e2f72] text-white text-xs font-medium transition-all">
+                              className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-brand-navy hover:bg-[#1e2f72] text-white text-[10px] sm:text-xs font-medium transition-all">
                               Approve
                             </button>
                           </div>
@@ -597,26 +600,30 @@ export default function TreasuryPage() {
         {/* ── RECONCILIATION ── */}
         {tab === "reconciliation" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">Daily provider reconciliation. Discrepancies are flagged for investigation.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                <span className="hidden sm:inline">Daily provider reconciliation. Discrepancies are flagged for investigation.</span>
+                <span className="sm:hidden">Daily reconciliation & discrepancies</span>
+              </p>
               <button 
                 onClick={() => setShowExportModal(true)}
-                className="flex items-center gap-1.5 px-3 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all"
+                className="flex items-center justify-center gap-1.5 px-3 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all shrink-0"
               >
                 <Download className="size-3.5" /> Export
               </button>
             </div>
 
             <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border bg-muted/30">
-                    {["Date", "Provider", "Collections", "Payouts", "Fees", "Status", ""].map((h) => (
-                      <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm min-w-200">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/30">
+                      {["Date", "Provider", "Collections", "Payouts", "Fees", "Status", ""].map((h, idx) => (
+                        <th key={`reconc-header-${idx}`} className="text-left px-3 sm:px-4 py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5 whitespace-nowrap">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
                   {mockReconciliationEntries.map((entry) => {
                     const cfg = reconcStatusCfg[entry.status];
                     const Icon = cfg.icon;
@@ -689,6 +696,7 @@ export default function TreasuryPage() {
                   })}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}
@@ -697,7 +705,7 @@ export default function TreasuryPage() {
         {tab === "payouts" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">Review and approve merchant payout batches.</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Review and approve merchant payout batches.</p>
             </div>
 
             <div className="space-y-3">
@@ -706,50 +714,50 @@ export default function TreasuryPage() {
                 const Icon = cfg.icon;
                 const isPending = batch.status === "pending_approval";
                 return (
-                  <div key={batch.id} className={cn("bg-card border rounded-2xl p-5", isPending && canApprove ? "border-amber-200/60 shadow-sm" : "border-border")}>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-start gap-3">
-                        <div className="size-9 rounded-xl bg-brand-teal/10 flex items-center justify-center shrink-0">
-                          <ArrowUpRight className="size-4 text-[#1a6e6c]" />
+                  <div key={batch.id} className={cn("bg-card border rounded-2xl p-4 sm:p-5", isPending && canApprove ? "border-amber-200/60 shadow-sm" : "border-border")}>
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <div className="size-8 sm:size-9 rounded-xl bg-brand-teal/10 flex items-center justify-center shrink-0">
+                          <ArrowUpRight className="size-3.5 sm:size-4 text-[#1a6e6c]" />
                         </div>
-                        <div>
+                        <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                            <p className="font-semibold text-sm font-mono">{batch.batchRef}</p>
-                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
+                            <p className="font-semibold text-xs sm:text-sm font-mono truncate">{batch.batchRef}</p>
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium shrink-0", cfg.color)}>
                               <Icon className="size-2.5" />{cfg.label}
                             </span>
-                            <span className="text-[10px] px-1.5 py-0.5 bg-muted rounded font-mono">{batch.provider}</span>
+                            <span className="text-[10px] px-1.5 py-0.5 bg-muted rounded font-mono shrink-0">{batch.provider}</span>
                           </div>
-                          <p className="text-xs text-muted-foreground">{batch.merchantName}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
+                          <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{batch.merchantName}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">
                             {batch.payoutCount} payouts · Created {formatDate(batch.createdAt)}
                           </p>
                           {batch.failedCount && (
-                            <p className="text-xs text-red-600 font-medium mt-0.5">
+                            <p className="text-[10px] sm:text-xs text-red-600 font-medium mt-0.5">
                               {batch.failedCount} failed payouts — requires review
                             </p>
                           )}
                           {batch.approvedBy && (
-                            <p className="text-xs text-muted-foreground mt-0.5">
+                            <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">
                               Approved by {batch.approvedBy}{batch.approvedAt ? ` · ${formatDate(batch.approvedAt)}` : ""}
                             </p>
                           )}
                         </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-lg font-bold text-brand-navy" style={{ fontFamily: "var(--font-heading)" }}>
+                      <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 shrink-0">
+                        <p className="text-base sm:text-lg font-bold text-brand-navy" style={{ fontFamily: "var(--font-heading)" }}>
                           {formatGHS(batch.totalAmount)}
                         </p>
                         {isPending && canApprove && (
-                          <div className="flex items-center gap-2 mt-2.5">
+                          <div className="flex items-center gap-2">
                             <button
                               onClick={() => setApprovalModal({ type: "payout", id: batch.id, action: "reject" })}
-                              className="px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-xs font-medium hover:bg-red-50 transition-all">
+                              className="px-2.5 sm:px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-[10px] sm:text-xs font-medium hover:bg-red-50 transition-all">
                               Reject
                             </button>
                             <button
                               onClick={() => setApprovalModal({ type: "payout", id: batch.id, action: "approve" })}
-                              className="px-3 py-1.5 rounded-lg bg-brand-navy hover:bg-[#1e2f72] text-white text-xs font-medium transition-all">
+                              className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-brand-navy hover:bg-[#1e2f72] text-white text-[10px] sm:text-xs font-medium transition-all">
                               Approve
                             </button>
                           </div>
@@ -766,21 +774,21 @@ export default function TreasuryPage() {
         {/* ── FEE LEDGER ── */}
         {tab === "fee_ledger" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
                 <input value={ledgerSearch} onChange={(e) => setLedgerSearch(e.target.value)}
                   placeholder="Search merchant or ref…"
-                  className="w-full pl-9 pr-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-teal/60 transition-all" />
+                  className="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-teal/60 transition-all" />
               </div>
-              <div className="flex items-center gap-3">
-                <div className="text-right">
+              <div className="flex items-center justify-between sm:justify-end gap-3">
+                <div className="text-left sm:text-right">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total fees shown</p>
-                  <p className="text-sm font-bold text-brand-navy">{formatGHS(filteredLedger.reduce((s, e) => s + e.feeAmount, 0))}</p>
+                  <p className="text-xs sm:text-sm font-bold text-brand-navy">{formatGHS(filteredLedger.reduce((s, e) => s + e.feeAmount, 0))}</p>
                 </div>
                 <button 
                   onClick={() => setShowExportModal(true)}
-                  className="flex items-center gap-1.5 px-3 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all"
+                  className="flex items-center gap-1.5 px-3 py-2 border border-border rounded-xl text-xs font-medium hover:bg-muted/50 transition-all shrink-0"
                 >
                   <Download className="size-3.5" /> Export
                 </button>
@@ -788,37 +796,39 @@ export default function TreasuryPage() {
             </div>
 
             <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm min-w-250">
                 <thead>
                   <tr className="border-b border-border bg-muted/30">
-                    {["Date", "Merchant", "Channel", "Type", "Tx Amount", "Rate", "Fee", "Bank Share", "Platform Share", "Ref"].map((h) => (
-                      <th key={h} className="text-left px-3 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5">{h}</th>
+                    {["Date", "Merchant", "Channel", "Type", "Tx Amount", "Rate", "Fee", "Bank Share", "Platform Share", "Ref"].map((h, idx) => (
+                      <th key={`ledger-header-${idx}`} className="text-left px-2 sm:px-3 py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5 whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {filteredLedger.map((entry) => (
                     <tr key={entry.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
-                      <td className="pl-5 pr-3 py-3 text-xs text-muted-foreground whitespace-nowrap">{formatDate(entry.date)}</td>
-                      <td className="px-3 py-3 text-xs font-medium max-w-35 truncate">{entry.merchantName}</td>
-                      <td className="px-3 py-3 text-xs">{entry.channel}</td>
-                      <td className="px-3 py-3">
-                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium",
+                      <td className="pl-4 sm:pl-5 pr-2 sm:pr-3 py-3 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">{formatDate(entry.date)}</td>
+                      <td className="px-2 sm:px-3 py-3 text-[10px] sm:text-xs font-medium max-w-35 truncate">{entry.merchantName}</td>
+                      <td className="px-2 sm:px-3 py-3 text-[10px] sm:text-xs">{entry.channel}</td>
+                      <td className="px-2 sm:px-3 py-3">
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full font-medium",
                           entry.transactionType === "collection" ? "bg-brand-teal/10 text-[#1a6e6c]" : "bg-brand-peach/40 text-amber-700")}>
                           {entry.transactionType === "collection" ? <ArrowDownLeft className="size-2.5" /> : <ArrowUpRight className="size-2.5" />}
-                          {entry.transactionType}
+                          <span className="hidden sm:inline">{entry.transactionType}</span>
                         </span>
                       </td>
-                      <td className="px-3 py-3 text-xs font-medium">{formatGHS(entry.transactionAmount)}</td>
-                      <td className="px-3 py-3 text-xs font-mono text-brand-navy font-bold">{entry.feeRate}</td>
-                      <td className="px-3 py-3 text-xs font-semibold">{formatGHS(entry.feeAmount)}</td>
-                      <td className="px-3 py-3 text-xs text-muted-foreground">{formatGHS(entry.bankShare)}</td>
-                      <td className="px-3 py-3 text-xs text-muted-foreground">{formatGHS(entry.platformShare)}</td>
-                      <td className="px-3 py-3 text-xs font-mono text-muted-foreground">{entry.ref}</td>
+                      <td className="px-2 sm:px-3 py-3 text-[10px] sm:text-xs font-medium">{formatGHS(entry.transactionAmount)}</td>
+                      <td className="px-2 sm:px-3 py-3 text-[10px] sm:text-xs font-mono text-brand-navy font-bold">{entry.feeRate}</td>
+                      <td className="px-2 sm:px-3 py-3 text-[10px] sm:text-xs font-semibold">{formatGHS(entry.feeAmount)}</td>
+                      <td className="px-2 sm:px-3 py-3 text-[10px] sm:text-xs text-muted-foreground">{formatGHS(entry.bankShare)}</td>
+                      <td className="px-2 sm:px-3 py-3 text-[10px] sm:text-xs text-muted-foreground">{formatGHS(entry.platformShare)}</td>
+                      <td className="px-2 sm:px-3 py-3 text-[10px] sm:text-xs font-mono text-muted-foreground truncate max-w-20">{entry.ref}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}
@@ -826,12 +836,12 @@ export default function TreasuryPage() {
         {/* ── REPORTS ── */}
         {tab === "reports" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">Generate and download financial reports.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <p className="text-xs sm:text-sm text-muted-foreground">Generate and download financial reports.</p>
               {canApprove && (
                 <button 
                   onClick={() => setShowReportModal(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0"
                 >
                   <Plus className="size-4" /> Generate Report
                 </button>
@@ -842,23 +852,23 @@ export default function TreasuryPage() {
               {mockFinancialReports.map((report) => {
                 const typeCfg = reportTypeCfg[report.type];
                 return (
-                  <div key={report.id} className="bg-card border border-border rounded-2xl p-5 flex items-start gap-4 hover:shadow-sm transition-all">
-                    <div className={cn("size-10 rounded-xl flex items-center justify-center shrink-0", typeCfg.color)}>
-                      <FileText className="size-4" />
+                  <div key={report.id} className="bg-card border border-border rounded-2xl p-4 sm:p-5 flex items-start gap-3 sm:gap-4 hover:shadow-sm transition-all">
+                    <div className={cn("size-9 sm:size-10 rounded-xl flex items-center justify-center shrink-0", typeCfg.color)}>
+                      <FileText className="size-3.5 sm:size-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <p className="font-semibold text-sm">{report.name}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">{report.description}</p>
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold text-xs sm:text-sm truncate">{report.name}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 line-clamp-2">{report.description}</p>
                         </div>
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-muted/50 transition-all shrink-0">
+                        <button className="flex items-center justify-center gap-1.5 px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-muted/50 transition-all shrink-0">
                           <Download className="size-3" /> {report.size}
                         </button>
                       </div>
-                      <div className="flex items-center gap-3 mt-2.5">
-                        <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium", typeCfg.color)}>{typeCfg.label}</span>
-                        <span className="text-[10px] text-muted-foreground">{report.period}</span>
+                      <div className="flex items-center gap-2 sm:gap-3 mt-2.5 flex-wrap">
+                        <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0", typeCfg.color)}>{typeCfg.label}</span>
+                        <span className="text-[10px] text-muted-foreground shrink-0">{report.period}</span>
                         <span className="text-[10px] text-muted-foreground">{formatDate(report.generatedAt)}</span>
                       </div>
                     </div>
@@ -868,9 +878,9 @@ export default function TreasuryPage() {
             </div>
 
             {/* Quick-generate row */}
-            <div className="bg-muted/30 border border-border rounded-2xl p-5">
-              <p className="text-sm font-semibold mb-3" style={{ fontFamily: "var(--font-heading)" }}>Quick Generate</p>
-              <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
+            <div className="bg-muted/30 border border-border rounded-2xl p-4 sm:p-5">
+              <p className="text-xs sm:text-sm font-semibold mb-3" style={{ fontFamily: "var(--font-heading)" }}>Quick Generate</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                 {(["reconciliation", "fee_ledger", "payout", "volume", "settlement_balance"] as const).map((t) => {
                   const cfg = reportTypeCfg[t];
                   return (
@@ -897,34 +907,34 @@ export default function TreasuryPage() {
       {/* ── Approval modal ── */}
       <AnimatePresence>
         {approvalModal && (
-          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm"
             onClick={() => { setApprovalModal(null); setApprovalNote(""); }}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl"
+              className="bg-card border border-border rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-2xl"
               onClick={(e) => e.stopPropagation()}>
-              <div className={cn("size-11 rounded-xl flex items-center justify-center mb-4 border",
+              <div className={cn("size-10 sm:size-11 rounded-xl flex items-center justify-center mb-3 sm:mb-4 border",
                 approvalModal.action === "approve" ? "bg-brand-navy/10 border-brand-navy/20" : "bg-red-50 border-red-200")}>
-                {approvalModal.action === "approve" ? <CheckCircle className="size-5 text-brand-navy" /> : <XCircle className="size-5 text-red-500" />}
+                {approvalModal.action === "approve" ? <CheckCircle className="size-4 sm:size-5 text-brand-navy" /> : <XCircle className="size-4 sm:size-5 text-red-500" />}
               </div>
-              <h2 className="font-bold text-lg mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="font-bold text-base sm:text-lg mb-1" style={{ fontFamily: "var(--font-heading)" }}>
                 {approvalModal.action === "approve" ? "Approve" : "Reject"} {approvalModal.type === "prefund" ? "Prefund Request" : "Payout Batch"}
               </h2>
-              <p className="text-sm text-muted-foreground mb-5">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-5">
                 {approvalModal.action === "approve"
                   ? "This action will be logged with your identity."
                   : "A rejection note is required. The requester will be notified."}
               </p>
-              <div className="mb-5">
-                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
+              <div className="mb-4 sm:mb-5">
+                <label className="block text-[10px] sm:text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
                   Note {approvalModal.action === "reject" && <span className="text-destructive">*</span>}
                 </label>
                 <textarea rows={2} value={approvalNote} onChange={(e) => setApprovalNote(e.target.value)}
                   placeholder={approvalModal.action === "approve" ? "Optional note…" : "Reason for rejection…"}
-                  className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-brand-teal/60 transition-all" />
+                  className="w-full text-xs sm:text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-brand-teal/60 transition-all" />
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <button onClick={() => { setApprovalModal(null); setApprovalNote(""); }}
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all">
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-border text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1">
                   Cancel
                 </button>
                 <button
@@ -940,7 +950,7 @@ export default function TreasuryPage() {
                     setApprovalModal(null);
                     setApprovalNote("");
                   }}
-                  className={cn("flex-1 px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed",
+                  className={cn("flex-1 px-4 py-2.5 rounded-xl text-white text-xs sm:text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed order-1 sm:order-2",
                     approvalModal.action === "approve" ? "bg-brand-navy hover:bg-[#1e2f72]" : "bg-destructive hover:opacity-90")}>
                   {approvalModal.action === "approve" ? "Confirm Approval" : "Confirm Rejection"}
                 </button>
@@ -953,21 +963,21 @@ export default function TreasuryPage() {
       {/* ── New Prefund Request modal ── */}
       <AnimatePresence>
         {showPrefundModal && (
-          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm"
             onClick={() => setShowPrefundModal(false)}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-2xl"
+              className="bg-card border border-border rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-2xl"
               onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <h2 className="font-bold text-lg" style={{ fontFamily: "var(--font-heading)" }}>Request Settlement Prefund</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">This will be submitted for Finance approval.</p>
+              <div className="flex items-start justify-between mb-4 sm:mb-5 gap-3">
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-bold text-base sm:text-lg truncate" style={{ fontFamily: "var(--font-heading)" }}>Request Settlement Prefund</h2>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">This will be submitted for Finance approval.</p>
                 </div>
-                <button onClick={() => setShowPrefundModal(false)} className="p-1.5 rounded-lg hover:bg-muted/60"><X className="size-4" /></button>
+                <button onClick={() => setShowPrefundModal(false)} className="p-1.5 rounded-lg hover:bg-muted/60 shrink-0"><X className="size-4" /></button>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Provider</label>
+                  <label className="block text-[10px] sm:text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Provider</label>
                   <CustomSelect
                     value={prefundProviderId}
                     onChange={setPrefundProviderId}
@@ -979,24 +989,24 @@ export default function TreasuryPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Amount (GHS)</label>
+                  <label className="block text-[10px] sm:text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Amount (GHS)</label>
                   <input type="number" placeholder="e.g. 500000"
-                    className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-teal/60 transition-all" />
+                    className="w-full px-3 py-2.5 text-xs sm:text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-teal/60 transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Justification</label>
+                  <label className="block text-[10px] sm:text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">Justification</label>
                   <textarea rows={3} placeholder="Why is this prefund needed?"
-                    className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-brand-teal/60 transition-all" />
+                    className="w-full text-xs sm:text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-brand-teal/60 transition-all" />
                 </div>
               </div>
-              <div className="flex gap-3 mt-5">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4 sm:mt-5">
                 <button onClick={() => setShowPrefundModal(false)}
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted/50 transition-all">Cancel</button>
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-border text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1">Cancel</button>
                 <button onClick={() => {
                   showToast("success", "Prefund Request Submitted", "Your request has been submitted for approval.");
                   setShowPrefundModal(false);
                 }}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-brand-navy hover:bg-[#1e2f72] text-white text-sm font-medium transition-all">Submit Request</button>
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-brand-navy hover:bg-[#1e2f72] text-white text-xs sm:text-sm font-medium transition-all order-1 sm:order-2">Submit Request</button>
               </div>
             </motion.div>
           </div>

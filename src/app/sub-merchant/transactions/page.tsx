@@ -500,7 +500,7 @@ export default function SubMerchantTransactionsPage() {
         >
           <div className="space-y-6">
             {/* Info banner */}
-            <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+            <div className="flex items-start gap-2 sm:gap-3 bg-amber-50 border border-amber-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3">
               <Info className="size-4 text-amber-600 mt-0.5 shrink-0" />
               <div>
                 <p className="text-sm font-medium text-amber-800">Dispute Review Process</p>

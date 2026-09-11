@@ -73,29 +73,29 @@ export default function AuditLogPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-5 border-b border-border bg-card/50 shrink-0">
-        <div className="flex items-center justify-between mb-4">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border bg-card/50 shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
               Audit Log
             </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
               Complete audit trail · All actions tracked · Actor accountability
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-xl text-xs font-medium">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+            <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-xl text-[10px] sm:text-xs font-medium shrink-0">
               <Activity className="size-3" />
               {todayCount} today
             </span>
             {criticalCount > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-[10px] sm:text-xs font-medium shrink-0">
                 <AlertTriangle className="size-3" />
                 {criticalCount} critical
               </span>
             )}
             {securityCount > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-[10px] sm:text-xs font-medium shrink-0">
                 <Shield className="size-3" />
                 {securityCount} security
               </span>
@@ -104,27 +104,27 @@ export default function AuditLogPage() {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Search */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 sm:size-4 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search by action, resource, ID, or description..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
+              className="w-full pl-9 sm:pl-10 pr-4 py-2 bg-card border border-border rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
             />
           </div>
 
           {/* Filter Toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={cn("flex items-center gap-2 px-4 py-2 border rounded-xl text-sm font-medium transition-all",
+            className={cn("flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0",
               showFilters ? "bg-brand-navy text-white border-brand-navy" : "bg-card border-border hover:bg-muted/50")}
           >
-            <Filter className="size-4" />
-            Filters
+            <Filter className="size-3.5 sm:size-4" />
+            <span className="hidden sm:inline">Filters</span>
             {(selectedEventType !== "all" || selectedCategory !== "all" || selectedSeverity !== "all") && (
               <span className="px-1.5 py-0.5 bg-white/20 rounded-full text-[10px] font-bold">
                 {[selectedEventType !== "all", selectedCategory !== "all", selectedSeverity !== "all"].filter(Boolean).length}
@@ -135,16 +135,17 @@ export default function AuditLogPage() {
           {/* Export */}
           <button 
             onClick={() => setShowExportModal(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all shrink-0"
           >
-            <Download className="size-4" /> Export
+            <Download className="size-3.5 sm:size-4" />
+            <span className="hidden sm:inline">Export</span>
           </button>
         </div>
 
         {/* Filter Panel */}
         {showFilters && (
-          <div className="mt-3 p-4 bg-muted/30 border border-border rounded-xl">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="mt-3 p-3 sm:p-4 bg-muted/30 border border-border rounded-xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {/* Event Type Filter */}
               <div>
                 <label className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Event Type</label>
@@ -223,20 +224,20 @@ export default function AuditLogPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-20 md:pb-6">
         {/* Results Count */}
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
+        <div className="mb-4 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Showing <span className="font-semibold text-foreground">{filteredEvents.length}</span> of{" "}
             <span className="font-semibold text-foreground">{mockAuditEvents.length}</span> events
           </p>
-          <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <RefreshCw className="size-3.5" /> Refresh
+          <button className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors self-start xs:self-auto">
+            <RefreshCw className="size-3 sm:size-3.5" /> Refresh
           </button>
         </div>
 
         {/* Audit Events List */}
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {filteredEvents.map((event) => {
             const isExpanded = expandedEvent === event.id;
             const eventTypeColor = getEventTypeColor(event.eventType);
@@ -246,65 +247,66 @@ export default function AuditLogPage() {
             return (
               <div
                 key={event.id}
-                className={cn("bg-card border rounded-2xl overflow-hidden transition-all",
+                className={cn("bg-card border rounded-xl sm:rounded-2xl overflow-hidden transition-all",
                   event.severity === "critical" ? "border-red-200 shadow-sm" : "border-border",
                   isExpanded && "ring-2 ring-brand-navy/20")}
               >
                 {/* Event Summary */}
                 <button
                   onClick={() => setExpandedEvent(isExpanded ? null : event.id)}
-                  className="w-full p-5 text-left hover:bg-muted/20 transition-colors"
+                  className="w-full p-3 sm:p-5 text-left hover:bg-muted/20 transition-colors"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3 sm:gap-4">
                     {/* Icon */}
-                    <div className="size-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${categoryColor}18` }}>
-                      {event.eventType === "security_event" ? <Shield className="size-5" style={{ color: categoryColor }} /> :
-                       event.eventType === "approval_action" ? <CheckCircle className="size-5" style={{ color: categoryColor }} /> :
-                       event.eventType === "config_change" ? <Settings className="size-5" style={{ color: categoryColor }} /> :
-                       event.eventType === "data_access" ? <Eye className="size-5" style={{ color: categoryColor }} /> :
-                       event.eventType === "system_event" ? <Activity className="size-5" style={{ color: categoryColor }} /> :
-                       <User className="size-5" style={{ color: categoryColor }} />}
+                    <div className="size-8 sm:size-10 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0" style={{ background: `${categoryColor}18` }}>
+                      {event.eventType === "security_event" ? <Shield className="size-4 sm:size-5" style={{ color: categoryColor }} /> :
+                       event.eventType === "approval_action" ? <CheckCircle className="size-4 sm:size-5" style={{ color: categoryColor }} /> :
+                       event.eventType === "config_change" ? <Settings className="size-4 sm:size-5" style={{ color: categoryColor }} /> :
+                       event.eventType === "data_access" ? <Eye className="size-4 sm:size-5" style={{ color: categoryColor }} /> :
+                       event.eventType === "system_event" ? <Activity className="size-4 sm:size-5" style={{ color: categoryColor }} /> :
+                       <User className="size-4 sm:size-5" style={{ color: categoryColor }} />}
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium uppercase", severityColor)}>
-                          {event.severity === "critical" ? <AlertTriangle className="size-2.5" /> :
-                           event.severity === "warning" ? <AlertTriangle className="size-2.5" /> :
-                           <Info className="size-2.5" />}
+                      <div className="flex items-center gap-1.5 sm:gap-2 mb-2 flex-wrap">
+                        <span className={cn("inline-flex items-center gap-1 text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium uppercase shrink-0", severityColor)}>
+                          {event.severity === "critical" ? <AlertTriangle className="size-2 sm:size-2.5" /> :
+                           event.severity === "warning" ? <AlertTriangle className="size-2 sm:size-2.5" /> :
+                           <Info className="size-2 sm:size-2.5" />}
                           {event.severity}
                         </span>
-                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", eventTypeColor)}>
+                        <span className={cn("inline-flex items-center gap-1 text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium shrink-0", eventTypeColor)}>
                           {event.eventType.replace(/_/g, " ")}
                         </span>
-                        <span className="text-[10px] px-2 py-0.5 bg-muted rounded-full font-mono">
+                        <span className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 bg-muted rounded-full font-mono shrink-0">
                           {event.category.replace(/_/g, " ")}
                         </span>
-                        <span className="text-[10px] text-muted-foreground font-mono">
+                        <span className="text-[9px] sm:text-[10px] text-muted-foreground font-mono hidden sm:inline">
                           {event.id}
                         </span>
                       </div>
 
-                      <p className="font-semibold text-sm mb-1">{event.action.replace(/_/g, " ")}</p>
-                      <p className="text-sm text-muted-foreground mb-3">{event.description}</p>
+                      <p className="font-semibold text-xs sm:text-sm mb-1">{event.action.replace(/_/g, " ")}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-2">{event.description}</p>
 
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1.5">
-                          <User className="size-3" />
-                          {event.actor.name} ({event.actor.role})
+                      <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-muted-foreground flex-wrap">
+                        <span className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                          <User className="size-2.5 sm:size-3" />
+                          <span className="truncate max-w-30 sm:max-w-none">{event.actor.name}</span>
+                          <span className="hidden sm:inline">({event.actor.role})</span>
                         </span>
-                        <span>·</span>
-                        <span className="flex items-center gap-1.5">
-                          <Clock className="size-3" />
+                        <span className="hidden sm:inline">·</span>
+                        <span className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                          <Clock className="size-2.5 sm:size-3" />
                           {formatDate(event.timestamp)}
                         </span>
-                        <span>·</span>
-                        <span className="font-mono">{event.actor.ipAddress}</span>
+                        <span className="hidden md:inline">·</span>
+                        <span className="font-mono hidden md:inline">{event.actor.ipAddress}</span>
                         {event.resourceId && (
                           <>
-                            <span>·</span>
-                            <span className="font-mono">{event.resourceId}</span>
+                            <span className="hidden lg:inline">·</span>
+                            <span className="font-mono hidden lg:inline">{event.resourceId}</span>
                           </>
                         )}
                       </div>
@@ -313,9 +315,9 @@ export default function AuditLogPage() {
                     {/* Expand Icon */}
                     <div className="shrink-0">
                       {isExpanded ? (
-                        <ChevronUp className="size-5 text-muted-foreground" />
+                        <ChevronUp className="size-4 sm:size-5 text-muted-foreground" />
                       ) : (
-                        <ChevronDown className="size-5 text-muted-foreground" />
+                        <ChevronDown className="size-4 sm:size-5 text-muted-foreground" />
                       )}
                     </div>
                   </div>
@@ -323,30 +325,30 @@ export default function AuditLogPage() {
 
                 {/* Expanded Details */}
                 {isExpanded && (
-                  <div className="px-5 pb-5 pt-0 border-t border-border/50 bg-muted/10">
-                    <div className="grid grid-cols-2 gap-6 mt-5">
+                  <div className="px-3 sm:px-5 pb-3 sm:pb-5 pt-0 border-t border-border/50 bg-muted/10">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-3 sm:mt-5">
                       {/* Left Column */}
-                      <div className="space-y-4">
+                      <div className="space-y-3 sm:space-y-4">
                         <div>
-                          <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Event Details</h4>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex items-center justify-between">
-                              <span className="text-muted-foreground">Resource</span>
-                              <span className="font-medium font-mono">{event.resource}</span>
+                          <h4 className="text-[10px] sm:text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Event Details</h4>
+                          <div className="space-y-2 text-xs sm:text-sm">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-muted-foreground shrink-0">Resource</span>
+                              <span className="font-medium font-mono text-right truncate">{event.resource}</span>
                             </div>
                             {event.resourceId && (
-                              <div className="flex items-center justify-between">
-                                <span className="text-muted-foreground">Resource ID</span>
-                                <span className="font-medium font-mono">{event.resourceId}</span>
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="text-muted-foreground shrink-0">Resource ID</span>
+                                <span className="font-medium font-mono text-right truncate">{event.resourceId}</span>
                               </div>
                             )}
-                            <div className="flex items-center justify-between">
-                              <span className="text-muted-foreground">Tier</span>
-                              <span className="px-2 py-0.5 bg-muted rounded text-xs font-medium capitalize">{event.tier}</span>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-muted-foreground shrink-0">Tier</span>
+                              <span className="px-2 py-0.5 bg-muted rounded text-[10px] sm:text-xs font-medium capitalize">{event.tier}</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-muted-foreground">Timestamp</span>
-                              <span className="font-medium font-mono text-xs">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-muted-foreground shrink-0">Timestamp</span>
+                              <span className="font-medium font-mono text-[10px] sm:text-xs text-right">
                                 {event.timestamp.toLocaleString("en-GB", {
                                   day: "2-digit",
                                   month: "short",
@@ -362,36 +364,36 @@ export default function AuditLogPage() {
 
                         {/* Actor Information */}
                         <div>
-                          <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Actor Information</h4>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex items-center justify-between">
-                              <span className="text-muted-foreground">User ID</span>
-                              <span className="font-medium font-mono">{event.actor.userId}</span>
+                          <h4 className="text-[10px] sm:text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Actor Information</h4>
+                          <div className="space-y-2 text-xs sm:text-sm">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-muted-foreground shrink-0">User ID</span>
+                              <span className="font-medium font-mono text-right truncate">{event.actor.userId}</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-muted-foreground">Name</span>
-                              <span className="font-medium">{event.actor.name}</span>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-muted-foreground shrink-0">Name</span>
+                              <span className="font-medium text-right truncate">{event.actor.name}</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-muted-foreground">Role</span>
-                              <span className="font-medium">{event.actor.role}</span>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-muted-foreground shrink-0">Role</span>
+                              <span className="font-medium text-right">{event.actor.role}</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-muted-foreground">IP Address</span>
-                              <span className="font-medium font-mono">{event.actor.ipAddress}</span>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-muted-foreground shrink-0">IP Address</span>
+                              <span className="font-medium font-mono text-right">{event.actor.ipAddress}</span>
                             </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Right Column */}
-                      <div className="space-y-4">
+                      <div className="space-y-3 sm:space-y-4">
                         {/* Before State */}
                         {event.beforeState && (
                           <div>
-                            <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Before State</h4>
-                            <div className="p-3 bg-red-50/50 border border-red-200 rounded-xl">
-                              <pre className="text-xs font-mono text-muted-foreground overflow-x-auto">
+                            <h4 className="text-[10px] sm:text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Before State</h4>
+                            <div className="p-2 sm:p-3 bg-red-50/50 border border-red-200 rounded-xl">
+                              <pre className="text-[10px] sm:text-xs font-mono text-muted-foreground overflow-x-auto">
                                 {JSON.stringify(event.beforeState, null, 2)}
                               </pre>
                             </div>
@@ -401,9 +403,9 @@ export default function AuditLogPage() {
                         {/* After State */}
                         {event.afterState && (
                           <div>
-                            <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">After State</h4>
-                            <div className="p-3 bg-emerald-50/50 border border-emerald-200 rounded-xl">
-                              <pre className="text-xs font-mono text-muted-foreground overflow-x-auto">
+                            <h4 className="text-[10px] sm:text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">After State</h4>
+                            <div className="p-2 sm:p-3 bg-emerald-50/50 border border-emerald-200 rounded-xl">
+                              <pre className="text-[10px] sm:text-xs font-mono text-muted-foreground overflow-x-auto">
                                 {JSON.stringify(event.afterState, null, 2)}
                               </pre>
                             </div>
@@ -413,9 +415,9 @@ export default function AuditLogPage() {
                         {/* Metadata */}
                         {event.metadata && (
                           <div>
-                            <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Metadata</h4>
-                            <div className="p-3 bg-blue-50/50 border border-blue-200 rounded-xl">
-                              <pre className="text-xs font-mono text-muted-foreground overflow-x-auto">
+                            <h4 className="text-[10px] sm:text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Metadata</h4>
+                            <div className="p-2 sm:p-3 bg-blue-50/50 border border-blue-200 rounded-xl">
+                              <pre className="text-[10px] sm:text-xs font-mono text-muted-foreground overflow-x-auto">
                                 {JSON.stringify(event.metadata, null, 2)}
                               </pre>
                             </div>

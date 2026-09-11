@@ -57,7 +57,7 @@ export default function DocumentsForm({ defaultValues, ownerData, businessData, 
 
       {/* Info banner for starter businesses */}
       {!isRegistered && (
-        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+        <div className="flex items-start gap-2 sm:gap-3 bg-amber-50 border border-amber-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3">
           <Info className="size-4 text-amber-600 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-amber-900">Starter Business Account</p>

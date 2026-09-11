@@ -67,23 +67,23 @@ export function Modal({
       {/* Modal */}
       <div
         className={cn(
-          "relative w-full bg-card border border-border rounded-2xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col mx-4",
+          "relative w-full bg-card border border-border rounded-2xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col mx-3 sm:mx-4",
           sizeClasses[size]
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-5 border-b border-border shrink-0">
-          <div className="flex items-start justify-between gap-4">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border shrink-0">
+          <div className="flex items-start justify-between gap-3 sm:gap-4">
             <div className="flex-1 min-w-0">
               <h2
-                className="text-xl font-bold tracking-tight"
+                className="text-base sm:text-xl font-bold tracking-tight"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {title}
               </h2>
               {description && (
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   {description}
                 </p>
               )}
@@ -93,14 +93,14 @@ export function Modal({
                 onClick={onClose}
                 className="size-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors shrink-0"
               >
-                <X className="size-5 text-muted-foreground" />
+                <X className="size-4 sm:size-5 text-muted-foreground" />
               </button>
             )}
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">{children}</div>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</div>
       </div>
     </div>
   );

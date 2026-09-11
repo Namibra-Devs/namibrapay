@@ -119,31 +119,32 @@ export default function SupportPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-border bg-card/50 shrink-0">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+      <div className="px-4 sm:px-6 py-4 border-b border-border bg-card/50 shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate" style={{ fontFamily: "var(--font-heading)" }}>
               Support Tools
             </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              Ticket management · Transaction search · Disputes · SLA tracking
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+              <span className="hidden sm:inline">Ticket management · Transaction search · Disputes · SLA tracking</span>
+              <span className="sm:hidden">Tickets · Disputes · SLA</span>
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {openTickets > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-xl text-[10px] sm:text-xs font-medium">
                 <Activity className="size-3" />
                 {openTickets} active
               </span>
             )}
             {urgentTickets > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-[10px] sm:text-xs font-medium">
                 <AlertTriangle className="size-3" />
                 {urgentTickets} urgent
               </span>
             )}
             {breachedSla > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border border-orange-200 text-orange-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-orange-50 border border-orange-200 text-orange-700 rounded-xl text-[10px] sm:text-xs font-medium">
                 <Clock className="size-3" />
                 {breachedSla} SLA breach
               </span>
@@ -178,24 +179,24 @@ export default function SupportPage() {
           <>
             {/* Ticket List */}
             <div className={cn("flex flex-col transition-all duration-300 border-r border-border", selectedTicket ? "w-105 shrink-0" : "flex-1")}>
-              <div className="px-6 py-4 border-b border-border bg-card/30">
-                <div className="flex items-center gap-2 text-xs">
-                  <button className="px-2.5 py-1 rounded-lg border transition-all bg-foreground text-background border-foreground">
+              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-card/30">
+                <div className="flex items-center gap-2 text-[10px] sm:text-xs overflow-x-auto scrollbar-none">
+                  <button className="px-2 sm:px-2.5 py-1 rounded-lg border transition-all bg-foreground text-background border-foreground whitespace-nowrap shrink-0">
                     All ({mockSupportTickets.length})
                   </button>
-                  <button className="px-2.5 py-1 rounded-lg border transition-all bg-card border-border hover:bg-muted/50">
+                  <button className="px-2 sm:px-2.5 py-1 rounded-lg border transition-all bg-card border-border hover:bg-muted/50 whitespace-nowrap shrink-0">
                     Open ({mockSupportTickets.filter(t => t.status === "open").length})
                   </button>
-                  <button className="px-2.5 py-1 rounded-lg border transition-all bg-card border-border hover:bg-muted/50">
+                  <button className="px-2 sm:px-2.5 py-1 rounded-lg border transition-all bg-card border-border hover:bg-muted/50 whitespace-nowrap shrink-0">
                     Urgent ({urgentTickets})
                   </button>
-                  <button className="px-2.5 py-1 rounded-lg border transition-all bg-card border-border hover:bg-muted/50">
+                  <button className="px-2 sm:px-2.5 py-1 rounded-lg border transition-all bg-card border-border hover:bg-muted/50 whitespace-nowrap shrink-0">
                     SLA Breach ({breachedSla})
                   </button>
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto divide-y divide-border">
+              <div className="flex-1 overflow-y-auto divide-y divide-border pb-20 md:pb-0">
                 {mockSupportTickets.map((ticket) => {
                   const statusCfg = ticketStatusConfig[ticket.status];
                   const priorityCfg = priorityConfig[ticket.priority];
@@ -207,51 +208,51 @@ export default function SupportPage() {
                     <motion.button
                       key={ticket.id}
                       onClick={() => setSelectedTicket(isSelected ? null : ticket)}
-                      className={cn("w-full text-left px-6 py-4 hover:bg-muted/30 transition-colors",
+                      className={cn("w-full text-left px-4 sm:px-6 py-3 sm:py-4 hover:bg-muted/30 transition-colors",
                         isSelected && "bg-brand-mint/5 border-r-2 border-r-brand-mint",
                         isUrgent && !isSelected && "bg-red-50/30",
                         ticket.slaBreached && !isSelected && "bg-orange-50/30")}
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                     >
                       <div className="flex items-start justify-between gap-3 mb-2">
-                        <div className="flex items-start gap-3 min-w-0 flex-1">
-                          <div className={cn("size-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5",
+                        <div className="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
+                          <div className={cn("size-8 sm:size-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5",
                             isUrgent ? "bg-red-100" : "bg-brand-mint/20 border border-brand-mint/20")}>
-                            <Headphones className={cn("size-4", isUrgent ? "text-red-600" : "text-[#1a7a5e]")} />
+                            <Headphones className={cn("size-3.5 sm:size-4", isUrgent ? "text-red-600" : "text-[#1a7a5e]")} />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
                               <span className="text-[10px] font-mono text-muted-foreground">{ticket.ticketNumber}</span>
-                              <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", priorityCfg.color)}>
+                              <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium shrink-0", priorityCfg.color)}>
                                 {priorityCfg.label}
                               </span>
                               {ticket.slaBreached && (
-                                <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium bg-orange-50 text-orange-700 border-orange-200">
+                                <span className="inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium bg-orange-50 text-orange-700 border-orange-200 shrink-0">
                                   <Clock className="size-2.5" /> SLA
                                 </span>
                               )}
                             </div>
-                            <p className="font-semibold text-sm truncate">{ticket.subject}</p>
-                            <p className="text-xs text-muted-foreground truncate">{ticket.merchantName}</p>
+                            <p className="font-semibold text-xs sm:text-sm truncate">{ticket.subject}</p>
+                            <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{ticket.merchantName}</p>
                           </div>
                         </div>
-                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium shrink-0", statusCfg.color)}>
-                          <StatusIcon className="size-2.5" />{statusCfg.label}
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium shrink-0", statusCfg.color)}>
+                          <StatusIcon className="size-2.5" /><span className="hidden sm:inline">{statusCfg.label}</span>
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-muted-foreground flex-wrap">
                         <span className="flex items-center gap-1">
                           <Calendar className="size-3" />
                           {new Date(ticket.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
                         </span>
                         <span className="flex items-center gap-1">
                           <MessageSquare className="size-3" />
-                          {ticket.responseCount} replies
+                          {ticket.responseCount} <span className="hidden sm:inline">replies</span>
                         </span>
                         {ticket.transactionRef && (
-                          <span className="flex items-center gap-1 font-mono text-[10px]">
+                          <span className="flex items-center gap-1 font-mono text-[10px] truncate">
                             <Hash className="size-3" />
-                            {ticket.transactionRef}
+                            <span className="truncate">{ticket.transactionRef}</span>
                           </span>
                         )}
                       </div>
@@ -270,28 +271,28 @@ export default function SupportPage() {
                   transition={{ duration: 0.2 }}
                 >
                   {/* Detail header */}
-                  <div className="px-6 py-4 border-b border-border bg-card/50">
-                    <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-card/50">
+                    <div className="flex items-start justify-between gap-3 sm:gap-4 mb-2 sm:mb-3">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className="text-xs font-mono text-muted-foreground">{selectedTicket.ticketNumber}</span>
-                          <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", 
+                        <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
+                          <span className="text-[10px] sm:text-xs font-mono text-muted-foreground">{selectedTicket.ticketNumber}</span>
+                          <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium shrink-0", 
                             getTicketCategoryColor(selectedTicket.category))}>
                             {getTicketCategoryLabel(selectedTicket.category)}
                           </span>
                           {selectedTicket.slaBreached && (
-                            <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium bg-orange-50 text-orange-700 border-orange-200">
+                            <span className="inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium bg-orange-50 text-orange-700 border-orange-200 shrink-0">
                               <Clock className="size-2.5" /> SLA Breached
                             </span>
                           )}
                         </div>
-                        <h2 className="font-bold text-base leading-tight mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                        <h2 className="font-bold text-sm sm:text-base leading-tight mb-1 sm:mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                           {selectedTicket.subject}
                         </h2>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-muted-foreground flex-wrap">
                           <span className="flex items-center gap-1">
                             <Building2 className="size-3" />
-                            {selectedTicket.merchantName}
+                            <span className="truncate">{selectedTicket.merchantName}</span>
                           </span>
                           <span className="flex items-center gap-1">
                             <Calendar className="size-3" />
@@ -299,20 +300,20 @@ export default function SupportPage() {
                           </span>
                         </div>
                       </div>
-                      <button onClick={() => setSelectedTicket(null)} className="p-2 rounded-xl hover:bg-muted/50 transition-all">
+                      <button onClick={() => setSelectedTicket(null)} className="p-1.5 sm:p-2 rounded-xl hover:bg-muted/50 transition-all shrink-0">
                         <X className="size-4" />
                       </button>
                     </div>
 
                     {/* Status and Priority */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       {(() => { const cfg = ticketStatusConfig[selectedTicket.status]; const I = cfg.icon; return (
-                        <span className={cn("inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full border font-medium", cfg.color)}>
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-1 rounded-full border font-medium shrink-0", cfg.color)}>
                           <I className="size-3" />{cfg.label}
                         </span>
                       ); })()}
                       {(() => { const cfg = priorityConfig[selectedTicket.priority]; return (
-                        <span className={cn("inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full border font-medium", cfg.color)}>
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-1 rounded-full border font-medium shrink-0", cfg.color)}>
                           {cfg.label} Priority
                         </span>
                       ); })()}
@@ -412,25 +413,25 @@ export default function SupportPage() {
 
         {/* ── TRANSACTION SEARCH TAB ── */}
         {tab === "transactions" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 pb-24 md:pb-6">
             {/* Search Bar */}
-            <div className="bg-card border border-border rounded-2xl p-5">
+            <div className="bg-card border border-border rounded-2xl p-4 sm:p-5">
               <h2 className="font-semibold text-sm mb-3" style={{ fontFamily: "var(--font-heading)" }}>
                 Cross-Merchant Transaction Search
               </h2>
-              <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
                 <input
                   placeholder="Transaction reference..."
-                  className="px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all"
+                  className="px-4 py-2.5 text-xs sm:text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all"
                 />
                 <input
                   placeholder="Payer phone number..."
-                  className="px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all"
+                  className="px-4 py-2.5 text-xs sm:text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all"
                 />
                 <input
                   placeholder="Amount (GHS)..."
                   type="number"
-                  className="px-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all"
+                  className="px-4 py-2.5 text-xs sm:text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all"
                 />
               </div>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -462,19 +463,19 @@ export default function SupportPage() {
                     triggerClassName="rounded-xl"
                   />
                 </div>
-                <button className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#1a7a5e] hover:bg-[#15614a] text-white rounded-xl text-sm font-medium transition-all shrink-0">
+                <button className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#1a7a5e] hover:bg-[#15614a] text-white rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0">
                   <Search className="size-4" /> Search
                 </button>
               </div>
             </div>
 
             {/* Info Banner */}
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 sm:p-5">
               <div className="flex items-start gap-3">
                 <Shield className="size-5 text-blue-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-blue-900 mb-1">Tier 1 Access: Provider Information Visible</p>
-                  <p className="text-sm text-blue-700">
+                  <p className="text-xs sm:text-sm font-semibold text-blue-900 mb-1">Tier 1 Access: Provider Information Visible</p>
+                  <p className="text-xs sm:text-sm text-blue-700">
                     As a Support Lead, you can see provider names, provider transaction IDs, and routing information. This data is hidden from merchants.
                   </p>
                 </div>
@@ -487,7 +488,8 @@ export default function SupportPage() {
                 Recent Transactions (Sample)
               </h3>
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                <table className="w-full text-sm">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-225">
                   <thead>
                     <tr className="border-b border-border bg-muted/30">
                       {["Reference", "Merchant", "Amount", "Provider", "Status", "Date", ""].map((h) => (
@@ -537,6 +539,7 @@ export default function SupportPage() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
           </div>
@@ -544,35 +547,35 @@ export default function SupportPage() {
 
         {/* ── DISPUTES & REFUNDS TAB ── */}
         {tab === "disputes" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 pb-24 md:pb-6">
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {[
                 { label: "Open Disputes", value: String(mockDisputes.filter(d => d.status === "open" || d.status === "investigating").length), color: "#f59e0b", icon: AlertTriangle },
                 { label: "Pending Refunds", value: String(mockRefundRequests.filter(r => r.status === "pending").length), color: "#3b82f6", icon: Clock },
                 { label: "Completed This Month", value: String(mockRefundRequests.filter(r => r.status === "completed").length), color: "#10b981", icon: CheckCircle },
               ].map(({ label, value, color, icon: Icon }) => (
-                <div key={label} className="bg-card border border-border rounded-2xl p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
-                    <div className="size-8 rounded-lg flex items-center justify-center" style={{ background: `${color}18` }}>
-                      <Icon className="size-4" style={{ color }} />
+                <div key={label} className="bg-card border border-border rounded-2xl p-4 sm:p-5">
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <span className="text-[10px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
+                    <div className="size-7 sm:size-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${color}18` }}>
+                      <Icon className="size-3.5 sm:size-4" style={{ color }} />
                     </div>
                   </div>
-                  <p className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
+                  <p className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
                 </div>
               ))}
             </div>
 
             {/* Disputes */}
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <h2 className="text-sm sm:text-base font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
                   Active Disputes ({mockDisputes.filter(d => d.status !== "resolved" && d.status !== "declined").length})
                 </h2>
                 <button
                   onClick={() => setShowDisputeModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all"
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0"
                 >
                   <AlertTriangle className="size-4" /> Initiate Dispute
                 </button>
@@ -582,23 +585,23 @@ export default function SupportPage() {
                   const cfg = disputeStatusConfig[dispute.status];
                   const Icon = cfg.icon;
                   return (
-                    <div key={dispute.id} className="bg-card border border-border rounded-2xl p-5">
-                      <div className="flex items-start justify-between gap-4 mb-3">
+                    <div key={dispute.id} className="bg-card border border-border rounded-2xl p-4 sm:p-5">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 mb-3">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <span className="text-xs font-mono text-muted-foreground">{dispute.disputeNumber}</span>
-                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
+                            <span className="text-[10px] sm:text-xs font-mono text-muted-foreground">{dispute.disputeNumber}</span>
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium shrink-0", cfg.color)}>
                               <Icon className="size-2.5" />{cfg.label}
                             </span>
                             {dispute.escalatedToProvider && (
-                              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium bg-orange-50 text-orange-700 border-orange-200">
+                              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium bg-orange-50 text-orange-700 border-orange-200 shrink-0">
                                 Escalated to Provider
                               </span>
                             )}
                           </div>
-                          <p className="font-semibold text-sm mb-1">{dispute.merchantName}</p>
-                          <p className="text-sm text-muted-foreground mb-2">{dispute.reason}</p>
-                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <p className="font-semibold text-xs sm:text-sm mb-1">{dispute.merchantName}</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-2 line-clamp-2">{dispute.reason}</p>
+                          <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-muted-foreground flex-wrap">
                             <span className="flex items-center gap-1">
                               <Hash className="size-3" />
                               {dispute.transactionRef}
@@ -608,17 +611,17 @@ export default function SupportPage() {
                               {formatGHS(dispute.amount)}
                             </span>
                             {dispute.customerName && (
-                              <span className="flex items-center gap-1">
+                              <span className="flex items-center gap-1 truncate">
                                 <User className="size-3" />
                                 {dispute.customerName}
                               </span>
                             )}
                           </div>
                         </div>
-                        <div className="text-right shrink-0">
-                          <p className="text-lg font-bold text-[#1a7a5e]" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(dispute.amount)}</p>
+                        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 shrink-0">
+                          <p className="text-base sm:text-lg font-bold text-[#1a7a5e]" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(dispute.amount)}</p>
                           {dispute.status === "open" && (
-                            <button className="mt-2 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-all">
+                            <button className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-all">
                               Investigate
                             </button>
                           )}
@@ -638,56 +641,58 @@ export default function SupportPage() {
 
             {/* Refund Requests */}
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <h2 className="text-sm sm:text-base font-semibold" style={{ fontFamily: "var(--font-heading)" }}>
                   Refund Requests ({mockRefundRequests.length})
                 </h2>
                 <button
                   onClick={() => setShowRefundModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-brand-teal hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all"
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-brand-teal hover:bg-[#52b4b1] text-white rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0"
                 >
                   <DollarSign className="size-4" /> Request Refund
                 </button>
               </div>
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/30">
-                      {["Refund #", "Merchant", "Amount", "Reason", "Status", "Requested", ""].map((h) => (
-                        <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mockRefundRequests.map((refund) => {
-                      const cfg = refundStatusConfig[refund.status];
-                      const Icon = cfg.icon;
-                      return (
-                        <tr key={refund.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
-                          <td className="pl-5 pr-4 py-3.5 font-mono text-xs">{refund.refundNumber}</td>
-                          <td className="px-4 py-3.5">{refund.merchantName}</td>
-                          <td className="px-4 py-3.5 font-semibold">{formatGHS(refund.amount)}</td>
-                          <td className="px-4 py-3.5 text-xs text-muted-foreground max-w-xs truncate">{refund.reason}</td>
-                          <td className="px-4 py-3.5">
-                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
-                              <Icon className="size-2.5" />{cfg.label}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3.5 text-xs text-muted-foreground">
-                            {new Date(refund.requestedAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
-                          </td>
-                          <td className="px-4 py-3.5">
-                            {refund.status === "pending" && (
-                              <button className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium transition-all">
-                                Approve
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-200">
+                    <thead>
+                      <tr className="border-b border-border bg-muted/30">
+                        {["Refund #", "Merchant", "Amount", "Reason", "Status", "Requested", ""].map((h) => (
+                          <th key={h} className="text-left px-3 sm:px-4 py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5 whitespace-nowrap">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mockRefundRequests.map((refund) => {
+                        const cfg = refundStatusConfig[refund.status];
+                        const Icon = cfg.icon;
+                        return (
+                          <tr key={refund.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
+                            <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-3.5 font-mono text-[10px] sm:text-xs">{refund.refundNumber}</td>
+                            <td className="px-3 sm:px-4 py-3.5 text-xs sm:text-sm">{refund.merchantName}</td>
+                            <td className="px-3 sm:px-4 py-3.5 font-semibold text-xs sm:text-sm">{formatGHS(refund.amount)}</td>
+                            <td className="px-3 sm:px-4 py-3.5 text-[10px] sm:text-xs text-muted-foreground max-w-xs truncate">{refund.reason}</td>
+                            <td className="px-3 sm:px-4 py-3.5">
+                              <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
+                                <Icon className="size-2.5" />{cfg.label}
+                              </span>
+                            </td>
+                            <td className="px-3 sm:px-4 py-3.5 text-[10px] sm:text-xs text-muted-foreground">
+                              {new Date(refund.requestedAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
+                            </td>
+                            <td className="px-3 sm:px-4 py-3.5">
+                              {refund.status === "pending" && (
+                                <button className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium transition-all whitespace-nowrap">
+                                  Approve
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -695,27 +700,27 @@ export default function SupportPage() {
 
         {/* ── SLA TRACKER TAB ── */}
         {tab === "sla" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 pb-24 md:pb-6">
             {/* Overview Cards */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {mockSlaMetrics.map((sla) => {
                 const totalIssues = sla.openIssues.critical + sla.openIssues.major + sla.openIssues.minor;
                 const isCritical = sla.openIssues.critical > 0 || sla.complianceRate < 80;
                 return (
-                  <div key={sla.providerId} className={cn("bg-card border rounded-2xl p-5",
+                  <div key={sla.providerId} className={cn("bg-card border rounded-2xl p-4 sm:p-5",
                     isCritical ? "border-red-200 shadow-sm" : "border-border")}>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-bold font-mono text-muted-foreground">{sla.providerName.split(" ")[0]}</span>
+                    <div className="flex items-center justify-between mb-2 sm:mb-3">
+                      <span className="text-[10px] sm:text-xs font-bold font-mono text-muted-foreground">{sla.providerName.split(" ")[0]}</span>
                       <span className={cn("text-xs font-semibold",
                         sla.complianceRate >= 95 ? "text-emerald-600" : sla.complianceRate >= 85 ? "text-amber-600" : "text-red-600")}>
                         {sla.complianceRate.toFixed(1)}%
                       </span>
                     </div>
-                    <p className="text-2xl font-bold mb-1" style={{ fontFamily: "var(--font-heading)" }}>{totalIssues}</p>
-                    <p className="text-xs text-muted-foreground">open issues</p>
+                    <p className="text-xl sm:text-2xl font-bold mb-1" style={{ fontFamily: "var(--font-heading)" }}>{totalIssues}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">open issues</p>
                     {sla.breachedCount > 0 && (
                       <div className="mt-2 pt-2 border-t border-border/50">
-                        <p className="text-xs text-red-600 font-medium">{sla.breachedCount} SLA breaches</p>
+                        <p className="text-[10px] sm:text-xs text-red-600 font-medium">{sla.breachedCount} SLA breaches</p>
                       </div>
                     )}
                   </div>
@@ -998,14 +1003,14 @@ export default function SupportPage() {
 
         {/* ── INCIDENT LOG TAB ── */}
         {tab === "incidents" && (
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 pb-24 md:pb-6">
             {/* Info Banner */}
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-5">
+            <div className="bg-red-50 border border-red-200 rounded-2xl p-4 sm:p-5">
               <div className="flex items-start gap-3">
                 <Shield className="size-5 text-red-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-red-900 mb-1">Security Incident Reporting — 24-Hour Requirement</p>
-                  <p className="text-sm text-red-700">
+                  <p className="text-xs sm:text-sm font-semibold text-red-900 mb-1">Security Incident Reporting — 24-Hour Requirement</p>
+                  <p className="text-xs sm:text-sm text-red-700">
                     Per contractual obligation, all security incidents must be reported to affected providers within 24 hours of detection.
                   </p>
                 </div>
@@ -1013,7 +1018,7 @@ export default function SupportPage() {
             </div>
 
             {/* Incident Cards */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {mockSecurityIncidents.map((incident) => {
                 const severityConfig = {
                   critical: { color: "bg-red-100", textColor: "text-red-700", borderColor: "border-red-200" },
@@ -1030,20 +1035,20 @@ export default function SupportPage() {
                 }[incident.status];
 
                 return (
-                  <div key={incident.id} className={cn("bg-card border rounded-2xl p-6",
+                  <div key={incident.id} className={cn("bg-card border rounded-2xl p-4 sm:p-6",
                     incident.severity === "critical" ? "border-red-200 shadow-sm" : "border-border")}>
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <div className="flex items-start gap-3 flex-1">
-                        <div className={cn("size-10 rounded-xl flex items-center justify-center shrink-0", severityConfig.color)}>
-                          <Shield className={cn("size-5", severityConfig.textColor)} />
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+                      <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+                        <div className={cn("size-9 sm:size-10 rounded-xl flex items-center justify-center shrink-0", severityConfig.color)}>
+                          <Shield className={cn("size-4 sm:size-5", severityConfig.textColor)} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <span className="text-xs font-mono text-muted-foreground">{incident.incidentNumber}</span>
-                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium uppercase", severityConfig.borderColor, severityConfig.textColor, "bg-opacity-50")}>
+                          <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
+                            <span className="text-[10px] sm:text-xs font-mono text-muted-foreground">{incident.incidentNumber}</span>
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium uppercase shrink-0", severityConfig.borderColor, severityConfig.textColor, "bg-opacity-50")}>
                               {incident.severity}
                             </span>
-                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", statusConfig.color)}>
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium shrink-0", statusConfig.color)}>
                               {statusConfig.label}
                             </span>
                             {incident.reportedToProvider && (

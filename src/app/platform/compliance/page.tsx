@@ -201,25 +201,25 @@ export default function CompliancePage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-border bg-card/50 shrink-0">
-        <div className="flex items-center justify-between mb-4">
+      <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-card/50 shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3 sm:mb-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
               Compliance & KYC
             </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
               Application review · KYC documents · AML monitoring · Regulatory compliance
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
             {pendingCount > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-[10px] sm:text-xs font-medium shrink-0">
                 <Clock className="size-3" />
                 {pendingCount} pending review
               </span>
             )}
             {openAmlFlags > 0 && (
-              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium">
+              <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-[10px] sm:text-xs font-medium shrink-0">
                 <AlertTriangle className="size-3" />
                 {openAmlFlags} AML flag{openAmlFlags > 1 ? "s" : ""}
               </span>
@@ -231,7 +231,7 @@ export default function CompliancePage() {
         <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
           {TABS.map((t) => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={cn("px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all",
+              className={cn("px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-medium whitespace-nowrap transition-all",
                 tab === t.id ? "bg-card shadow-sm border border-border text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted/40")}>
               {t.label}
               {t.id === "kyc_queue" && (pendingCount + infoRequestedCount) > 0 && (
@@ -246,18 +246,18 @@ export default function CompliancePage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-hidden flex">
+      <div className="flex-1 overflow-hidden flex relative">
         {/* ── KYC QUEUE TAB ── */}
         {tab === "kyc_queue" && (
           <>
             {/* Application List */}
-            <div className={cn("flex flex-col transition-all duration-300 border-r border-border", selectedApp ? "w-105 shrink-0" : "flex-1")}>
-              <div className="px-6 py-4 border-b border-border bg-card/30">
-                <div className="flex items-center gap-2 text-xs">
+            <div className={cn("flex flex-col transition-all duration-300 border-r border-border", selectedApp ? "hidden md:flex md:w-105 shrink-0" : "flex-1")}>
+              <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-card/30">
+                <div className="flex items-center gap-2 text-[10px] sm:text-xs overflow-x-auto scrollbar-none">
                   <button 
                     onClick={() => setKycFilter("all")}
                     className={cn(
-                      "px-2.5 py-1 rounded-lg border transition-all",
+                      "px-2 sm:px-2.5 py-1 rounded-lg border transition-all whitespace-nowrap shrink-0",
                       kycFilter === "all" 
                         ? "bg-foreground text-background border-foreground" 
                         : "bg-card border-border hover:bg-muted/50"
@@ -268,7 +268,7 @@ export default function CompliancePage() {
                   <button 
                     onClick={() => setKycFilter("pending")}
                     className={cn(
-                      "px-2.5 py-1 rounded-lg border transition-all",
+                      "px-2 sm:px-2.5 py-1 rounded-lg border transition-all whitespace-nowrap shrink-0",
                       kycFilter === "pending" 
                         ? "bg-foreground text-background border-foreground" 
                         : "bg-card border-border hover:bg-muted/50"
@@ -279,7 +279,7 @@ export default function CompliancePage() {
                   <button 
                     onClick={() => setKycFilter("info_requested")}
                     className={cn(
-                      "px-2.5 py-1 rounded-lg border transition-all",
+                      "px-2 sm:px-2.5 py-1 rounded-lg border transition-all whitespace-nowrap shrink-0",
                       kycFilter === "info_requested" 
                         ? "bg-foreground text-background border-foreground" 
                         : "bg-card border-border hover:bg-muted/50"
@@ -290,7 +290,7 @@ export default function CompliancePage() {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto divide-y divide-border">
+              <div className="flex-1 overflow-y-auto divide-y divide-border pb-20 md:pb-0">
                 {filteredKycApplications.map((app) => {
                   const cfg = applicationStatusConfig[app.status];
                   const Icon = cfg.icon;
@@ -344,49 +344,56 @@ export default function CompliancePage() {
             <AnimatePresence>
               {selectedApp && (
                 <motion.div
-                  className="flex-1 flex flex-col overflow-hidden"
+                  className="fixed inset-0 md:relative md:flex-1 flex flex-col overflow-hidden bg-background z-40 md:z-auto"
                   initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 16 }}
                   transition={{ duration: 0.2 }}
                 >
                   {/* Detail header */}
-                  <div className="px-6 py-4 border-b border-border bg-card/50 flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-3">
-                      <div className="size-10 rounded-xl bg-brand-lavender/20 flex items-center justify-center shrink-0">
-                        <Building2 className="size-5 text-[#5c3d9e]" />
+                  <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-card/50 flex items-start justify-between gap-3 sm:gap-4">
+                    <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+                      {/* Mobile back button */}
+                      <button 
+                        onClick={() => setSelectedApp(null)}
+                        className="md:hidden size-9 rounded-xl border border-border flex items-center justify-center shrink-0 hover:bg-muted/50 transition-colors"
+                      >
+                        <X className="size-4" />
+                      </button>
+                      <div className="size-9 sm:size-10 rounded-xl bg-brand-lavender/20 flex items-center justify-center shrink-0">
+                        <Building2 className="size-4 sm:size-5 text-[#5c3d9e]" />
                       </div>
-                      <div>
-                        <h2 className="font-bold text-lg leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
+                      <div className="flex-1 min-w-0">
+                        <h2 className="font-bold text-base sm:text-lg leading-tight truncate" style={{ fontFamily: "var(--font-heading)" }}>
                           {selectedApp.merchantName}
                         </h2>
-                        <p className="text-xs text-muted-foreground font-mono">{selectedApp.registrationNumber}</p>
-                        <div className="flex items-center gap-2 mt-1.5">
+                        <p className="text-[10px] sm:text-xs text-muted-foreground font-mono truncate">{selectedApp.registrationNumber}</p>
+                        <div className="flex items-center gap-1.5 sm:gap-2 mt-1.5 flex-wrap">
                           {(() => { const cfg = applicationStatusConfig[selectedApp.status]; const I = cfg.icon; return (
-                            <span className={cn("inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium shrink-0", cfg.color)}>
                               <I className="size-2.5" />{cfg.label}
                             </span>
                           ); })()}
                           {selectedApp.applicationType === "sub_merchant" && (
-                            <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border font-medium bg-brand-mint/20 text-[#1a7a5e] border-brand-mint/50">
+                            <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium bg-brand-mint/20 text-[#1a7a5e] border-brand-mint/50 shrink-0">
                               Sub-merchant
                             </span>
                           )}
                         </div>
                       </div>
                     </div>
-                    <button onClick={() => setSelectedApp(null)} className="p-2 rounded-xl hover:bg-muted/50 transition-all">
+                    <button onClick={() => setSelectedApp(null)} className="hidden md:block p-2 rounded-xl hover:bg-muted/50 transition-all shrink-0">
                       <X className="size-4" />
                     </button>
                   </div>
 
                   {/* Detail content */}
-                  <div className="flex-1 overflow-y-auto p-6 space-y-5">
+                  <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-20 md:pb-6 space-y-4 sm:space-y-5">
                     {/* Applicant Info */}
-                    <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
-                      <h3 className="font-semibold text-sm flex items-center gap-2" style={{ fontFamily: "var(--font-heading)" }}>
-                        <User className="size-4 text-[#5c3d9e]" />
+                    <div className="bg-card border border-border rounded-xl sm:rounded-2xl p-4 sm:p-5 space-y-2 sm:space-y-3">
+                      <h3 className="font-semibold text-xs sm:text-sm flex items-center gap-2" style={{ fontFamily: "var(--font-heading)" }}>
+                        <User className="size-3.5 sm:size-4 text-[#5c3d9e]" />
                         Applicant Information
                       </h3>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 sm:gap-3">
                         {[
                           { icon: Mail, label: "Email", value: selectedApp.contactEmail },
                           { icon: Phone, label: "Phone", value: selectedApp.contactPhone },
@@ -394,17 +401,17 @@ export default function CompliancePage() {
                           { icon: Calendar, label: "Submitted", value: new Date(selectedApp.submittedAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) },
                         ].map(({ icon: Icon, label, value }) => (
                           <div key={label} className="flex items-start gap-2">
-                            <Icon className="size-3.5 text-muted-foreground shrink-0 mt-0.5" />
-                            <div>
-                              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{label}</p>
-                              <p className="text-sm font-medium">{value}</p>
+                            <Icon className="size-3 sm:size-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                            <div className="min-w-0">
+                              <p className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider">{label}</p>
+                              <p className="text-xs sm:text-sm font-medium truncate">{value}</p>
                             </div>
                           </div>
                         ))}
                       </div>
                       {selectedApp.assignedTo && (
-                        <div className="pt-3 border-t border-border/50">
-                          <p className="text-xs text-muted-foreground">
+                        <div className="pt-2 sm:pt-3 border-t border-border/50">
+                          <p className="text-[10px] sm:text-xs text-muted-foreground">
                             Assigned to <span className="font-medium text-foreground">{selectedApp.assignedTo}</span>
                           </p>
                         </div>
@@ -412,9 +419,9 @@ export default function CompliancePage() {
                     </div>
 
                     {/* Documents */}
-                    <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
-                      <h3 className="font-semibold text-sm flex items-center gap-2" style={{ fontFamily: "var(--font-heading)" }}>
-                        <FileText className="size-4 text-[#5c3d9e]" />
+                    <div className="bg-card border border-border rounded-xl sm:rounded-2xl p-4 sm:p-5 space-y-2 sm:space-y-3">
+                      <h3 className="font-semibold text-xs sm:text-sm flex items-center gap-2" style={{ fontFamily: "var(--font-heading)" }}>
+                        <FileText className="size-3.5 sm:size-4 text-[#5c3d9e]" />
                         KYC Documents ({selectedApp.documents.length})
                       </h3>
                       <div className="space-y-2">
@@ -422,23 +429,23 @@ export default function CompliancePage() {
                           const cfg = docStatusConfig[doc.status];
                           const Icon = cfg.icon;
                           return (
-                            <div key={doc.id} className="flex items-center justify-between gap-3 p-3 rounded-xl border border-border hover:bg-muted/30 transition-colors">
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className="size-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
-                                  <FileText className="size-3.5 text-muted-foreground" />
+                            <div key={doc.id} className="flex items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-border hover:bg-muted/30 transition-colors">
+                              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                                <div className="size-7 sm:size-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                                  <FileText className="size-3 sm:size-3.5 text-muted-foreground" />
                                 </div>
-                                <div className="min-w-0">
-                                  <p className="text-sm font-medium truncate">{getDocumentTypeLabel(doc.type)}</p>
-                                  <p className="text-xs text-muted-foreground font-mono truncate">{doc.fileName}</p>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-[10px] sm:text-xs font-medium text-muted-foreground truncate">{getDocumentTypeLabel(doc.type)}</p>
+                                  <p className="text-xs sm:text-sm font-semibold font-mono truncate">{doc.fileName}</p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2 shrink-0">
-                                <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
+                                <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium shrink-0", cfg.color)}>
                                   <Icon className="size-2.5" />{cfg.label}
                                 </span>
                                 <button onClick={() => setViewingDoc(doc)}
                                   className="p-1.5 hover:bg-muted rounded-lg transition-all">
-                                  <Eye className="size-3.5" />
+                                  <Eye className="size-3 sm:size-3.5" />
                                 </button>
                               </div>
                             </div>
@@ -449,10 +456,10 @@ export default function CompliancePage() {
 
                     {/* Info Request Message */}
                     {selectedApp.infoRequestMessage && (
-                      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
-                        <div className="flex items-start gap-3">
-                          <MessageSquare className="size-4 text-blue-600 shrink-0 mt-0.5" />
-                          <div>
+                      <div className="bg-blue-50 border border-blue-200 rounded-xl sm:rounded-2xl p-4 sm:p-5">
+                        <div className="flex items-start gap-2 sm:gap-3">
+                          <MessageSquare className="size-3.5 sm:size-4 text-blue-600 shrink-0 mt-0.5" />
+                          <div className="min-w-0">
                             <p className="text-sm font-semibold text-blue-900 mb-1">Additional Information Requested</p>
                             <p className="text-sm text-blue-700">{selectedApp.infoRequestMessage}</p>
                           </div>

@@ -99,7 +99,7 @@ export default function SubMerchantsPage() {
           { label: "Suspended", value: mockSubMerchants.filter(s => s.status === "suspended").length, color: "text-red-600" },
         ].map((stat) => (
           <div key={stat.label} className="bg-card border border-border rounded-xl p-4 text-center">
-            <p className={cn("text-2xl font-bold", stat.color)} style={{ fontFamily: "var(--font-heading)" }}>{stat.value}</p>
+            <p className={cn("text-lg sm:text-xl md:text-2xl font-bold", stat.color)} style={{ fontFamily: "var(--font-heading)" }}>{stat.value}</p>
             <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
           </div>
         ))}
@@ -379,15 +379,15 @@ export default function SubMerchantsPage() {
             {/* Key Metrics */}
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-muted/30 rounded-xl p-4 text-center">
-                <p className="text-2xl font-bold text-brand-navy">{formatGHS(selectedSubMerchant.volume)}</p>
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-brand-navy">{formatGHS(selectedSubMerchant.volume)}</p>
                 <p className="text-xs text-muted-foreground mt-1">Total Volume</p>
               </div>
               <div className="bg-muted/30 rounded-xl p-4 text-center">
-                <p className="text-2xl font-bold text-brand-navy">{selectedSubMerchant.txnCount.toLocaleString()}</p>
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-brand-navy">{selectedSubMerchant.txnCount.toLocaleString()}</p>
                 <p className="text-xs text-muted-foreground mt-1">Transactions</p>
               </div>
               <div className="bg-muted/30 rounded-xl p-4 text-center">
-                <p className="text-2xl font-bold text-brand-navy">{selectedSubMerchant.feeRate}%</p>
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-brand-navy">{selectedSubMerchant.feeRate}%</p>
                 <p className="text-xs text-muted-foreground mt-1">Fee Rate</p>
               </div>
             </div>

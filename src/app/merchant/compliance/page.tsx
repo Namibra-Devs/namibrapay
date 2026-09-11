@@ -124,7 +124,7 @@ export default function CompliancePage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3"
+        className="flex items-start gap-2 sm:gap-3 bg-blue-50 border border-blue-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3"
       >
         <Info className="size-4 text-blue-600 shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">

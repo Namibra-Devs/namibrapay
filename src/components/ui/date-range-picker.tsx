@@ -82,6 +82,8 @@ export default function DateRangePicker({
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      const isMobile = viewportWidth < 640; // sm breakpoint
       const calendarHeight = 450;
       const spaceBelow = viewportHeight - rect.bottom;
       const spaceAbove = rect.top;
@@ -89,13 +91,26 @@ export default function DateRangePicker({
       const shouldOpenUpward = spaceBelow < calendarHeight && spaceAbove > spaceBelow;
 
       setOpenUpward(shouldOpenUpward);
-      setPos({ 
-        top: shouldOpenUpward 
-          ? rect.top + window.scrollY - calendarHeight - 8
-          : rect.bottom + window.scrollY + 8, 
-        left: rect.left + window.scrollX,
-        width: rect.width
-      });
+      
+      // On mobile, center the picker with some padding
+      if (isMobile) {
+        setPos({ 
+          top: shouldOpenUpward 
+            ? rect.top + window.scrollY - calendarHeight - 8
+            : rect.bottom + window.scrollY + 8, 
+          left: 16, // 16px padding from left
+          width: viewportWidth - 32 // 16px padding on each side
+        });
+      } else {
+        setPos({ 
+          top: shouldOpenUpward 
+            ? rect.top + window.scrollY - calendarHeight - 8
+            : rect.bottom + window.scrollY + 8, 
+          left: rect.left + window.scrollX,
+          width: rect.width
+        });
+      }
+      
       setTempStart(startDate);
       setTempEnd(endDate);
       setSelectingStart(true);
@@ -299,9 +314,10 @@ export default function DateRangePicker({
                   position: "fixed", 
                   top: pos.top, 
                   left: pos.left,
-                  width: Math.max(pos.width, 320)
+                  width: Math.max(pos.width, 280),
+                  maxWidth: "calc(100vw - 32px)" // Prevent overflow on mobile
                 }}
-                className="bg-card border border-border rounded-xl shadow-xl p-4 z-9999"
+                className="bg-card border border-border rounded-xl shadow-xl p-3 sm:p-4 z-9999 max-h-[85vh] overflow-y-auto"
               >
                 {/* Header with instructions */}
                 <div className="mb-3 pb-3 border-b border-border">
@@ -309,39 +325,39 @@ export default function DateRangePicker({
                     {selectingStart ? "Select start date" : "Select end date"}
                   </p>
                   {tempStart && !tempEnd && (
-                    <p className="text-[10px] text-muted-foreground mt-1">
+                    <p className="text-[10px] text-muted-foreground mt-1 truncate">
                       Start: {formatDisplayDate(tempStart)}
                     </p>
                   )}
                   {tempStart && tempEnd && (
-                    <p className="text-[10px] text-muted-foreground mt-1">
+                    <p className="text-[10px] text-muted-foreground mt-1 truncate">
                       {formatDisplayDate(tempStart)} - {formatDisplayDate(tempEnd)}
                     </p>
                   )}
                 </div>
 
                 {/* Quick Select Buttons */}
-                <div className="grid grid-cols-3 gap-2 mb-3">
+                <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3">
                   <button
                     type="button"
                     onClick={() => handleQuickSelect(7)}
-                    className="px-2 py-1.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                    className="px-1.5 sm:px-2 py-1.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
                   >
-                    Last 7 days
+                    Last 7d
                   </button>
                   <button
                     type="button"
                     onClick={() => handleQuickSelect(14)}
-                    className="px-2 py-1.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                    className="px-1.5 sm:px-2 py-1.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
                   >
-                    Last 14 days
+                    Last 14d
                   </button>
                   <button
                     type="button"
                     onClick={() => handleQuickSelect(30)}
-                    className="px-2 py-1.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                    className="px-1.5 sm:px-2 py-1.5 text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
                   >
-                    Last 30 days
+                    Last 30d
                   </button>
                 </div>
 
@@ -350,26 +366,26 @@ export default function DateRangePicker({
                   <button
                     type="button"
                     onClick={handlePrevMonth}
-                    className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+                    className="p-1 sm:p-1.5 hover:bg-muted rounded-lg transition-colors"
                   >
                     <ChevronLeft className="size-4 text-muted-foreground" />
                   </button>
                   
-                  <div className="text-sm font-semibold text-foreground">
+                  <div className="text-xs sm:text-sm font-semibold text-foreground">
                     {MONTHS[viewMonth]} {viewYear}
                   </div>
                   
                   <button
                     type="button"
                     onClick={handleNextMonth}
-                    className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+                    className="p-1 sm:p-1.5 hover:bg-muted rounded-lg transition-colors"
                   >
                     <ChevronRight className="size-4 text-muted-foreground" />
                   </button>
                 </div>
 
                 {/* Day Headers */}
-                <div className="grid grid-cols-7 gap-1 mb-2">
+                <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-2">
                   {DAYS.map((day) => (
                     <div
                       key={day}
@@ -381,7 +397,7 @@ export default function DateRangePicker({
                 </div>
 
                 {/* Calendar Days */}
-                <div className="grid grid-cols-7 gap-1 mb-3">
+                <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-3">
                   {calendarDays.map((day, index) => {
                     if (day === null) {
                       return <div key={`empty-${index}`} />;
@@ -400,7 +416,7 @@ export default function DateRangePicker({
                         onClick={() => !disabled && handleDateSelect(day)}
                         disabled={disabled}
                         className={cn(
-                          "aspect-square flex items-center justify-center text-xs rounded-lg transition-all",
+                          "aspect-square flex items-center justify-center text-[11px] sm:text-xs rounded-md sm:rounded-lg transition-all min-h-8 sm:min-h-0",
                           disabled
                             ? "text-gray-300 cursor-not-allowed"
                             : rangeStart || rangeEnd

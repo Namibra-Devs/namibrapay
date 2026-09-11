@@ -107,26 +107,27 @@ export function TransactionChart() {
   const maxDateStr = today.toISOString().split("T")[0];
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+    <div className="bg-card border border-border rounded-2xl p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3">
         <div>
           <h3 className="font-semibold text-base" style={{ fontFamily: "var(--font-heading)" }}>
             Transaction Volume
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Successful vs failed transactions {formatDateRangeText() && `(${formatDateRangeText()})`}
+            <span className="hidden sm:inline">Successful vs failed transactions </span>
+            {formatDateRangeText() && `${formatDateRangeText()}`}
           </p>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
           {/* Range Selector Buttons */}
-          <div className="flex items-center gap-1 bg-muted/60 rounded-lg p-0.5">
+          <div className="flex items-center gap-1 bg-muted/60 rounded-lg p-0.5 overflow-x-auto">
             {ranges.map((r) => (
               <button
                 key={r}
                 onClick={() => handleRangeClick(r)}
                 className={cn(
-                  "px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+                  "px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap shrink-0",
                   range === r
                     ? "bg-card shadow-sm text-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -139,7 +140,7 @@ export function TransactionChart() {
           
           {/* Custom Date Range Picker */}
           {showCustom && (
-            <div className="w-64">
+            <div className="w-full sm:w-64">
               <DateRangePicker
                 startDate={customStartDate}
                 endDate={customEndDate}
@@ -166,8 +167,21 @@ export function TransactionChart() {
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-          <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} />
+          <XAxis 
+            dataKey="date" 
+            tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} 
+            axisLine={false} 
+            tickLine={false}
+            interval="preserveStartEnd"
+            minTickGap={20}
+          />
+          <YAxis 
+            tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} 
+            axisLine={false} 
+            tickLine={false} 
+            tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
+            width={35}
+          />
           <Tooltip content={<CustomTooltip />} />
           <Legend
             formatter={(value) => <span className="text-xs text-muted-foreground">{value}</span>}

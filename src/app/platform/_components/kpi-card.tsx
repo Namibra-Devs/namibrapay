@@ -17,44 +17,44 @@ type KpiCardProps = {
 export function KpiCard({ label, value, sub, trend, accent = "#64c6c3", icon, gradient = false }: KpiCardProps) {
   return (
     <div className={cn(
-      "rounded-2xl p-5 flex flex-col gap-3 transition-all duration-300",
+      "rounded-2xl p-4 sm:p-5 flex flex-col gap-2.5 sm:gap-3 transition-all duration-300",
       gradient 
         ? "bg-linear-to-br from-brand-teal via-[#4db5b2] to-[#2d9a97] text-white border-0 hover:shadow-lg" 
         : "bg-card border border-border hover:border-ring/40"
     )}>
       <div className="flex items-center justify-between">
         <span className={cn(
-          "text-xs font-medium uppercase tracking-wider",
+          "text-[10px] sm:text-xs font-medium uppercase tracking-wider",
           gradient ? "text-white/90" : "text-muted-foreground"
         )}>{label}</span>
         {icon && (
           <div className={cn(
-            "size-8 rounded-lg flex items-center justify-center",
+            "size-7 sm:size-8 rounded-lg flex items-center justify-center",
             gradient ? "bg-white/20 backdrop-blur-sm" : ""
           )} style={!gradient ? { background: `${accent}18` } : {}}>
-            <div style={{ color: gradient ? "white" : accent }}>{icon}</div>
+            <div className="[&>svg]:size-3.5 sm:[&>svg]:size-4" style={{ color: gradient ? "white" : accent }}>{icon}</div>
           </div>
         )}
       </div>
       <div>
         <p className={cn(
-          "text-2xl font-bold tracking-tight",
+          "text-lg sm:text-xl md:text-2xl font-bold tracking-tight",
           gradient ? "text-white" : ""
         )} style={{ fontFamily: "var(--font-heading)" }}>
           {value}
         </p>
         {sub && <p className={cn(
-          "text-xs mt-0.5",
+          "text-[10px] sm:text-xs mt-0.5",
           gradient ? "text-white/80" : "text-muted-foreground"
         )}>{sub}</p>}
       </div>
       {trend && (
         <div className={cn(
-          "flex items-center gap-1 text-xs font-medium", 
+          "flex items-center gap-1 text-[10px] sm:text-xs font-medium", 
           gradient ? "text-white/90" : (trend.positive ? "text-emerald-600" : "text-destructive")
         )}>
-          {trend.positive ? <MoveUp className="size-3.5" /> : <MoveDown className="size-3.5" />}
-          <span>{trend.value} vs yesterday</span>
+          {trend.positive ? <MoveUp className="size-3 sm:size-3.5" /> : <MoveDown className="size-3 sm:size-3.5" />}
+          <span className="truncate">{trend.value} vs yesterday</span>
         </div>
       )}
     </div>

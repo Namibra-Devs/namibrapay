@@ -19,6 +19,7 @@ import {
   mockMerchantTransactions,
   mockMerchantChartData,
   mockSettlements,
+  mockMerchantProfile,
 } from "@/lib/merchant-mock-data";
 import { useMerchantRole } from "@/hooks/use-merchant-role";
 import {
@@ -64,6 +65,107 @@ export default function MerchantOverview() {
   const successCount = mockMerchantTransactions.filter((t) => t.status === "success").length;
   const successRate = Math.round((successCount / mockMerchantTransactions.length) * 100);
 
+  // Determine status banner based on merchant profile
+  const getAccountStatusBanner = () => {
+    const { accountStatus, isVerified, hasPendingActions, pendingActionsCount, complianceStatus, kycStatus } = mockMerchantProfile;
+
+    // Suspended account
+    if (accountStatus === "suspended") {
+      return {
+        bg: "bg-red-50",
+        border: "border-red-200",
+        dotColor: "bg-red-500",
+        textColor: "text-red-800",
+        badgeText: "Suspended",
+        badgeColor: "text-red-600",
+        message: {
+          full: "Account suspended · Contact support",
+          short: "Suspended · Contact support"
+        }
+      };
+    }
+
+    // Pending verification
+    if (accountStatus === "pending_verification" || kycStatus === "pending") {
+      return {
+        bg: "bg-amber-50",
+        border: "border-amber-200",
+        dotColor: "bg-amber-500",
+        textColor: "text-amber-800",
+        badgeText: "Pending",
+        badgeColor: "text-amber-600",
+        message: {
+          full: "Verification pending · Limited access",
+          short: "Verification pending"
+        }
+      };
+    }
+
+    // KYC rejected
+    if (kycStatus === "rejected") {
+      return {
+        bg: "bg-red-50",
+        border: "border-red-200",
+        dotColor: "bg-red-500",
+        textColor: "text-red-800",
+        badgeText: "Action Required",
+        badgeColor: "text-red-600",
+        message: {
+          full: "KYC rejected · Resubmit documents",
+          short: "KYC rejected · Resubmit"
+        }
+      };
+    }
+
+    // Incomplete compliance
+    if (complianceStatus === "incomplete") {
+      return {
+        bg: "bg-amber-50",
+        border: "border-amber-200",
+        dotColor: "bg-amber-500",
+        textColor: "text-amber-800",
+        badgeText: "Action Required",
+        badgeColor: "text-amber-600",
+        message: {
+          full: `Complete ${pendingActionsCount} compliance step${pendingActionsCount !== 1 ? 's' : ''}`,
+          short: `${pendingActionsCount} step${pendingActionsCount !== 1 ? 's' : ''} pending`
+        }
+      };
+    }
+
+    // Has pending actions (but otherwise active)
+    if (hasPendingActions && pendingActionsCount > 0) {
+      return {
+        bg: "bg-blue-50",
+        border: "border-blue-200",
+        dotColor: "bg-blue-500",
+        textColor: "text-blue-800",
+        badgeText: `${pendingActionsCount} pending`,
+        badgeColor: "text-blue-600",
+        message: {
+          full: `Account active · ${pendingActionsCount} pending action${pendingActionsCount !== 1 ? 's' : ''}`,
+          short: `Active · ${pendingActionsCount} action${pendingActionsCount !== 1 ? 's' : ''}`
+        }
+      };
+    }
+
+    // All good - active and verified
+    return {
+      bg: "bg-emerald-50",
+      border: "border-emerald-200",
+      dotColor: "bg-emerald-400",
+      textColor: "text-emerald-800",
+      badgeText: isVerified ? "Verified" : "Active",
+      badgeColor: "text-emerald-600",
+      message: {
+        full: "Account active · No pending actions",
+        short: "Active · No pending actions"
+      }
+    };
+  };
+
+  const statusBanner = getAccountStatusBanner();
+
   return (
     <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
       {/* Header */}
@@ -76,12 +178,25 @@ export default function MerchantOverview() {
         </p>
       </motion.div>
 
-      {/* Account Status Banner */}
+      {/* Account Status Banner - Dynamic based on merchant profile */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-        className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
-        <div className="size-2 rounded-full bg-emerald-400" />
-        <p className="text-sm font-medium text-emerald-800">Account active · No pending actions</p>
-        <span className="ml-auto text-xs text-emerald-600">Verified merchant</span>
+        className={cn(
+          "flex items-center gap-2 sm:gap-3 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3",
+          statusBanner.bg,
+          statusBanner.border,
+          "border"
+        )}>
+        <div className={cn("size-2 rounded-full shrink-0", statusBanner.dotColor)} />
+        <p className={cn("text-xs sm:text-sm font-medium truncate", statusBanner.textColor)}>
+          <span className="hidden sm:inline">{statusBanner.message.full}</span>
+          <span className="sm:hidden">{statusBanner.message.short}</span>
+        </p>
+        <span className={cn(
+          "ml-auto text-[10px] sm:text-xs whitespace-nowrap shrink-0",
+          statusBanner.badgeColor
+        )}>
+          {statusBanner.badgeText}
+        </span>
       </motion.div>
 
       {/* KPI Cards */}
@@ -102,30 +217,30 @@ export default function MerchantOverview() {
         ].map((kpi) => (
           <motion.div key={kpi.label} variants={item}
             className={cn(
-              "rounded-2xl p-5 flex flex-col gap-3 hover:shadow-lg transition-all duration-300",
+              "rounded-2xl p-4 sm:p-5 flex flex-col gap-2.5 sm:gap-3 hover:shadow-lg transition-all duration-300",
               kpi.gradient 
                 ? "bg-linear-to-br from-brand-teal via-[#4db5b2] to-[#2d9a97] text-white border-0" 
                 : "bg-card border border-border hover:border-ring/40"
             )}>
             <div className="flex items-center justify-between">
               <span className={cn(
-                "text-[10px] font-medium uppercase tracking-wider",
+                "text-[10px] sm:text-xs font-medium uppercase tracking-wider",
                 kpi.gradient ? "text-white/90" : "text-muted-foreground"
               )}>{kpi.label}</span>
               <div className={cn(
-                "size-8 rounded-lg flex items-center justify-center",
+                "size-7 sm:size-8 rounded-lg flex items-center justify-center",
                 kpi.gradient ? "bg-white/20 backdrop-blur-sm" : ""
               )} style={!kpi.gradient ? { background: `${kpi.accent}18` } : {}}>
-                <div style={{ color: kpi.gradient ? "white" : kpi.accent }}>{kpi.icon}</div>
+                <div className="[&>svg]:size-3.5 sm:[&>svg]:size-4" style={{ color: kpi.gradient ? "white" : kpi.accent }}>{kpi.icon}</div>
               </div>
             </div>
             <div>
               <p className={cn(
-                "text-xl font-bold tracking-tight",
+                "text-lg sm:text-xl md:text-2xl font-bold tracking-tight",
                 kpi.gradient ? "text-white" : ""
               )} style={{ fontFamily: "var(--font-heading)" }}>{kpi.value}</p>
               <p className={cn(
-                "text-xs mt-0.5",
+                "text-[10px] sm:text-xs mt-0.5",
                 kpi.gradient ? "text-white/80" : "text-muted-foreground"
               )}>{kpi.sub}</p>
             </div>
@@ -214,7 +329,7 @@ export default function MerchantOverview() {
             {mockSettlements.map((s) => (
               <div key={s.id} className="bg-card border border-border rounded-xl p-4">
                 <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">{s.periodLabel}</p>
-                <p className="text-lg font-bold" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(s.collected)}</p>
+                <p className="text-base sm:text-lg md:text-xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(s.collected)}</p>
                 <div className="mt-2 space-y-1 text-[11px] text-muted-foreground">
                   <div className="flex justify-between"><span>Fees</span><span className="text-destructive">-{formatGHS(s.fees)}</span></div>
                   <div className="flex justify-between"><span>Net settled</span><span className="text-emerald-600 font-medium">{formatGHS(s.netSettled)}</span></div>
@@ -224,7 +339,7 @@ export default function MerchantOverview() {
             ))}
             <div className="bg-brand-teal/5 border border-brand-teal/20 rounded-xl p-4 flex flex-col justify-between">
               <p className="text-xs text-[#1a6e6c] font-medium uppercase tracking-wider mb-2">Pending Payout</p>
-              <p className="text-lg font-bold text-[#1a6e6c]" style={{ fontFamily: "var(--font-heading)" }}>
+              <p className="text-base sm:text-lg md:text-xl font-bold text-[#1a6e6c]" style={{ fontFamily: "var(--font-heading)" }}>
                 {formatGHS(mockSettlements.reduce((a, s) => a + s.pendingPayout, 0))}
               </p>
               <p className="text-[10px] text-[#1a6e6c]/70 mt-1">Across all periods</p>
@@ -236,9 +351,9 @@ export default function MerchantOverview() {
       {/* Support-only: limited message */}
       {!can("settlements.view") && !can("transactions.export") && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-          className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+          className="flex items-center gap-2 sm:gap-3 bg-blue-50 border border-blue-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3">
           <AlertCircle className="size-4 text-blue-500 shrink-0" />
-          <p className="text-sm text-blue-800">
+          <p className="text-xs sm:text-sm text-blue-800">
             Your role (Support Agent) provides transaction search access only. Contact your account admin for financial data.
           </p>
         </motion.div>

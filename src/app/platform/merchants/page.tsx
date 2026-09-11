@@ -153,7 +153,7 @@ export default function MerchantsPage() {
   const notes = selected ? (MERCHANT_NOTES[selected.id] ?? []) : [];
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex h-full overflow-hidden relative">
       {/* ── Impersonation banner ── */}
       <AnimatePresence>
         {impersonating && (
@@ -176,19 +176,20 @@ export default function MerchantsPage() {
       </AnimatePresence>
 
       {/* ── Merchant list panel ── */}
-      <div className={cn("flex flex-col transition-all duration-300", selected ? "w-105 shrink-0 border-r border-border" : "flex-1")}>
+      <div className={cn("flex flex-col transition-all duration-300", 
+        selected ? "hidden md:flex md:w-105 shrink-0 border-r border-border" : "flex-1")}>
         {/* Header */}
-        <div className="px-6 py-5 border-b border-border bg-card/50">
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border bg-card/50">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate" style={{ fontFamily: "var(--font-heading)" }}>
                 Merchants
               </h1>
-              <p className="text-sm text-muted-foreground mt-0.5">{filtered.length} of {mockMerchants.length} merchants</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">{filtered.length} of {mockMerchants.length} merchants</p>
             </div>
             {canManage && (
               <button onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all shrink-0">
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs sm:text-sm font-medium transition-all shrink-0">
                 <Plus className="size-4" />
                 {selected ? "Add" : "Add Merchant"}
               </button>
@@ -200,25 +201,25 @@ export default function MerchantsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
             <input value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name, reg no, email, industry…"
-              className="w-full pl-9 pr-4 py-2.5 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-teal/60 transition-all" />
+              className="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-teal/60 transition-all" />
           </div>
 
           {/* Filters */}
-          <div className="flex flex-wrap gap-2">
-            <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap gap-2 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1.5 shrink-0">
               <Filter className="size-3 text-muted-foreground" />
               {["all", "active", "suspended", "pending", "deactivated"].map((s) => (
                 <button key={s} onClick={() => setStatusFilter(s)}
-                  className={cn("px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all capitalize",
+                  className={cn("px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-medium border transition-all capitalize whitespace-nowrap",
                     statusFilter === s ? "bg-foreground text-background border-foreground" : "bg-card border-border hover:bg-muted/50")}>
                   {s}
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 shrink-0">
               {["all", "verified", "pending", "flagged"].map((c) => (
                 <button key={c} onClick={() => setComplianceFilter(c)}
-                  className={cn("px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all capitalize",
+                  className={cn("px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-medium border transition-all capitalize whitespace-nowrap",
                     complianceFilter === c ? "bg-foreground text-background border-foreground" : "bg-card border-border hover:bg-muted/50")}>
                   {c === "all" ? "All KYC" : c}
                 </button>
@@ -228,7 +229,7 @@ export default function MerchantsPage() {
         </div>
 
         {/* List */}
-        <div className="flex-1 overflow-y-auto divide-y divide-border">
+        <div className="flex-1 overflow-y-auto divide-y divide-border pb-20 md:pb-0">
           {filtered.map((merchant) => {
             const sc = statusConfig[merchant.status];
             const cc = complianceConfig[merchant.complianceStatus];
@@ -239,15 +240,15 @@ export default function MerchantsPage() {
             return (
               <motion.button key={merchant.id}
                 onClick={() => { setSelected(isSelected ? null : merchant); setDetailTab("overview"); }}
-                className={cn("w-full text-left px-6 py-4 hover:bg-muted/30 transition-colors group",
+                className={cn("w-full text-left px-4 sm:px-6 py-3 sm:py-4 hover:bg-muted/30 transition-colors group",
                   isSelected && "bg-brand-teal/5 border-r-2 border-r-brand-teal")}
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3 min-w-0">
-                    <div className="size-9 rounded-xl bg-brand-navy/10 border border-brand-navy/10 flex items-center justify-center shrink-0 mt-0.5">
-                      <Building2 className="size-4 text-brand-navy" />
+                  <div className="flex items-start gap-2 sm:gap-3 min-w-0 flex-1">
+                    <div className="size-8 sm:size-9 rounded-xl bg-brand-navy/10 border border-brand-navy/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <Building2 className="size-3.5 sm:size-4 text-brand-navy" />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="font-semibold text-sm truncate">{merchant.name}</p>
                       <p className="text-xs text-muted-foreground font-mono truncate">{merchant.registrationNumber}</p>
                       <p className="text-xs text-muted-foreground truncate">{merchant.industry}</p>
@@ -287,29 +288,37 @@ export default function MerchantsPage() {
       {/* ── Detail panel ── */}
       <AnimatePresence>
         {selected && canViewDetails && (
-          <motion.div className="flex-1 flex flex-col overflow-hidden"
+          <motion.div 
+            className="fixed inset-0 md:relative md:flex-1 flex flex-col overflow-hidden bg-background z-50 md:z-auto"
             initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 16 }}
             transition={{ duration: 0.2 }}>
 
             {/* Detail header */}
-            <div className="px-6 py-4 border-b border-border bg-card/50 flex items-start justify-between gap-4">
-              <div className="flex items-start gap-3">
-                <div className="size-10 rounded-xl bg-brand-navy/10 flex items-center justify-center shrink-0">
-                  <Building2 className="size-5 text-brand-navy" />
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-card/50 flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+              <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+                {/* Mobile back button */}
+                <button 
+                  onClick={() => setSelected(null)}
+                  className="md:hidden size-9 rounded-xl border border-border flex items-center justify-center shrink-0 hover:bg-muted/50 transition-colors"
+                >
+                  <X className="size-4" />
+                </button>
+                <div className="size-9 sm:size-10 rounded-xl bg-brand-navy/10 flex items-center justify-center shrink-0">
+                  <Building2 className="size-4 sm:size-5 text-brand-navy" />
                 </div>
-                <div>
-                  <h2 className="font-bold text-lg leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-bold text-base sm:text-lg leading-tight truncate" style={{ fontFamily: "var(--font-heading)" }}>
                     {selected.name}
                   </h2>
-                  <p className="text-xs text-muted-foreground font-mono">{selected.registrationNumber}</p>
-                  <div className="flex items-center gap-2 mt-1.5">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground font-mono truncate">{selected.registrationNumber}</p>
+                  <div className="flex items-center gap-1.5 sm:gap-2 mt-1.5 flex-wrap">
                     {(() => { const sc = statusConfig[selected.status]; const I = sc.icon; return (
-                      <span className={cn("inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border font-medium", sc.color)}>
+                      <span className={cn("inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium shrink-0", sc.color)}>
                         <I className="size-2.5" />{sc.label}
                       </span>
                     ); })()}
                     {(() => { const cc = complianceConfig[selected.complianceStatus]; const I = cc.icon; return (
-                      <span className={cn("inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border font-medium", cc.color)}>
+                      <span className={cn("inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium shrink-0", cc.color)}>
                         <I className="size-2.5" />{cc.label}
                       </span>
                     ); })()}
@@ -318,7 +327,7 @@ export default function MerchantsPage() {
               </div>
 
               {/* Action buttons */}
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap">
                 {canImpersonate && selected.status === "active" && (
                   <button onClick={() => setActionModal({ merchant: selected, type: "impersonate" })}
                     className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-brand-navy/30 text-brand-navy text-xs font-medium hover:bg-brand-navy/5 transition-all">
@@ -333,19 +342,19 @@ export default function MerchantsPage() {
                     <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-xl shadow-xl z-20 p-1 min-w-45 opacity-0 group-hover/actions:opacity-100 transition-opacity pointer-events-none group-hover/actions:pointer-events-auto">
                       {selected.status === "active" && (
                         <button onClick={() => setActionModal({ merchant: selected, type: "suspend" })}
-                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-amber-700 hover:bg-amber-50 transition-all">
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs sm:text-sm text-amber-700 hover:bg-amber-50 transition-all whitespace-nowrap">
                           <Ban className="size-3.5" /> Suspend
                         </button>
                       )}
                       {selected.status === "suspended" && (
                         <button onClick={() => setActionModal({ merchant: selected, type: "reactivate" })}
-                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-emerald-700 hover:bg-emerald-50 transition-all">
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs sm:text-sm text-emerald-700 hover:bg-emerald-50 transition-all whitespace-nowrap">
                           <RefreshCw className="size-3.5" /> Reactivate
                         </button>
                       )}
                       {selected.status !== "deactivated" && (
                         <button onClick={() => setActionModal({ merchant: selected, type: "deactivate" })}
-                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-destructive hover:bg-red-50 transition-all">
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs sm:text-sm text-destructive hover:bg-red-50 transition-all whitespace-nowrap">
                           <Trash2 className="size-3.5" /> Deactivate
                         </button>
                       )}
@@ -359,29 +368,29 @@ export default function MerchantsPage() {
             </div>
 
             {/* KPI strip */}
-            <div className="grid grid-cols-3 divide-x divide-border border-b border-border bg-muted/20">
+            <div className="grid grid-cols-1 xs:grid-cols-3 divide-y xs:divide-y-0 xs:divide-x divide-border border-b border-border bg-muted/20">
               {[
                 { icon: TrendingUp, label: "Total Volume", value: formatGHS(selected.totalVolume), color: "#64c6c3" },
                 { icon: ArrowLeftRight, label: "Sub-merchants", value: String(selected.subMerchantCount), color: "#263b8e" },
                 { icon: DollarSign, label: "Onboarded", value: new Date(selected.onboardingDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }), color: "#bcbbee" },
               ].map(({ icon: Icon, label, value, color }) => (
-                <div key={label} className="flex items-center gap-3 px-5 py-3">
-                  <div className="size-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${color}18` }}>
-                    <Icon className="size-3.5" style={{ color }} />
+                <div key={label} className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-2.5 sm:py-3">
+                  <div className="size-7 sm:size-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${color}18` }}>
+                    <Icon className="size-3 sm:size-3.5" style={{ color }} />
                   </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{label}</p>
-                    <p className="text-sm font-bold" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
+                  <div className="min-w-0">
+                    <p className="text-[9px] sm:text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{label}</p>
+                    <p className="text-xs sm:text-sm font-bold truncate" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Tabs */}
-            <div className="flex items-center gap-1 px-6 py-3 border-b border-border bg-card/30">
+            <div className="flex items-center gap-1 px-4 sm:px-6 py-2 sm:py-3 border-b border-border bg-card/30 overflow-x-auto scrollbar-none">
               {(["overview", "fees", "team", "notes"] as const).map((t) => (
                 <button key={t} onClick={() => setDetailTab(t)}
-                  className={cn("px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize",
+                  className={cn("px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-medium transition-all capitalize whitespace-nowrap",
                     detailTab === t ? "bg-card shadow-sm border border-border text-foreground" : "text-muted-foreground hover:text-foreground")}>
                   {t === "fees" ? "Fee Schedule" : t === "notes" ? `Notes ${notes.length > 0 ? `(${notes.length})` : ""}` : t}
                 </button>
@@ -389,27 +398,27 @@ export default function MerchantsPage() {
             </div>
 
             {/* Tab content */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-20 md:pb-6">
               {/* OVERVIEW TAB */}
               {detailTab === "overview" && (
-                <div className="space-y-5">
+                <div className="space-y-4 sm:space-y-5">
                   {/* Profile */}
-                  <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
-                    <h3 className="font-semibold text-sm" style={{ fontFamily: "var(--font-heading)" }}>Business Details</h3>
+                  <div className="bg-card border border-border rounded-xl sm:rounded-2xl p-4 sm:p-5 space-y-2 sm:space-y-3">
+                    <h3 className="font-semibold text-xs sm:text-sm" style={{ fontFamily: "var(--font-heading)" }}>Business Details</h3>
                     {[
                       { label: "Legal Name", value: selected.name },
                       { label: "Registration No.", value: selected.registrationNumber, mono: true, copyable: true },
                       { label: "Industry", value: selected.industry },
                       { label: "Contact Email", value: selected.email, copyable: true },
                     ].map(({ label, value, mono, copyable }) => (
-                      <div key={label} className="flex items-center justify-between gap-4 py-2 border-b border-border/50 last:border-0">
-                        <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider shrink-0">{label}</span>
-                        <div className="flex items-center gap-2">
-                          <span className={cn("text-sm", mono ? "font-mono text-xs" : "")}>{value}</span>
+                      <div key={label} className="flex items-center justify-between gap-2 sm:gap-4 py-2 border-b border-border/50 last:border-0">
+                        <span className="text-[10px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider shrink-0">{label}</span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className={cn("text-xs sm:text-sm truncate", mono ? "font-mono text-[10px] sm:text-xs" : "")}>{value}</span>
                           {copyable && (
                             <button onClick={() => handleCopy(`${label}-${selected.id}`, value)}
-                              className="text-muted-foreground hover:text-foreground transition-colors">
-                              {copiedId === `${label}-${selected.id}` ? <Check className="size-3 text-emerald-500" /> : <Copy className="size-3" />}
+                              className="text-muted-foreground hover:text-foreground transition-colors shrink-0">
+                              {copiedId === `${label}-${selected.id}` ? <Check className="size-3" /> : <Copy className="size-3" />}
                             </button>
                           )}
                         </div>
@@ -418,17 +427,17 @@ export default function MerchantsPage() {
                   </div>
 
                   {/* KYC / Compliance status */}
-                  <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
-                    <h3 className="font-semibold text-sm" style={{ fontFamily: "var(--font-heading)" }}>KYC & Compliance</h3>
+                  <div className="bg-card border border-border rounded-xl sm:rounded-2xl p-4 sm:p-5 space-y-2 sm:space-y-3">
+                    <h3 className="font-semibold text-xs sm:text-sm" style={{ fontFamily: "var(--font-heading)" }}>KYC & Compliance</h3>
                     {(() => {
                       const cc = complianceConfig[selected.complianceStatus];
                       const I = cc.icon;
                       return (
-                        <div className={cn("flex items-center gap-3 px-4 py-3 rounded-xl border", cc.color)}>
-                          <I className="size-4 shrink-0" />
-                          <div>
-                            <p className="text-sm font-semibold">{cc.label}</p>
-                            <p className="text-xs opacity-80">
+                        <div className={cn("flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border", cc.color)}>
+                          <I className="size-3.5 sm:size-4 shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-xs sm:text-sm font-semibold">{cc.label}</p>
+                            <p className="text-[10px] sm:text-xs opacity-80">
                               {selected.complianceStatus === "verified" && "Full KYC completed. All documents on file."}
                               {selected.complianceStatus === "pending" && "Documents submitted. Under review."}
                               {selected.complianceStatus === "flagged" && "AML flag raised. Account suspended pending review."}
@@ -439,12 +448,12 @@ export default function MerchantsPage() {
                       );
                     })()}
                     {selected.complianceStatus === "flagged" && (
-                      <div className="flex gap-2">
-                        <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-brand-lavender/40 text-[#5c3d9e] text-xs font-medium hover:bg-brand-lavender/10 transition-all">
-                          <UserCheck className="size-3.5" /> View KYC File
+                      <div className="flex flex-col xs:flex-row gap-2">
+                        <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-brand-lavender/40 text-[#5c3d9e] text-[10px] sm:text-xs font-medium hover:bg-brand-lavender/10 transition-all">
+                          <UserCheck className="size-3 sm:size-3.5" /> View KYC File
                         </button>
-                        <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-border text-xs font-medium hover:bg-muted/50 transition-all">
-                          <ExternalLink className="size-3.5" /> Open Ticket
+                        <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-border text-[10px] sm:text-xs font-medium hover:bg-muted/50 transition-all">
+                          <ExternalLink className="size-3 sm:size-3.5" /> Open Ticket
                         </button>
                       </div>
                     )}
@@ -452,31 +461,31 @@ export default function MerchantsPage() {
 
                   {/* Quick actions */}
                   {canManage && (
-                    <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
-                      <h3 className="font-semibold text-sm" style={{ fontFamily: "var(--font-heading)" }}>Account Actions</h3>
-                      <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-card border border-border rounded-xl sm:rounded-2xl p-4 sm:p-5 space-y-2 sm:space-y-3">
+                      <h3 className="font-semibold text-xs sm:text-sm" style={{ fontFamily: "var(--font-heading)" }}>Account Actions</h3>
+                      <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
                         {selected.status === "active" && (
                           <button onClick={() => setActionModal({ merchant: selected, type: "suspend" })}
-                            className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-amber-200 text-amber-700 bg-amber-50 text-xs font-medium hover:bg-amber-100 transition-all">
-                            <Ban className="size-3.5" /> Suspend Account
+                            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2.5 rounded-xl border border-amber-200 text-amber-700 bg-amber-50 text-[10px] sm:text-xs font-medium hover:bg-amber-100 transition-all">
+                            <Ban className="size-3 sm:size-3.5" /> Suspend Account
                           </button>
                         )}
                         {selected.status === "suspended" && (
                           <button onClick={() => setActionModal({ merchant: selected, type: "reactivate" })}
-                            className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-emerald-200 text-emerald-700 bg-emerald-50 text-xs font-medium hover:bg-emerald-100 transition-all">
-                            <RefreshCw className="size-3.5" /> Reactivate
+                            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2.5 rounded-xl border border-emerald-200 text-emerald-700 bg-emerald-50 text-[10px] sm:text-xs font-medium hover:bg-emerald-100 transition-all">
+                            <RefreshCw className="size-3 sm:size-3.5" /> Reactivate
                           </button>
                         )}
                         {selected.status !== "deactivated" && (
                           <button onClick={() => setActionModal({ merchant: selected, type: "deactivate" })}
-                            className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-destructive/20 text-destructive text-xs font-medium hover:bg-red-50 transition-all">
-                            <Trash2 className="size-3.5" /> Deactivate
+                            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2.5 rounded-xl border border-destructive/20 text-destructive text-[10px] sm:text-xs font-medium hover:bg-red-50 transition-all">
+                            <Trash2 className="size-3 sm:size-3.5" /> Deactivate
                           </button>
                         )}
                         {selected.status === "active" && canImpersonate && (
                           <button onClick={() => setActionModal({ merchant: selected, type: "impersonate" })}
-                            className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-brand-navy/20 text-brand-navy text-xs font-medium hover:bg-brand-navy/5 transition-all">
-                            <Eye className="size-3.5" /> Impersonate
+                            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2.5 rounded-xl border border-brand-navy/20 text-brand-navy text-[10px] sm:text-xs font-medium hover:bg-brand-navy/5 transition-all">
+                            <Eye className="size-3 sm:size-3.5" /> Impersonate
                           </button>
                         )}
                       </div>
@@ -487,36 +496,38 @@ export default function MerchantsPage() {
 
               {/* FEES TAB */}
               {detailTab === "fees" && (
-                <div className="space-y-4">
-                  <div className="bg-muted/30 border border-border rounded-xl px-4 py-3 text-xs text-muted-foreground">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="bg-muted/30 border border-border rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-muted-foreground">
                     Fee schedules are set by the Platform Finance team. Rates apply to this merchant's collections and payouts.
                   </div>
-                  <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-border bg-muted/30">
-                          {["Channel", "Rate", "Cap"].map((h) => (
-                            <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {fees.map((fee) => (
-                          <tr key={fee.label} className="border-b border-border/50 last:border-0">
-                            <td className="px-4 py-3 text-sm font-medium">{fee.label}</td>
-                            <td className="px-4 py-3">
-                              <span className="text-sm font-bold text-brand-navy">{fee.rate}</span>
-                            </td>
-                            <td className="px-4 py-3 text-sm text-muted-foreground">{fee.cap}</td>
+                  <div className="bg-card border border-border rounded-xl sm:rounded-2xl overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm min-w-100">
+                        <thead>
+                          <tr className="border-b border-border bg-muted/30">
+                            {["Channel", "Rate", "Cap"].map((h) => (
+                              <th key={h} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
+                            ))}
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {fees.map((fee) => (
+                            <tr key={fee.label} className="border-b border-border/50 last:border-0">
+                              <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium">{fee.label}</td>
+                              <td className="px-3 sm:px-4 py-2.5 sm:py-3">
+                                <span className="text-xs sm:text-sm font-bold text-brand-navy">{fee.rate}</span>
+                              </td>
+                              <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm text-muted-foreground">{fee.cap}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                   {canManage && (
                     <button
                       onClick={() => setShowFeeModal(true)}
-                      className="flex items-center gap-2 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                      className="flex items-center justify-center gap-2 px-4 py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all w-full sm:w-auto"
                     >
                       Edit Fee Schedule
                     </button>
@@ -526,8 +537,8 @@ export default function MerchantsPage() {
 
               {/* TEAM TAB */}
               {detailTab === "team" && (
-                <div className="space-y-3">
-                  <div className="bg-muted/20 border border-border rounded-xl px-4 py-3 text-xs text-muted-foreground">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="bg-muted/20 border border-border rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs text-muted-foreground">
                     Merchant team members. Managed by the merchant owner — platform staff can view only.
                   </div>
                   {[
@@ -535,19 +546,19 @@ export default function MerchantsPage() {
                     { name: "Abena Mensah", email: `abena@${selected.email.split("@")[1]}`, role: "Admin", lastLogin: new Date(Date.now() - 86400000).toISOString() },
                     { name: "Kofi Boateng", email: `kofi@${selected.email.split("@")[1]}`, role: "Developer", lastLogin: new Date(Date.now() - 7200000).toISOString() },
                   ].map((member) => (
-                    <div key={member.email} className="bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center">
-                          <span className="text-xs font-bold text-[#1a6e6c]">{member.name[0]}</span>
+                    <div key={member.email} className="bg-card border border-border rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <div className="size-7 sm:size-8 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center shrink-0">
+                          <span className="text-[10px] sm:text-xs font-bold text-[#1a6e6c]">{member.name[0]}</span>
                         </div>
-                        <div>
-                          <p className="text-sm font-medium">{member.name}</p>
-                          <p className="text-xs text-muted-foreground">{member.email}</p>
+                        <div className="min-w-0">
+                          <p className="text-xs sm:text-sm font-medium truncate">{member.name}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{member.email}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <span className="text-[11px] px-2 py-0.5 rounded-full border font-medium bg-brand-teal/10 text-[#1a6e6c] border-brand-teal/20">{member.role}</span>
-                        <p className="text-[10px] text-muted-foreground mt-1">{formatDate(member.lastLogin)}</p>
+                      <div className="text-right shrink-0">
+                        <span className="text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium bg-brand-teal/10 text-[#1a6e6c] border-brand-teal/20 whitespace-nowrap">{member.role}</span>
+                        <p className="text-[9px] sm:text-[10px] text-muted-foreground mt-1">{formatDate(member.lastLogin)}</p>
                       </div>
                     </div>
                   ))}
@@ -556,33 +567,33 @@ export default function MerchantsPage() {
 
               {/* NOTES TAB */}
               {detailTab === "notes" && (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {canManage && (
-                    <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Add Internal Note</p>
+                    <div className="bg-card border border-border rounded-xl sm:rounded-2xl p-3 sm:p-4 space-y-2 sm:space-y-3">
+                      <p className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">Add Internal Note</p>
                       <textarea rows={3} placeholder="Write an internal note about this merchant…"
-                        className="w-full text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-brand-teal/60 transition-all" />
-                      <button className="px-4 py-2 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs font-medium transition-all">
+                        className="w-full text-xs sm:text-sm px-3 py-2.5 border border-border rounded-xl bg-background outline-none resize-none focus:border-brand-teal/60 transition-all" />
+                      <button className="px-3 sm:px-4 py-2 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-[10px] sm:text-xs font-medium transition-all">
                         Save Note
                       </button>
                     </div>
                   )}
                   {notes.length > 0 ? (
-                    <div className="space-y-3">
+                    <div className="space-y-2 sm:space-y-3">
                       {notes.map((note) => (
-                        <div key={note.id} className="bg-card border border-border rounded-2xl p-4">
+                        <div key={note.id} className="bg-card border border-border rounded-xl sm:rounded-2xl p-3 sm:p-4">
                           <div className="flex items-center justify-between mb-2">
-                            <p className="text-xs font-semibold text-brand-navy">{note.author}</p>
-                            <p className="text-[10px] text-muted-foreground">{formatDate(note.date)}</p>
+                            <p className="text-[10px] sm:text-xs font-semibold text-brand-navy">{note.author}</p>
+                            <p className="text-[9px] sm:text-[10px] text-muted-foreground">{formatDate(note.date)}</p>
                           </div>
-                          <p className="text-sm text-foreground/80">{note.text}</p>
+                          <p className="text-xs sm:text-sm text-foreground/80">{note.text}</p>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <AlertTriangle className="size-8 text-muted-foreground/30 mb-2" />
-                      <p className="text-sm text-muted-foreground">No notes yet</p>
+                      <AlertTriangle className="size-7 sm:size-8 text-muted-foreground/30 mb-2" />
+                      <p className="text-xs sm:text-sm text-muted-foreground">No notes yet</p>
                     </div>
                   )}
                 </div>

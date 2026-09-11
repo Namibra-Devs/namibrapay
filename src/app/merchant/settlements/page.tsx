@@ -69,7 +69,7 @@ export default function SettlementsPage() {
                     </button>
                   )}
                 </div>
-                <p className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(s.collected)}</p>
+                <p className="text-lg sm:text-xl md:text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>{formatGHS(s.collected)}</p>
                 <div className="space-y-2">
                   {[
                     { label: "Gross collected", val: s.collected, color: "text-foreground" },

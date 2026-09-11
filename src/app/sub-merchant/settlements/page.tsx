@@ -93,13 +93,13 @@ export default function SubMerchantSettlementsPage() {
             className="bg-card border border-border rounded-2xl p-5 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{kpi.label}</span>
-              <div className="size-8 rounded-lg flex items-center justify-center" style={{ background: `${kpi.accent}18` }}>
-                {kpi.icon}
+              <div className="size-7 sm:size-8 rounded-lg flex items-center justify-center" style={{ background: `${kpi.accent}18` }}>
+                <div className="[&>svg]:size-3.5 sm:[&>svg]:size-4">{kpi.icon}</div>
               </div>
             </div>
             <div>
-              <p className="text-2xl font-bold mb-0.5" style={{ fontFamily: "var(--font-heading)" }}>{kpi.value}</p>
-              <p className="text-[11px] text-muted-foreground">{kpi.sub}</p>
+              <p className="text-lg sm:text-xl md:text-2xl font-bold mb-0.5" style={{ fontFamily: "var(--font-heading)" }}>{kpi.value}</p>
+              <p className="text-[10px] sm:text-[11px] text-muted-foreground">{kpi.sub}</p>
             </div>
           </motion.div>
         ))}
@@ -240,7 +240,7 @@ export default function SubMerchantSettlementsPage() {
                     </div>
 
                     {/* Fee calculation explanation */}
-                    <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                    <div className="flex items-start gap-2 sm:gap-3 bg-amber-50 border border-amber-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3">
                       <Info className="size-4 text-amber-600 mt-0.5 shrink-0" />
                       <div>
                         <p className="text-xs font-medium text-amber-800">How fees are calculated</p>
