@@ -207,7 +207,7 @@ export default function SubMerchantsPage() {
                 {isMounted && (
                   <button
                     onClick={() => setSelectedSubMerchant(sm)}
-                    className="flex items-center gap-1 text-brand-teal font-medium opacity-0 group-hover:opacity-100 transition-opacity hover:underline"
+                    className="flex items-center gap-1 text-brand-teal font-medium transition-opacity hover:underline"
                   >
                     <TrendingUp className="size-3" />
                     View details
