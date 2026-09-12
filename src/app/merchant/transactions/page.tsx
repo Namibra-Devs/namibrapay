@@ -76,7 +76,7 @@ export default function TransactionsPage() {
   const activeFilterCount = [statusFilter !== "all", typeFilter !== "all", search !== ""].filter(Boolean).length;
 
   return (
-    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-6">
+    <div className="px-4 sm:pl-6 sm:pr-4 py-4 sm:py-4 space-y-4 pb-20 md:pb-b">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>Transactions</h1>
@@ -135,7 +135,7 @@ export default function TransactionsPage() {
       {/* Filter Panel */}
       {filtersOpen && (
         <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col gap-4 p-4 bg-muted/30 border border-border rounded-xl">
+          className="flex flex-col sm:flex-row gap-4 p-4 bg-muted/30 border border-border rounded-xl">
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</label>
             <div className="flex gap-2 flex-wrap">
@@ -276,7 +276,7 @@ export default function TransactionsPage() {
             <FileText className="size-5 text-blue-600 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-blue-900 mb-1">Transaction Export</p>
-              <p className="text-sm text-blue-700">
+              <p className="text-xs text-blue-700">
                 Export includes transaction reference, date/time, type, amount, fee, net, status, and payer/beneficiary information.
               </p>
             </div>

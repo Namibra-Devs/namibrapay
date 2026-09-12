@@ -119,7 +119,7 @@ export default function SubMerchantTeamPage() {
   };
 
   return (
-    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-4">
+    <div className="px-4 sm:pl-6 sm:pr-4 py-4 sm:py-6 space-y-4 pb-20 md:pb-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div className="flex-1 min-w-0">

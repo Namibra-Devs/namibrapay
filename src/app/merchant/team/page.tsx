@@ -29,7 +29,7 @@ export default function TeamPage() {
   const assignableRoles = [MERCHANT_ROLES.ADMIN, MERCHANT_ROLES.DEVELOPER, MERCHANT_ROLES.FINANCE, MERCHANT_ROLES.SUPPORT] as MerchantRole[];
 
   return (
-    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-6">
+    <div className="px-4 sm:pl-6 sm:pr-4 py-4 sm:py-4 space-y-4 pb-20 md:pb-4">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
         className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
         <div className="flex-1 min-w-0">

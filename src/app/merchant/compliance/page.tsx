@@ -106,7 +106,7 @@ export default function CompliancePage() {
   };
 
   return (
-    <div className="px-6 py-6 space-y-4 pb-24 md:pb-6">
+    <div className="sm:pl-6 sm:pr-4 py-4 space-y-4 pb-24 md:pb-4">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
@@ -278,6 +278,3 @@ export default function CompliancePage() {
     </div>
   );
 }
-
-// Continue in next message with form components...
-

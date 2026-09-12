@@ -407,11 +407,11 @@ export default function MerchantsPage() {
                       <div key={label} className="flex items-center justify-between gap-2 sm:gap-4 py-2 border-b border-border/50 last:border-0">
                         <span className="text-[10px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider shrink-0">{label}</span>
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className={cn("text-xs sm:text-sm truncate", mono ? "font-mono text-[10px] sm:text-xs" : "")}>{value}</span>
+                          <span className={cn("text-[11px] sm:text-sm font-medium truncate", mono ? "font-mono" : "")}>{value}</span>
                           {copyable && (
                             <button onClick={() => handleCopy(`${label}-${selected.id}`, value)}
                               className="text-muted-foreground hover:text-foreground transition-colors shrink-0">
-                              {copiedId === `${label}-${selected.id}` ? <Check className="size-3" /> : <Copy className="size-3" />}
+                              {copiedId === `${label}-${selected.id}` ? <Check className="size-3 sm:size-3.5" /> : <Copy className="size-3 sm:size-3.5" />}
                             </button>
                           )}
                         </div>

@@ -64,7 +64,7 @@ export default function ApiPage() {
   ];
 
   return (
-    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6 pb-20 md:pb-6">
+    <div className="px-4 sm:pl-6 sm:pr-4 py-4 sm:py-6 space-y-4 sm:space-y-6 pb-20 md:pb-6">
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
           className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
           <div className="flex-1 min-w-0">

@@ -73,7 +73,7 @@ export default function SubMerchantsPage() {
   };
 
   return (
-    <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4 pb-20 md:pb-6">
+    <div className="px-4 sm:pl-6 sm:pr-4 py-4 sm:py-4 space-y-4 pb-20 md:pb-4">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
         className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
         <div className="flex-1 min-w-0">
@@ -377,17 +377,17 @@ export default function SubMerchantsPage() {
             </div>
 
             {/* Key Metrics */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               <div className="bg-muted/30 rounded-xl p-4 text-center">
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-brand-navy">{formatGHS(selectedSubMerchant.volume)}</p>
+                <p className="text-sm sm:text-xl md:text-2xl font-bold text-brand-navy">{formatGHS(selectedSubMerchant.volume)}</p>
                 <p className="text-xs text-muted-foreground mt-1">Total Volume</p>
               </div>
               <div className="bg-muted/30 rounded-xl p-4 text-center">
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-brand-navy">{selectedSubMerchant.txnCount.toLocaleString()}</p>
+                <p className="text-sm sm:text-xl md:text-2xl font-bold text-brand-navy">{selectedSubMerchant.txnCount.toLocaleString()}</p>
                 <p className="text-xs text-muted-foreground mt-1">Transactions</p>
               </div>
               <div className="bg-muted/30 rounded-xl p-4 text-center">
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-brand-navy">{selectedSubMerchant.feeRate}%</p>
+                <p className="text-sm sm:text-xl md:text-2xl font-bold text-brand-navy">{selectedSubMerchant.feeRate}%</p>
                 <p className="text-xs text-muted-foreground mt-1">Fee Rate</p>
               </div>
             </div>
@@ -397,7 +397,7 @@ export default function SubMerchantsPage() {
               <h3 className="text-sm font-semibold text-foreground">Contact Information</h3>
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Email</p>
-                <p className="text-sm font-medium">{selectedSubMerchant.contactEmail}</p>
+                <p className="text-sm sm:text-base font-medium break-all">{selectedSubMerchant.contactEmail}</p>
               </div>
             </div>
 
@@ -406,7 +406,7 @@ export default function SubMerchantsPage() {
               <h3 className="text-sm font-semibold text-foreground">Account Timeline</h3>
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Onboarded</p>
-                <p className="text-sm font-medium">{formatDate(selectedSubMerchant.onboardingDate + "T00:00:00Z")}</p>
+                <p className="text-sm sm:text-base font-medium">{formatDate(selectedSubMerchant.onboardingDate + "T00:00:00Z")}</p>
               </div>
             </div>
 
