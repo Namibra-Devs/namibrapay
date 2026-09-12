@@ -517,7 +517,7 @@ export default function AuditLogPage() {
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => {
                 setShowExportModal(false);
@@ -525,7 +525,7 @@ export default function AuditLogPage() {
                 setExportDateFrom("");
                 setExportDateTo("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
@@ -542,7 +542,7 @@ export default function AuditLogPage() {
                 setExportDateFrom("");
                 setExportDateTo("");
               }}
-              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs sm:text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 sm:gap-2 order-1 sm:order-2"
             >
               <Download className="size-4" />
               Generate Export

@@ -549,15 +549,15 @@ export default function SupportPage() {
         {tab === "disputes" && (
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 pb-24 md:pb-6">
             {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {[
                 { label: "Open Disputes", value: String(mockDisputes.filter(d => d.status === "open" || d.status === "investigating").length), color: "#f59e0b", icon: AlertTriangle },
                 { label: "Pending Refunds", value: String(mockRefundRequests.filter(r => r.status === "pending").length), color: "#3b82f6", icon: Clock },
                 { label: "Completed This Month", value: String(mockRefundRequests.filter(r => r.status === "completed").length), color: "#10b981", icon: CheckCircle },
               ].map(({ label, value, color, icon: Icon }) => (
-                <div key={label} className="bg-card border border-border rounded-2xl p-4 sm:p-5">
+                <div key={label} className="bg-card border border-border rounded-2xl p-2 sm:p-4">
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
-                    <span className="text-[10px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
+                    <span className="text-[8px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
                     <div className="size-7 sm:size-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${color}18` }}>
                       <Icon className="size-3.5 sm:size-4" style={{ color }} />
                     </div>
@@ -1210,10 +1210,10 @@ export default function SupportPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
               <button
                 onClick={() => setSelectedTransaction(null)}
-                className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
               >
                 Close
               </button>
@@ -1223,7 +1223,7 @@ export default function SupportPage() {
                   setSelectedTransaction(null);
                   setShowDisputeModal(true);
                 }}
-                className="flex-1 px-4 py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-xs sm:text-sm font-medium transition-all order-1 sm:order-2"
               >
                 Initiate Dispute
               </button>
@@ -1315,7 +1315,7 @@ export default function SupportPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => {
                 setShowDisputeModal(false);
@@ -1323,7 +1323,7 @@ export default function SupportPage() {
                 setDisputeReason("");
                 setDisputeNotes("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
@@ -1336,7 +1336,7 @@ export default function SupportPage() {
                 setDisputeReason("");
                 setDisputeNotes("");
               }}
-              className="flex-1 px-4 py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-xs sm:text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
             >
               Create Dispute
             </button>
@@ -1435,7 +1435,7 @@ export default function SupportPage() {
           </FormField>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => {
                 setShowRefundModal(false);
@@ -1444,7 +1444,7 @@ export default function SupportPage() {
                 setRefundReason("");
                 setRefundNotes("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
@@ -1458,7 +1458,7 @@ export default function SupportPage() {
                 setRefundReason("");
                 setRefundNotes("");
               }}
-              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-teal hover:bg-[#52b4b1] text-white rounded-xl text-xs sm:text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
             >
               Submit Request
             </button>

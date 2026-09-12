@@ -598,7 +598,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Security */}
-            <div className="bg-card border border-border rounded-2xl p-6">
+            <div className="bg-card border border-border rounded-2xl p-3 sm:p-6">
               <div className="flex items-start gap-3">
                 <Lock className="size-5 text-brand-navy shrink-0 mt-0.5" />
                 <div>
@@ -606,14 +606,14 @@ export default function SettingsPage() {
                   <p className="text-sm text-muted-foreground mb-4">
                     All configuration changes are logged in the audit trail. Critical changes require Super Admin approval and are subject to 24-hour notice period.
                   </p>
-                  <div className="flex items-center gap-4 text-xs">
-                    <span className="flex items-center gap-1.5 text-emerald-600">
+                  <div className="flex items-center gap-1 sm:gap-4 text-[10px] sm:text-xs">
+                    <span className="flex items-center gap-1 sm:gap-1.5 text-emerald-600">
                       <CheckCircle className="size-3" /> SSL Encrypted
                     </span>
-                    <span className="flex items-center gap-1.5 text-emerald-600">
+                    <span className="flex items-center gap-1 sm:gap-1.5 text-emerald-600">
                       <CheckCircle className="size-3" /> Audit Logged
                     </span>
-                    <span className="flex items-center gap-1.5 text-emerald-600">
+                    <span className="flex items-center gap-1 sm:gap-1.5 text-emerald-600">
                       <CheckCircle className="size-3" /> Bank of Ghana Compliant
                     </span>
                   </div>
@@ -742,7 +742,7 @@ export default function SettingsPage() {
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => {
                 setShowInviteModal(false);
@@ -750,7 +750,7 @@ export default function SettingsPage() {
                 setInviteRole("");
                 setInviteName("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>

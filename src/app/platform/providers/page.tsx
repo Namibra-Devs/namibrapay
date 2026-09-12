@@ -742,7 +742,7 @@ export default function ProvidersPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => {
                 setShowAddProviderModal(false);
@@ -750,7 +750,7 @@ export default function ProvidersPage() {
                 setNewProviderType("");
                 setNewProviderApiUrl("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
@@ -763,7 +763,7 @@ export default function ProvidersPage() {
                 setNewProviderType("");
                 setNewProviderApiUrl("");
               }}
-              className="flex-1 px-4 py-2.5 bg-brand-teal hover:bg-[#52b4b1] text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-teal hover:bg-[#52b4b1] text-white rounded-xl text-xs sm:text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
             >
               Add Provider
             </button>
@@ -869,14 +869,14 @@ export default function ProvidersPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
               <button
                 onClick={() => {
                   setShowRotateCredentialModal(null);
                   setRotationReason("");
                   setRotationNotes("");
                 }}
-                className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
               >
                 Cancel
               </button>
@@ -888,7 +888,7 @@ export default function ProvidersPage() {
                   setRotationReason("");
                   setRotationNotes("");
                 }}
-                className="flex-1 px-4 py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-lavender hover:bg-[#a8a7dc] text-[#1a1a3e] rounded-xl text-xs sm:text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
               >
                 <RotateCw className="size-4 inline mr-1.5" /> Rotate Credential
               </button>
@@ -976,14 +976,14 @@ export default function ProvidersPage() {
             </FormField>
 
             {/* Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
               <button
                 onClick={() => {
                   setShowRoutingApprovalModal(null);
                   setApprovalDecision(null);
                   setApprovalNotes("");
                 }}
-                className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
               >
                 Cancel
               </button>
@@ -1148,7 +1148,7 @@ export default function ProvidersPage() {
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => {
                 setShowScheduleMaintenanceModal(false);
@@ -1159,7 +1159,7 @@ export default function ProvidersPage() {
                 setMaintenanceDuration("");
                 setMaintenanceNotifyMerchants(true);
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
@@ -1313,7 +1313,7 @@ export default function ProvidersPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => {
                 setShowConfigureProviderModal(false);
@@ -1321,7 +1321,7 @@ export default function ProvidersPage() {
                 setConfigProviderTimeout("");
                 setConfigProviderRetries("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
@@ -1492,7 +1492,7 @@ export default function ProvidersPage() {
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => {
                 setShowAddRoutingRuleModal(false);
@@ -1504,7 +1504,7 @@ export default function ProvidersPage() {
                 setNewRuleCondition("");
                 setNewRuleDescription("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
