@@ -213,7 +213,7 @@ export default function SubMerchantOverviewPage() {
           7-Day Collection Volume
         </h2>
         <ResponsiveContainer width="100%" height={200}>
-          <AreaChart data={smChartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+          <AreaChart data={smChartData} margin={{ top: 4, right: 4, left: -10, bottom: 0 }}>
             <defs>
               <linearGradient id="smVolGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#a3ffe2" stopOpacity={0.3} />
@@ -231,7 +231,8 @@ export default function SubMerchantOverviewPage() {
               tickFormatter={(v: number) => `${(v / 1_000).toFixed(0)}K`} 
               tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} 
               axisLine={false} 
-              tickLine={false} 
+              tickLine={false}
+              width={40}
             />
             <Tooltip 
               formatter={(v) => typeof v === "number" ? formatGHS(v) : v} 
