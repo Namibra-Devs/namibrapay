@@ -266,7 +266,7 @@ export default function SubMerchantTransactionsPage() {
             <thead>
               <tr className="border-b border-border bg-muted/30">
                 {["Reference", "Date/Time", "Type", "Amount", "Fee", "Net", "Status", "Customer", "Actions"].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5 last:pr-5">
+                  <th key={h} className="text-left px-2 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-3 sm:first:pl-5 last:pr-3 sm:last:pr-5 whitespace-nowrap">
                     {h}
                   </th>
                 ))}
@@ -275,7 +275,7 @@ export default function SubMerchantTransactionsPage() {
             <tbody>
               {paginatedTxns.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-5 py-12 text-center text-muted-foreground">
+                  <td colSpan={9} className="px-3 sm:px-5 py-12 text-center text-muted-foreground">
                     No transactions found
                   </td>
                 </tr>
@@ -288,35 +288,35 @@ export default function SubMerchantTransactionsPage() {
                       i % 2 === 0 ? "" : "bg-muted/10"
                     )}
                   >
-                    <td className="pl-5 pr-4 py-3 font-mono text-xs">{txn.reference}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                    <td className="pl-3 sm:pl-5 pr-2 sm:pr-4 py-2 sm:py-3 font-mono text-[10px] sm:text-xs">{txn.reference}</td>
+                    <td className="px-2 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
                       {formatDate(txn.date)}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-2 sm:px-4 py-2 sm:py-3">
                       <span className={cn(
-                        "inline-block px-2 py-1 rounded-full border text-[11px] font-medium",
+                        "inline-block px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full border text-[10px] sm:text-[11px] font-medium",
                         typeBadge[txn.type]
                       )}>
                         {txn.type}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs font-semibold">{formatGHS(txn.grossAmount)}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{formatGHS(txn.fee)}</td>
-                    <td className="px-4 py-3 text-xs font-medium">{formatGHS(txn.net)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-2 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs font-semibold">{formatGHS(txn.grossAmount)}</td>
+                    <td className="px-2 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs text-muted-foreground">{formatGHS(txn.fee)}</td>
+                    <td className="px-2 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs font-medium">{formatGHS(txn.net)}</td>
+                    <td className="px-2 sm:px-4 py-2 sm:py-3">
                       <span className={cn(
-                        "flex items-center gap-1.5 w-fit px-2 py-1 rounded-full border text-[11px] font-medium",
+                        "flex items-center gap-1 sm:gap-1.5 w-fit px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full border text-[10px] sm:text-[11px] font-medium whitespace-nowrap",
                         statusBadge[txn.status]
                       )}>
                         {statusIcons[txn.status]}
                         {txn.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">{txn.customerName}</td>
-                    <td className="pl-4 pr-5 py-3">
+                    <td className="px-2 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs text-muted-foreground">{txn.customerName}</td>
+                    <td className="pl-2 sm:pl-4 pr-3 sm:pr-5 py-2 sm:py-3">
                       <button
                         onClick={() => setDetailTxn(txn)}
-                        className="text-xs text-[#1a7a5e] hover:underline font-medium"
+                        className="text-[10px] sm:text-xs text-[#1a7a5e] hover:underline font-medium"
                       >
                         View
                       </button>
