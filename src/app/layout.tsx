@@ -68,7 +68,7 @@ export const metadata: Metadata = {
       "NamibraPay provides fast, reliable, and affordable payment solutions for businesses and individuals across Ghana. Accept mobile money, process payouts, and manage settlements seamlessly.",
     images: [
       {
-        url: "/logo.png", // Update with actual OG image path (recommended: 1200x630px)
+        url: "/logo-md.png", // Update with actual OG image path (recommended: 1200x630px)
         width: 1200,
         height: 630,
         alt: "NamibraPay - Payment Solutions",
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     title: "NamibraPay | Fast, Reliable & Affordable Payments",
     description:
       "Fast, reliable, and affordable payment solutions for businesses and individuals across Ghana.",
-    images: ["/logo.png"], // Update with actual Twitter card image
+    images: ["/logo-md.png"], // Update with actual Twitter card image
     creator: "@namibrapay", // Update with actual Twitter handle
   },
   verification: {
