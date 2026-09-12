@@ -312,7 +312,7 @@ export default function SubMerchantsPage() {
           </FormField>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
             <button
               onClick={() => {
                 setShowCreate(false);
@@ -322,7 +322,7 @@ export default function SubMerchantsPage() {
                 setNewSubMerchantAddress("");
                 setNewSubMerchantCategory("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
@@ -411,10 +411,10 @@ export default function SubMerchantsPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
               <button
                 onClick={() => setSelectedSubMerchant(null)}
-                className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
               >
                 Close
               </button>
@@ -520,7 +520,7 @@ export default function SubMerchantsPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
               <button
                 onClick={() => {
                   setShowEdit(false);
@@ -529,7 +529,7 @@ export default function SubMerchantsPage() {
                   setEditEmail("");
                   setEditFeeRate("");
                 }}
-                className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
               >
                 Cancel
               </button>

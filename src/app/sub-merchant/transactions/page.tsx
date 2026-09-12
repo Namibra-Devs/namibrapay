@@ -24,6 +24,7 @@ import { Modal } from "@/components/ui/modal";
 import { FormField, Input, Textarea } from "@/components/ui/form-field";
 import Select from "@/components/ui/Select";
 import { useToast } from "@/components/ui/Toast";
+import { Pagination } from "@/components/ui/pagination";
 import DatePicker from "@/components/ui/date-picker";
 
 const statusIcons = {
@@ -329,30 +330,14 @@ export default function SubMerchantTransactionsPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-4 border-t border-border">
-            <p className="text-xs text-muted-foreground">
-              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredTxns.length)} of {filteredTxns.length}
-            </p>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="p-2 rounded-lg border border-border hover:bg-muted/50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronLeft className="size-4" />
-              </button>
-              <span className="text-xs font-medium px-3">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="p-2 rounded-lg border border-border hover:bg-muted/50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronRight className="size-4" />
-              </button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredTxns.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            currentItemCount={paginatedTxns.length}
+          />
         )}
       </div>
 
@@ -460,7 +445,7 @@ export default function SubMerchantTransactionsPage() {
             )}
 
             {/* Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
               {detailTxn.status === "failed" && (
                 <button
                   onClick={() => {
@@ -471,14 +456,14 @@ export default function SubMerchantTransactionsPage() {
                     setDisputeTxn(detailTxn);
                     setDetailTxn(null);
                   }}
-                  className="flex-1 px-4 py-2.5 bg-amber-500 text-white rounded-xl text-sm font-medium hover:bg-amber-600 transition-colors"
+                  className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-amber-500 text-white rounded-xl text-xs sm:text-sm font-medium hover:bg-amber-600 transition-colors order-1 sm:order-2"
                 >
                   Raise Dispute
                 </button>
               )}
               <button
                 onClick={() => setDetailTxn(null)}
-                className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-colors"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-colors order-2 sm:order-1"
               >
                 Close
               </button>
@@ -527,10 +512,10 @@ export default function SubMerchantTransactionsPage() {
             </FormField>
 
             {/* Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
               <button
                 onClick={handleRaiseDispute}
-                className="flex-1 px-4 py-2.5 bg-[#1a7a5e] text-white rounded-xl text-sm font-medium hover:bg-[#1a7a5e]/90 transition-colors"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#1a7a5e] text-white rounded-xl text-xs sm:text-sm font-medium hover:bg-[#1a7a5e]/90 transition-colors order-1 sm:order-2"
               >
                 Submit Dispute
               </button>
@@ -539,7 +524,7 @@ export default function SubMerchantTransactionsPage() {
                   setDisputeTxn(null);
                   setDisputeReason("");
                 }}
-                className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-colors"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-colors order-2 sm:order-1"
               >
                 Cancel
               </button>
@@ -639,10 +624,10 @@ export default function SubMerchantTransactionsPage() {
             })()}
 
             {/* Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
               <button
                 onClick={handleExport}
-                className="flex-1 px-4 py-2.5 bg-[#1a7a5e] text-white rounded-xl text-sm font-medium hover:bg-[#1a7a5e]/90 transition-colors"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#1a7a5e] text-white rounded-xl text-xs sm:text-sm font-medium hover:bg-[#1a7a5e]/90 transition-colors order-1 sm:order-2"
               >
                 Export {exportFormat.toUpperCase()}
               </button>
@@ -652,7 +637,7 @@ export default function SubMerchantTransactionsPage() {
                   setExportStartDate("");
                   setExportEndDate("");
                 }}
-                className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-colors"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-colors order-2 sm:order-1"
               >
                 Cancel
               </button>

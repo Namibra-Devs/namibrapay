@@ -208,7 +208,7 @@ export function SubMerchantBottomNav() {
   return (
     <>
       {/* Bottom Navigation Bar - All items fit, no need for More button */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-sidebar border-t border-sidebar-border safe-bottom">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-sidebar border-t border-sidebar-border safe-bottom">
         <div className="flex items-center">
           {visibleItems.map(({ to, label, icon: Icon }) => {
             const isActive = to === "/sub-merchant"

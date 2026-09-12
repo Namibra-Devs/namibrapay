@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { formatGHS, formatDate } from "@/lib/constants";
 import { smPayouts, smTransactions } from "@/lib/sub-merchant-mock-data";
 import { useSubMerchantRole } from "@/hooks/use-sub-merchant-role";
+import { Pagination } from "@/components/ui/pagination";
 
 const item = {
   hidden: { opacity: 0, y: 10 },
@@ -28,6 +29,17 @@ const container = {
 export default function SubMerchantSettlementsPage() {
   const { can } = useSubMerchantRole();
   const [expandedPayout, setExpandedPayout] = useState<string | null>(null);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Paginated data
+  const totalPages = Math.ceil(smPayouts.length / itemsPerPage);
+  const paginatedPayouts = smPayouts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Calculate settlement summary - SM-020
   const totalPayouts = smPayouts.reduce((sum, p) => sum + p.net, 0);
@@ -126,7 +138,7 @@ export default function SubMerchantSettlementsPage() {
           </h2>
         </div>
         <div className="divide-y divide-border">
-          {smPayouts.map((payout, i) => {
+          {paginatedPayouts.map((payout, i) => {
             const isExpanded = expandedPayout === payout.id;
             const transactions = getPayoutTransactions(payout.id);
             const platformFee = Math.round(payout.amount * 0.015 * 100) / 100;
@@ -256,6 +268,18 @@ export default function SubMerchantSettlementsPage() {
             );
           })}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={smPayouts.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            currentItemCount={paginatedPayouts.length}
+          />
+        )}
       </motion.div>
 
       {/* Settlement Schedule Info */}

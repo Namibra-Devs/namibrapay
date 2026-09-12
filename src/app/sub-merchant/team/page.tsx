@@ -22,6 +22,7 @@ import { useSubMerchantRole } from "@/hooks/use-sub-merchant-role";
 import { Modal } from "@/components/ui/modal";
 import { FormField, Input } from "@/components/ui/form-field";
 import { useToast } from "@/components/ui/Toast";
+import { Pagination } from "@/components/ui/pagination";
 
 const inviteStatusBadge = {
   accepted: "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -44,6 +45,17 @@ export default function SubMerchantTeamPage() {
   const [memberToRemove, setMemberToRemove] = useState<SmTeamMember | null>(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [selectedRole, setSelectedRole] = useState<"sub_admin" | "sub_viewer">("sub_viewer");
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Paginated data
+  const totalPages = Math.ceil(teamMembers.length / itemsPerPage);
+  const paginatedMembers = teamMembers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Email validation
   const isValidEmail = (email: string) => {
@@ -176,7 +188,7 @@ export default function SubMerchantTeamPage() {
               </tr>
             </thead>
             <tbody>
-              {teamMembers.length === 0 ? (
+              {paginatedMembers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 sm:px-5 py-12 text-center">
                     <Users className="size-10 sm:size-12 text-muted-foreground/40 mx-auto mb-3" />
@@ -185,7 +197,7 @@ export default function SubMerchantTeamPage() {
                   </td>
                 </tr>
               ) : (
-                teamMembers.map((member, i) => (
+                paginatedMembers.map((member, i) => (
                   <tr
                     key={member.id}
                     className={cn(
@@ -242,6 +254,18 @@ export default function SubMerchantTeamPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={teamMembers.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            currentItemCount={paginatedMembers.length}
+          />
+        )}
       </div>
 
       {/* Invite Viewer Modal - SM-031 */}
@@ -370,7 +394,7 @@ export default function SubMerchantTeamPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
               <button
                 onClick={handleInvite}
                 className="flex-1 px-4 py-2.5 bg-[#1a7a5e] text-white rounded-xl text-sm font-medium hover:bg-[#1a7a5e]/90 transition-colors"
@@ -383,7 +407,7 @@ export default function SubMerchantTeamPage() {
                   setInviteEmail("");
                   setSelectedRole("sub_viewer");
                 }}
-                className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-colors"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-colors order-2 sm:order-1"
               >
                 Cancel
               </button>
@@ -429,7 +453,7 @@ export default function SubMerchantTeamPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
               <button
                 onClick={confirmRemove}
                 className="flex-1 px-4 py-2.5 bg-destructive text-white rounded-xl text-sm font-medium hover:bg-destructive/90 transition-colors"
@@ -441,7 +465,7 @@ export default function SubMerchantTeamPage() {
                   setShowRemoveModal(false);
                   setMemberToRemove(null);
                 }}
-                className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-colors"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-colors order-2 sm:order-1"
               >
                 Cancel
               </button>

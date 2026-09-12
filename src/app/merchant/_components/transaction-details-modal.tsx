@@ -43,7 +43,7 @@ export default function TransactionDetail({ txn, onClose }: Props) {
         key="drawer"
         initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
         transition={{ type: "spring", damping: 28, stiffness: 300 }}
-        className="fixed right-0 top-0 h-full w-full max-w-[480px] bg-card border-l border-border z-50 flex flex-col shadow-2xl"
+        className="fixed right-0 top-0 h-full w-full max-w-120 bg-card border-l border-border z-50 flex flex-col shadow-2xl"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
@@ -59,7 +59,7 @@ export default function TransactionDetail({ txn, onClose }: Props) {
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
           {/* Status + Amount */}
           <div className={cn("flex items-center gap-4 p-4 rounded-xl border", sc.bg)}>
-            <div className={sc.color}>{sc.icon}</div>
+            <div className={cn("p-2 rounded-lg", sc.color)}>{sc.icon}</div>
             <div>
               <p className={cn("font-bold text-2xl", sc.color)} style={{ fontFamily: "var(--font-heading)" }}>
                 {formatGHS(txn.amount)}
@@ -131,7 +131,7 @@ export default function TransactionDetail({ txn, onClose }: Props) {
 
           {/* Provider info intentionally hidden */}
           <div className="bg-muted/20 border border-border/50 rounded-xl p-3 flex items-center gap-2">
-            <div className="size-5 rounded-full bg-[#64c6c3]/20 flex items-center justify-center shrink-0">
+            <div className="size-5 rounded-full bg-brand-teal/20 flex items-center justify-center shrink-0">
               <span className="text-[8px] font-bold text-[#1a6e6c]">i</span>
             </div>
             <p className="text-[11px] text-muted-foreground">

@@ -340,7 +340,7 @@ export default function MerchantSettingsPage() {
             <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-amber-900 mb-1">Compliance Review Required</p>
-              <p className="text-sm text-amber-700">
+              <p className="text-xs text-amber-700">
                 Bank account changes require verification by NamibraPay Compliance team. This process typically takes 2–5 business days. You'll receive an email notification once reviewed.
               </p>
             </div>
@@ -382,7 +382,7 @@ export default function MerchantSettingsPage() {
             />
           </FormField>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4">
             <button
               onClick={() => {
                 setShowBankChangeModal(false);
@@ -391,16 +391,16 @@ export default function MerchantSettingsPage() {
                 setNewAccountName("");
                 setChangeReason("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
             <button
               onClick={handleRequestBankChange}
-              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 sm:gap-2 order-1 sm:order-2"
             >
-              <FileText className="size-4" />
-              Submit
+              <FileText className="size-3.5 sm:size-4" />
+              Submit Request
             </button>
           </div>
         </div>
@@ -451,13 +451,13 @@ export default function MerchantSettingsPage() {
             <Shield className="size-5 text-blue-600 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-blue-900 mb-1">Security Notice</p>
-              <p className="text-sm text-blue-700">
+              <p className="text-xs text-blue-700">
                 Changing your password will log you out of all other active sessions on other devices for security.
               </p>
             </div>
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-3 sm:pt-4">
             <button
               onClick={() => {
                 setShowChangePasswordModal(false);
@@ -465,15 +465,15 @@ export default function MerchantSettingsPage() {
                 setNewPassword("");
                 setConfirmPassword("");
               }}
-              className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all order-2 sm:order-1"
             >
               Cancel
             </button>
             <button
               onClick={handleChangePassword}
-              className="flex-1 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2"
+              className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 sm:gap-2 order-1 sm:order-2"
             >
-              <Lock className="size-4" />
+              <Lock className="size-3.5 sm:size-4" />
               Change Password
             </button>
           </div>
@@ -576,7 +576,7 @@ export default function MerchantSettingsPage() {
             onClick={() => {
               showToast("success", "All Sessions Terminated", "You've been logged out of all other devices. This session remains active.");
             }}
-            className="w-full px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-xl text-sm font-medium transition-all"
+            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-xl text-xs sm:text-sm font-medium transition-all"
           >
             Revoke All Other Sessions
           </button>
