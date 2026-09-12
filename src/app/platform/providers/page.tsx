@@ -156,12 +156,12 @@ export default function ProvidersPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-24 md:pb-6">
         {/* ── HEALTH MONITORING TAB ── */}
         {tab === "health" && (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {/* Provider Cards Grid */}
-            <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
               {mockProviderDetails.map((provider) => {
                 const statusCfg = getProviderStatusColor(provider.status);
                 const isDown = provider.status === "down";
@@ -170,45 +170,45 @@ export default function ProvidersPage() {
                   <button
                     key={provider.id}
                     onClick={() => setSelectedProvider(provider)}
-                    className={cn("bg-card border rounded-2xl p-5 text-left transition-all hover:shadow-md",
+                    className={cn("bg-card border rounded-2xl p-4 sm:p-5 text-left transition-all hover:shadow-md",
                       selectedProvider.id === provider.id ? "border-brand-teal shadow-sm" : "border-border",
                       isDown && "border-red-200")}
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-bold font-mono text-muted-foreground">{provider.shortCode}</span>
-                      <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", statusCfg)}>
+                    <div className="flex items-center justify-between mb-2 sm:mb-3">
+                      <span className="text-[10px] sm:text-xs font-bold font-mono text-muted-foreground">{provider.shortCode}</span>
+                      <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium", statusCfg)}>
                         {provider.status === "operational" ? <CheckCircle className="size-2.5" /> :
                          provider.status === "degraded" ? <AlertTriangle className="size-2.5" /> :
                          provider.status === "down" ? <XCircle className="size-2.5" /> :
                          <Clock className="size-2.5" />}
-                        {provider.status}
+                        <span className="hidden sm:inline">{provider.status}</span>
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-3 truncate">{provider.name}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-2 sm:mb-3 truncate">{provider.name}</p>
                     
                     {/* Metrics */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <div className="flex items-center justify-between text-[10px] sm:text-xs">
                         <span className="text-muted-foreground">Success Rate</span>
                         <span className={cn("font-bold", provider.successRate >= 95 ? "text-emerald-600" : "text-red-600")}>
                           {provider.successRate.toFixed(1)}%
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center justify-between text-[10px] sm:text-xs">
                         <span className="text-muted-foreground">Latency (p95)</span>
                         <span className={cn("font-bold", provider.p95LatencyMs < 1000 ? "text-emerald-600" : "text-amber-600")}>
                           {provider.p95LatencyMs}ms
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center justify-between text-[10px] sm:text-xs">
                         <span className="text-muted-foreground">Throughput</span>
                         <span className="font-bold">{provider.throughput}/min</span>
                       </div>
                     </div>
 
                     {/* Uptime Bar */}
-                    <div className="mt-3 pt-3 border-t border-border/50">
-                      <div className="flex items-center justify-between text-xs mb-1">
+                    <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-border/50">
+                      <div className="flex items-center justify-between text-[10px] sm:text-xs mb-1">
                         <span className="text-muted-foreground">Uptime (30d)</span>
                         <span className="font-semibold">{provider.uptime}%</span>
                       </div>
@@ -226,13 +226,13 @@ export default function ProvidersPage() {
             </div>
 
             {/* Selected Provider Details */}
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-lg font-bold mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+            <div className="bg-card border border-border rounded-2xl p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-base sm:text-lg font-bold mb-1 truncate" style={{ fontFamily: "var(--font-heading)" }}>
                     {selectedProvider.name}
                   </h2>
-                  <p className="text-xs text-muted-foreground" suppressHydrationWarning>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground" suppressHydrationWarning>
                     API v{selectedProvider.apiVersion} · Last health check {new Date(selectedProvider.lastHealthCheck).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                   </p>
                 </div>
@@ -244,37 +244,37 @@ export default function ProvidersPage() {
                       setConfigProviderTimeout("30");
                       setConfigProviderRetries("3");
                     }}
-                    className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-sm font-medium hover:bg-muted/50 transition-all"
+                    className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-border rounded-xl text-xs sm:text-sm font-medium hover:bg-muted/50 transition-all"
                   >
-                    <Settings className="size-4" /> Configure
+                    <Settings className="size-3.5 sm:size-4" /> Configure
                   </button>
                 )}
               </div>
 
               {/* Latency Metrics */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
                 {[
                   { label: "p50 Latency", value: `${selectedProvider.p50LatencyMs}ms`, color: "#64c6c3", icon: Zap },
                   { label: "p95 Latency", value: `${selectedProvider.p95LatencyMs}ms`, color: "#263b8e", icon: Activity },
                   { label: "p99 Latency", value: `${selectedProvider.p99LatencyMs}ms`, color: "#fedfb8", icon: BarChart2 },
                 ].map(({ label, value, color, icon: Icon }) => (
-                  <div key={label} className="bg-muted/30 border border-border rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="size-7 rounded-lg flex items-center justify-center" style={{ background: `${color}18` }}>
-                        <Icon className="size-3.5" style={{ color }} />
+                  <div key={label} className="bg-muted/30 border border-border rounded-xl p-3 sm:p-4">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                      <div className="size-6 sm:size-7 rounded-lg flex items-center justify-center" style={{ background: `${color}18` }}>
+                        <Icon className="size-3 sm:size-3.5" style={{ color }} />
                       </div>
-                      <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
+                      <span className="text-[10px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</span>
                     </div>
-                    <p className="text-xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
+                    <p className="text-lg sm:text-xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>{value}</p>
                   </div>
                 ))}
               </div>
 
               {/* Performance Stats */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <h3 className="text-sm font-semibold mb-3" style={{ fontFamily: "var(--font-heading)" }}>API Performance</h3>
-                  <div className="space-y-2 text-sm">
+                  <h3 className="text-xs sm:text-sm font-semibold mb-2 sm:mb-3" style={{ fontFamily: "var(--font-heading)" }}>API Performance</h3>
+                  <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Success Rate</span>
                       <span className="font-semibold">{selectedProvider.successRate}%</span>
@@ -295,8 +295,8 @@ export default function ProvidersPage() {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-semibold mb-3" style={{ fontFamily: "var(--font-heading)" }}>Configuration</h3>
-                  <div className="space-y-2 text-sm">
+                  <h3 className="text-xs sm:text-sm font-semibold mb-2 sm:mb-3" style={{ fontFamily: "var(--font-heading)" }}>Configuration</h3>
+                  <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">API Version</span>
                       <span className="font-semibold font-mono">{selectedProvider.apiVersion}</span>
@@ -322,14 +322,14 @@ export default function ProvidersPage() {
 
         {/* ── ROUTING RULES TAB ── */}
         {tab === "routing" && (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {/* Info Banner */}
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
-              <div className="flex items-start gap-3">
-                <Shield className="size-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-5">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <Shield className="size-4 sm:size-5 text-amber-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-amber-900 mb-1">Super Admin Approval Required</p>
-                  <p className="text-sm text-amber-700">
+                  <p className="text-xs sm:text-sm font-semibold text-amber-900 mb-1">Super Admin Approval Required</p>
+                  <p className="text-xs sm:text-sm text-amber-700">
                     All routing rule changes require Super Admin approval before going live. Changes are staged until approved.
                   </p>
                 </div>
@@ -341,70 +341,70 @@ export default function ProvidersPage() {
               <div className="flex justify-end">
                 <button 
                   onClick={() => setShowAddRoutingRuleModal(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-sm font-medium transition-all"
+                  className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-teal hover:bg-[#52a8a5] text-white rounded-xl text-xs sm:text-sm font-medium transition-all w-full sm:w-auto"
                 >
-                  <GitBranch className="size-4" /> Add Routing Rule
+                  <GitBranch className="size-3.5 sm:size-4" /> Add Routing Rule
                 </button>
               </div>
             )}
 
             {/* Routing Rules List */}
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {mockRoutingRules.map((rule) => {
                 const statusCfg = getRoutingRuleStatusColor(rule.status);
                 const isPending = rule.status === "pending_approval";
                 
                 return (
-                  <div key={rule.id} className={cn("bg-card border rounded-2xl p-5",
+                  <div key={rule.id} className={cn("bg-card border rounded-2xl p-4 sm:p-5",
                     isPending ? "border-amber-200 shadow-sm" : "border-border")}>
-                    <div className="flex items-start justify-between gap-4 mb-3">
-                      <div className="flex items-start gap-3 flex-1">
-                        <div className="size-9 rounded-xl bg-brand-teal/20 flex items-center justify-center shrink-0">
-                          <GitBranch className="size-4 text-[#1a6e6c]" />
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 mb-2 sm:mb-3">
+                      <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+                        <div className="size-8 sm:size-9 rounded-xl bg-brand-teal/20 flex items-center justify-center shrink-0">
+                          <GitBranch className="size-3.5 sm:size-4 text-[#1a6e6c]" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <p className="font-semibold text-sm">{rule.name}</p>
-                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", statusCfg)}>
+                          <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
+                            <p className="font-semibold text-xs sm:text-sm truncate">{rule.name}</p>
+                            <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium", statusCfg)}>
                               {rule.status === "active" ? <CheckCircle className="size-2.5" /> :
                                rule.status === "pending_approval" ? <Clock className="size-2.5" /> :
                                <XCircle className="size-2.5" />}
-                              {rule.status.replace(/_/g, " ")}
+                              <span className="hidden sm:inline">{rule.status.replace(/_/g, " ")}</span>
                             </span>
-                            <span className="text-[10px] px-2 py-0.5 bg-muted rounded-full font-mono">
-                              Priority {rule.priority}
+                            <span className="text-[10px] px-1.5 sm:px-2 py-0.5 bg-muted rounded-full font-mono">
+                              P{rule.priority}
                             </span>
                             {!rule.enabled && (
-                              <span className="text-[10px] px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded-full font-medium">
+                              <span className="text-[10px] px-1.5 sm:px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 rounded-full font-medium">
                                 Disabled
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground mb-2">{rule.description}</p>
-                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-1.5 sm:mb-2 line-clamp-2">{rule.description}</p>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 text-[10px] sm:text-xs text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <ChevronRight className="size-3" />
                               {rule.ruleType.replace(/_/g, " ")}
                             </span>
-                            <span className="flex items-center gap-1">
-                              Target: <span className="font-mono text-foreground">{rule.targetProvider}</span>
+                            <span className="flex items-center gap-1 truncate">
+                              Target: <span className="font-mono text-foreground truncate">{rule.targetProvider}</span>
                             </span>
                             {rule.fallbackProvider && (
-                              <span className="flex items-center gap-1">
-                                Fallback: <span className="font-mono text-foreground">{rule.fallbackProvider}</span>
+                              <span className="flex items-center gap-1 truncate">
+                                Fallback: <span className="font-mono text-foreground truncate">{rule.fallbackProvider}</span>
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
                       {canEdit && rule.status === "pending_approval" && (
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                           <button 
                             onClick={() => {
                               setShowRoutingApprovalModal(rule);
                               setApprovalDecision("reject");
                             }}
-                            className="px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-xs font-medium hover:bg-red-50 transition-all"
+                            className="flex-1 sm:flex-none px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-xs font-medium hover:bg-red-50 transition-all"
                           >
                             Reject
                           </button>
@@ -413,7 +413,7 @@ export default function ProvidersPage() {
                               setShowRoutingApprovalModal(rule);
                               setApprovalDecision("approve");
                             }}
-                            className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium transition-all"
+                            className="flex-1 sm:flex-none px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium transition-all"
                           >
                             Approve
                           </button>
@@ -422,15 +422,15 @@ export default function ProvidersPage() {
                     </div>
 
                     {/* Rule Details */}
-                    <div className="grid grid-cols-2 gap-3 pt-3 border-t border-border/50">
-                      <div className="text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 pt-2 sm:pt-3 border-t border-border/50">
+                      <div className="text-[10px] sm:text-xs">
                         <span className="text-muted-foreground">Created by</span>
-                        <p className="font-medium mt-0.5">{rule.createdBy} · {formatDate(rule.createdAt)}</p>
+                        <p className="font-medium mt-0.5 truncate">{rule.createdBy} · {formatDate(rule.createdAt)}</p>
                       </div>
                       {rule.approvedBy && (
-                        <div className="text-xs">
+                        <div className="text-[10px] sm:text-xs">
                           <span className="text-muted-foreground">Approved by</span>
-                          <p className="font-medium mt-0.5">{rule.approvedBy} · {formatDate(rule.approvedAt!)}</p>
+                          <p className="font-medium mt-0.5 truncate">{rule.approvedBy} · {formatDate(rule.approvedAt!)}</p>
                         </div>
                       )}
                     </div>
@@ -443,7 +443,7 @@ export default function ProvidersPage() {
 
         {/* ── CREDENTIALS TAB ── */}
         {tab === "credentials" && (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {/* Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {[
@@ -467,7 +467,7 @@ export default function ProvidersPage() {
             {/* Credentials Table */}
             <div className="bg-card border border-border rounded-2xl overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm min-w-250">
+                <table className="w-full text-xs sm:text-sm min-w-250">
                   <thead>
                     <tr className="border-b border-border bg-muted/30">
                       {["Provider", "Credential", "Type", "Status", "Last Rotated", "Expires", "Schedule", ""].map((h) => (
@@ -484,18 +484,18 @@ export default function ProvidersPage() {
                       return (
                         <tr key={cred.id} className={cn("border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors",
                           (isExpired || isExpiring) && "bg-red-50/30")}>
-                          <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-3 sm:py-3.5">
+                          <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-2 sm:py-3.5">
                             <span className="text-xs sm:text-sm font-medium">{cred.providerName.split(" ")[0]}</span>
                           </td>
-                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                          <td className="px-3 sm:px-4 py-2 sm:py-3.5">
                             <p className="text-xs sm:text-sm font-medium truncate max-w-40">{cred.label}</p>
                           </td>
-                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                          <td className="px-3 sm:px-4 py-2 sm:py-3.5">
                             <span className="px-1.5 sm:px-2 py-0.5 bg-muted rounded text-[10px] sm:text-xs font-mono whitespace-nowrap">
                               {cred.credentialType.replace(/_/g, " ")}
                             </span>
                           </td>
-                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                          <td className="px-3 sm:px-4 py-2 sm:py-3.5">
                             <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium whitespace-nowrap", statusCfg)}>
                               {cred.status === "active" ? <CheckCircle className="size-2.5" /> :
                                cred.status === "expiring_soon" ? <Clock className="size-2.5" /> :
@@ -503,19 +503,19 @@ export default function ProvidersPage() {
                               {cred.status.replace(/_/g, " ")}
                             </span>
                           </td>
-                          <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
+                          <td className="px-3 sm:px-4 py-2 sm:py-3.5 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
                             {new Date(cred.lastRotated).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
                           </td>
-                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                          <td className="px-3 sm:px-4 py-2 sm:py-3.5">
                             <p className="text-xs sm:text-sm whitespace-nowrap">{new Date(cred.expiresAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</p>
                             <p className={cn("text-[10px] sm:text-xs", isExpired ? "text-red-600" : isExpiring ? "text-amber-600" : "text-muted-foreground")}>
                               {isExpired ? "Expired" : `${cred.daysUntilExpiry} days`}
                             </p>
                           </td>
-                          <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
+                          <td className="px-3 sm:px-4 py-2 sm:py-3.5 text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
                             {cred.rotationSchedule}
                           </td>
-                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                          <td className="px-3 sm:px-4 py-2 sm:py-3.5">
                             {canEdit && (
                             <button 
                               onClick={() => setShowRotateCredentialModal(cred)}
@@ -538,16 +538,16 @@ export default function ProvidersPage() {
 
         {/* ── MAINTENANCE TAB ── */}
         {tab === "maintenance" && (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {/* Header with Schedule button */}
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">Scheduled maintenance windows and provider downtimes</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <p className="text-xs sm:text-sm text-muted-foreground">Scheduled maintenance windows and provider downtimes</p>
               {canEdit && (
                 <button
                   onClick={() => setShowScheduleMaintenanceModal(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-sm font-medium transition-all"
+                  className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-brand-navy hover:bg-[#1e2f72] text-white rounded-xl text-xs sm:text-sm font-medium transition-all w-full sm:w-auto shrink-0"
                 >
-                  <Plus className="size-4" /> Schedule Maintenance
+                  <Plus className="size-3.5 sm:size-4" /> Schedule Maintenance
                 </button>
               )}
             </div>
@@ -561,29 +561,29 @@ export default function ProvidersPage() {
               }[maint.status];
 
               return (
-                <div key={maint.id} className="bg-card border border-border rounded-2xl p-5">
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm font-semibold">{maint.providerName}</span>
-                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", statusColors)}>
+                <div key={maint.id} className="bg-card border border-border rounded-2xl p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 mb-2 sm:mb-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap">
+                        <span className="text-xs sm:text-sm font-semibold truncate">{maint.providerName}</span>
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium", statusColors)}>
                           {maint.status.replace(/_/g, " ")}
                         </span>
                         {maint.type === "emergency" && (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium bg-red-50 text-red-700 border-red-200">
+                          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium bg-red-50 text-red-700 border-red-200">
                             <AlertTriangle className="size-2.5" /> Emergency
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground mb-3">{maint.reason}</p>
-                      <div className="grid grid-cols-3 gap-4 text-xs">
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-2">{maint.reason}</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 text-[10px] sm:text-xs">
                         <div>
                           <span className="text-muted-foreground">Start</span>
-                          <p className="font-medium mt-0.5">{formatDate(maint.scheduledStart)}</p>
+                          <p className="font-medium mt-0.5 truncate">{formatDate(maint.scheduledStart)}</p>
                         </div>
                         <div>
                           <span className="text-muted-foreground">End</span>
-                          <p className="font-medium mt-0.5">{formatDate(maint.scheduledEnd)}</p>
+                          <p className="font-medium mt-0.5 truncate">{formatDate(maint.scheduledEnd)}</p>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Duration</span>
@@ -600,7 +600,7 @@ export default function ProvidersPage() {
 
         {/* ── INCIDENTS TAB ── */}
         {tab === "incidents" && (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {mockProviderIncidents.map((incident) => {
               const severityColors = {
                 critical: "bg-red-100 text-red-700 border-red-200",
@@ -616,40 +616,40 @@ export default function ProvidersPage() {
               }[incident.status];
 
               return (
-                <div key={incident.id} className={cn("bg-card border rounded-2xl p-5",
+                <div key={incident.id} className={cn("bg-card border rounded-2xl p-4 sm:p-5",
                   incident.severity === "critical" ? "border-red-200 shadow-sm" : "border-border")}>
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <span className="text-sm font-semibold">{incident.providerName}</span>
-                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium uppercase", severityColors)}>
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 mb-2 sm:mb-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap">
+                        <span className="text-xs sm:text-sm font-semibold truncate">{incident.providerName}</span>
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium uppercase", severityColors)}>
                           {incident.severity}
                         </span>
-                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium", statusColors)}>
+                        <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium", statusColors)}>
                           {incident.status}
                         </span>
                       </div>
-                      <h3 className="font-semibold text-base mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                      <h3 className="font-semibold text-sm sm:text-base mb-1.5 sm:mb-2 line-clamp-2" style={{ fontFamily: "var(--font-heading)" }}>
                         {incident.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground mb-3">{incident.description}</p>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 line-clamp-2">{incident.description}</p>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-muted-foreground flex-wrap">
                         <span>Started {formatDate(incident.startedAt)}</span>
                         {incident.resolvedAt && (
                           <>
-                            <span>·</span>
+                            <span className="hidden sm:inline">·</span>
                             <span>Resolved {formatDate(incident.resolvedAt)}</span>
-                            <span>·</span>
+                            <span className="hidden sm:inline">·</span>
                             <span>Duration: {incident.duration}min</span>
                           </>
                         )}
-                        <span>·</span>
+                        <span className="hidden sm:inline">·</span>
                         <span>{incident.impactedTransactions} transactions impacted</span>
                       </div>
                       {incident.rootCause && (
-                        <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
-                          <p className="text-xs font-semibold text-emerald-900 mb-1">Root Cause</p>
-                          <p className="text-xs text-emerald-700">{incident.rootCause}</p>
+                        <div className="mt-2 sm:mt-3 p-2.5 sm:p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                          <p className="text-[10px] sm:text-xs font-semibold text-emerald-900 mb-1">Root Cause</p>
+                          <p className="text-[10px] sm:text-xs text-emerald-700 line-clamp-2">{incident.rootCause}</p>
                         </div>
                       )}
                     </div>

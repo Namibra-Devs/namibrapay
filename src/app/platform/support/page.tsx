@@ -178,7 +178,7 @@ export default function SupportPage() {
         {tab === "tickets" && (
           <>
             {/* Ticket List */}
-            <div className={cn("flex flex-col transition-all duration-300 border-r border-border", selectedTicket ? "w-105 shrink-0" : "flex-1")}>
+            <div className={cn("flex flex-col transition-all duration-300 md:border-r border-border", selectedTicket ? "hidden md:block md:w-105 md:shrink-0" : "flex-1")}>
               <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-card/30">
                 <div className="flex items-center gap-2 text-[10px] sm:text-xs overflow-x-auto scrollbar-none">
                   <button className="px-2 sm:px-2.5 py-1 rounded-lg border transition-all bg-foreground text-background border-foreground whitespace-nowrap shrink-0">
@@ -266,7 +266,7 @@ export default function SupportPage() {
             <AnimatePresence>
               {selectedTicket && (
                 <motion.div
-                  className="flex-1 flex flex-col overflow-hidden"
+                  className="fixed inset-0 md:relative flex-1 flex flex-col overflow-hidden bg-background z-50"
                   initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 16 }}
                   transition={{ duration: 0.2 }}
                 >
@@ -321,25 +321,25 @@ export default function SupportPage() {
                   </div>
 
                   {/* Messages Thread */}
-                  <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                  <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 sm:space-y-4 pb-24 md:pb-6">
                     {/* Requester Info */}
-                    <div className="bg-card border border-border rounded-2xl p-5">
-                      <h3 className="font-semibold text-sm mb-3" style={{ fontFamily: "var(--font-heading)" }}>
+                    <div className="bg-card border border-border rounded-2xl p-4 sm:p-5">
+                      <h3 className="font-semibold text-xs sm:text-sm mb-2 sm:mb-3" style={{ fontFamily: "var(--font-heading)" }}>
                         Requester Information
                       </h3>
-                      <div className="space-y-2 text-sm">
+                      <div className="space-y-2 text-xs sm:text-sm">
                         <div className="flex items-center gap-2">
-                          <User className="size-3.5 text-muted-foreground" />
+                          <User className="size-3 sm:size-3.5 text-muted-foreground" />
                           <span className="font-medium">{selectedTicket.requesterName}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Mail className="size-3.5 text-muted-foreground" />
-                          <span className="text-muted-foreground">{selectedTicket.requesterEmail}</span>
+                          <Mail className="size-3 sm:size-3.5 text-muted-foreground" />
+                          <span className="text-muted-foreground truncate">{selectedTicket.requesterEmail}</span>
                         </div>
                         {selectedTicket.assignedTo && (
                           <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                            <User className="size-3.5 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">
+                            <User className="size-3 sm:size-3.5 text-muted-foreground" />
+                            <span className="text-[10px] sm:text-xs text-muted-foreground">
                               Assigned to <span className="font-medium text-foreground">{selectedTicket.assignedTo}</span>
                             </span>
                           </div>
@@ -348,31 +348,31 @@ export default function SupportPage() {
                     </div>
 
                     {/* Message Thread */}
-                    <div className="space-y-3">
+                    <div className="space-y-2 sm:space-y-3">
                       {ticketMessages.map((msg) => (
-                        <div key={msg.id} className={cn("flex gap-3",
+                        <div key={msg.id} className={cn("flex gap-2 sm:gap-3",
                           msg.authorType === "support" && "flex-row-reverse")}>
-                          <div className={cn("size-8 rounded-full flex items-center justify-center shrink-0",
+                          <div className={cn("size-7 sm:size-8 rounded-full flex items-center justify-center shrink-0",
                             msg.authorType === "support" ? "bg-brand-mint/20" : "bg-muted")}>
                             {msg.authorType === "support" ? (
-                              <Headphones className="size-4 text-[#1a7a5e]" />
+                              <Headphones className="size-3.5 sm:size-4 text-[#1a7a5e]" />
                             ) : (
-                              <User className="size-4 text-muted-foreground" />
+                              <User className="size-3.5 sm:size-4 text-muted-foreground" />
                             )}
                           </div>
                           <div className={cn("flex-1 min-w-0",
                             msg.authorType === "support" && "flex flex-col items-end")}>
-                            <div className={cn("inline-block max-w-[85%] rounded-2xl p-4 border",
+                            <div className={cn("inline-block max-w-[85%] rounded-2xl p-3 sm:p-4 border",
                               msg.authorType === "support" 
                                 ? "bg-brand-mint/10 border-brand-mint/30"
                                 : "bg-card border-border")}>
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-xs font-semibold">{msg.author}</span>
-                                <span className="text-[10px] text-muted-foreground">
+                              <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
+                                <span className="text-[10px] sm:text-xs font-semibold">{msg.author}</span>
+                                <span className="text-[9px] sm:text-[10px] text-muted-foreground">
                                   {new Date(msg.timestamp).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                                 </span>
                               </div>
-                              <p className="text-sm">{msg.message}</p>
+                              <p className="text-xs sm:text-sm">{msg.message}</p>
                             </div>
                           </div>
                         </div>
@@ -381,23 +381,23 @@ export default function SupportPage() {
 
                     {/* Reply Box */}
                     {selectedTicket.status !== "closed" && selectedTicket.status !== "resolved" && (
-                      <div className="bg-card border border-border rounded-2xl p-4">
+                      <div className="bg-card border border-border rounded-2xl p-3 sm:p-4">
                         <textarea
                           value={messageText}
                           onChange={(e) => setMessageText(e.target.value)}
                           placeholder="Type your response..."
                           rows={4}
-                          className="w-full px-4 py-3 text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all resize-none mb-3"
+                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm bg-background border border-border rounded-xl outline-none focus:border-brand-mint/60 transition-all resize-none mb-2 sm:mb-3"
                         />
-                        <div className="flex items-center justify-between">
-                          <button className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-0">
+                          <button className="flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors order-3 sm:order-1">
                             <FileText className="size-3.5" /> Attach file
                           </button>
-                          <div className="flex items-center gap-2">
-                            <button className="px-4 py-2 rounded-xl border border-border text-xs font-medium hover:bg-muted/50 transition-all">
+                          <div className="flex items-center gap-2 order-1 sm:order-2">
+                            <button className="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-xl border border-border text-xs font-medium hover:bg-muted/50 transition-all">
                               Close Ticket
                             </button>
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1a7a5e] hover:bg-[#15614a] text-white text-xs font-medium transition-all">
+                            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-[#1a7a5e] hover:bg-[#15614a] text-white text-xs font-medium transition-all">
                               <Send className="size-3.5" /> Send Reply
                             </button>
                           </div>
@@ -489,11 +489,11 @@ export default function SupportPage() {
               </h3>
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm min-w-225">
+                  <table className="w-full text-xs sm:text-sm min-w-225">
                   <thead>
                     <tr className="border-b border-border bg-muted/30">
                       {["Reference", "Merchant", "Amount", "Provider", "Status", "Date", ""].map((h) => (
-                        <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5">{h}</th>
+                        <th key={h} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -508,23 +508,23 @@ export default function SupportPage() {
                         className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors cursor-pointer"
                         onClick={() => setSelectedTransaction(txn)}
                       >
-                        <td className="pl-5 pr-4 py-3.5 font-mono text-xs">{txn.ref}</td>
-                        <td className="px-4 py-3.5">{txn.merchant}</td>
-                        <td className="px-4 py-3.5 font-semibold">{formatGHS(txn.amount)}</td>
-                        <td className="px-4 py-3.5">
-                          <span className="px-2 py-0.5 bg-muted rounded font-mono text-xs">{txn.provider}</span>
+                        <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-3 sm:py-3.5 font-mono text-[10px] sm:text-xs">{txn.ref}</td>
+                        <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm">{txn.merchant}</td>
+                        <td className="px-3 sm:px-4 py-3 sm:py-3.5 font-semibold text-xs sm:text-sm">{formatGHS(txn.amount)}</td>
+                        <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                          <span className="px-1.5 sm:px-2 py-0.5 bg-muted rounded font-mono text-[10px] sm:text-xs">{txn.provider}</span>
                         </td>
-                        <td className="px-4 py-3.5">
-                          <span className={cn("inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-medium",
+                        <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                          <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium",
                             txn.status === "success" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-red-50 text-red-700 border-red-200")}>
                             {txn.status === "success" ? <CheckCircle className="size-2.5" /> : <XCircle className="size-2.5" />}
                             {txn.status}
                           </span>
                         </td>
-                        <td className="px-4 py-3.5 text-xs text-muted-foreground">
+                        <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-[10px] sm:text-xs text-muted-foreground">
                           {txn.date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
                         </td>
-                        <td className="px-4 py-3.5">
+                        <td className="px-3 sm:px-4 py-3 sm:py-3.5">
                           <button 
                             className="p-1.5 hover:bg-muted rounded-lg transition-all"
                             onClick={(e) => {
@@ -532,7 +532,7 @@ export default function SupportPage() {
                               setSelectedTransaction(txn);
                             }}
                           >
-                            <Eye className="size-3.5 text-muted-foreground" />
+                            <Eye className="size-3 sm:size-3.5 text-muted-foreground" />
                           </button>
                         </td>
                       </tr>
@@ -654,11 +654,11 @@ export default function SupportPage() {
               </div>
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm min-w-200">
+                  <table className="w-full text-xs sm:text-sm min-w-225">
                     <thead>
                       <tr className="border-b border-border bg-muted/30">
                         {["Refund #", "Merchant", "Amount", "Reason", "Status", "Requested", ""].map((h) => (
-                          <th key={h} className="text-left px-3 sm:px-4 py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5 whitespace-nowrap">{h}</th>
+                          <th key={h} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5 whitespace-nowrap">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -668,21 +668,21 @@ export default function SupportPage() {
                         const Icon = cfg.icon;
                         return (
                           <tr key={refund.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
-                            <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-3.5 font-mono text-[10px] sm:text-xs">{refund.refundNumber}</td>
-                            <td className="px-3 sm:px-4 py-3.5 text-xs sm:text-sm">{refund.merchantName}</td>
-                            <td className="px-3 sm:px-4 py-3.5 font-semibold text-xs sm:text-sm">{formatGHS(refund.amount)}</td>
-                            <td className="px-3 sm:px-4 py-3.5 text-[10px] sm:text-xs text-muted-foreground max-w-xs truncate">{refund.reason}</td>
-                            <td className="px-3 sm:px-4 py-3.5">
+                            <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-3 sm:py-3.5 font-mono text-[10px] sm:text-xs">{refund.refundNumber}</td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-xs sm:text-sm">{refund.merchantName}</td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5 font-semibold text-xs sm:text-sm">{formatGHS(refund.amount)}</td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-[10px] sm:text-xs text-muted-foreground max-w-xs truncate">{refund.reason}</td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5">
                               <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full border font-medium", cfg.color)}>
                                 <Icon className="size-2.5" />{cfg.label}
                               </span>
                             </td>
-                            <td className="px-3 sm:px-4 py-3.5 text-[10px] sm:text-xs text-muted-foreground">
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-[10px] sm:text-xs text-muted-foreground">
                               {new Date(refund.requestedAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
                             </td>
-                            <td className="px-3 sm:px-4 py-3.5">
+                            <td className="px-3 sm:px-4 py-3 sm:py-3.5">
                               {refund.status === "pending" && (
-                                <button className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium transition-all whitespace-nowrap">
+                                <button className="px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-xs font-medium transition-all whitespace-nowrap">
                                   Approve
                                 </button>
                               )}
@@ -917,11 +917,12 @@ export default function SupportPage() {
                 Provider SLA Performance
               </h2>
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                <table className="w-full text-sm">
+                <div className="overflow-x-auto">
+                <table className="w-full text-xs sm:text-sm min-w-250">
                   <thead>
                     <tr className="border-b border-border bg-muted/30">
                       {["Provider", "Critical", "Major", "Minor", "Avg Response", "Avg Resolution", "Target", "Breached", "Compliance"].map((h) => (
-                        <th key={h} className="text-left px-4 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-5">{h}</th>
+                        <th key={h} className="text-left px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-[11px] font-semibold text-muted-foreground uppercase tracking-wider first:pl-4 sm:first:pl-5">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -931,64 +932,64 @@ export default function SupportPage() {
                       const resolutionBreached = sla.avgResolutionTime > sla.slaTarget.resolutionTime;
                       return (
                         <tr key={sla.providerId} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
-                          <td className="pl-5 pr-4 py-3.5 font-medium">{sla.providerName}</td>
-                          <td className="px-4 py-3.5">
+                          <td className="pl-4 sm:pl-5 pr-3 sm:pr-4 py-3 sm:py-3.5 font-medium text-xs sm:text-sm">{sla.providerName}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
                             {sla.openIssues.critical > 0 ? (
-                              <span className="inline-flex items-center justify-center size-6 rounded-full bg-red-100 text-red-700 text-xs font-bold">
+                              <span className="inline-flex items-center justify-center size-5 sm:size-6 rounded-full bg-red-100 text-red-700 text-[10px] sm:text-xs font-bold">
                                 {sla.openIssues.critical}
                               </span>
                             ) : (
-                              <span className="text-muted-foreground">—</span>
+                              <span className="text-muted-foreground text-xs sm:text-sm">—</span>
                             )}
                           </td>
-                          <td className="px-4 py-3.5">
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
                             {sla.openIssues.major > 0 ? (
-                              <span className="inline-flex items-center justify-center size-6 rounded-full bg-orange-100 text-orange-700 text-xs font-bold">
+                              <span className="inline-flex items-center justify-center size-5 sm:size-6 rounded-full bg-orange-100 text-orange-700 text-[10px] sm:text-xs font-bold">
                                 {sla.openIssues.major}
                               </span>
                             ) : (
-                              <span className="text-muted-foreground">—</span>
+                              <span className="text-muted-foreground text-xs sm:text-sm">—</span>
                             )}
                           </td>
-                          <td className="px-4 py-3.5">
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
                             {sla.openIssues.minor > 0 ? (
-                              <span className="inline-flex items-center justify-center size-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold">
+                              <span className="inline-flex items-center justify-center size-5 sm:size-6 rounded-full bg-blue-100 text-blue-700 text-[10px] sm:text-xs font-bold">
                                 {sla.openIssues.minor}
                               </span>
                             ) : (
-                              <span className="text-muted-foreground">—</span>
+                              <span className="text-muted-foreground text-xs sm:text-sm">—</span>
                             )}
                           </td>
-                          <td className="px-4 py-3.5">
-                            <span className={cn("text-sm font-medium", responseBreached && "text-red-600")}>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                            <span className={cn("text-xs sm:text-sm font-medium", responseBreached && "text-red-600")}>
                               {sla.avgResponseTime.toFixed(1)}h
                             </span>
                           </td>
-                          <td className="px-4 py-3.5">
-                            <span className={cn("text-sm font-medium", resolutionBreached && "text-red-600")}>
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
+                            <span className={cn("text-xs sm:text-sm font-medium", resolutionBreached && "text-red-600")}>
                               {sla.avgResolutionTime.toFixed(1)}h
                             </span>
                           </td>
-                          <td className="px-4 py-3.5 text-xs text-muted-foreground">
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5 text-[10px] sm:text-xs text-muted-foreground">
                             {sla.slaTarget.responseTime}h / {sla.slaTarget.resolutionTime}h
                           </td>
-                          <td className="px-4 py-3.5">
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
                             {sla.breachedCount > 0 ? (
-                              <span className="text-sm font-bold text-red-600">{sla.breachedCount}</span>
+                              <span className="text-xs sm:text-sm font-bold text-red-600">{sla.breachedCount}</span>
                             ) : (
-                              <span className="text-emerald-600">✓</span>
+                              <span className="text-emerald-600 text-sm sm:text-base">✓</span>
                             )}
                           </td>
-                          <td className="px-4 py-3.5">
+                          <td className="px-3 sm:px-4 py-3 sm:py-3.5">
                             <div className="flex items-center gap-2">
-                              <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                              <div className="flex-1 h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
                                 <div
                                   className={cn("h-full rounded-full transition-all",
                                     sla.complianceRate >= 95 ? "bg-emerald-500" : sla.complianceRate >= 85 ? "bg-amber-500" : "bg-red-500")}
                                   style={{ width: `${sla.complianceRate}%` }}
                                 />
                               </div>
-                              <span className="text-xs font-semibold w-10 text-right">{sla.complianceRate.toFixed(0)}%</span>
+                              <span className="text-[10px] sm:text-xs font-semibold w-8 sm:w-10 text-right">{sla.complianceRate.toFixed(0)}%</span>
                             </div>
                           </td>
                         </tr>
@@ -996,6 +997,7 @@ export default function SupportPage() {
                     })}
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
           </div>
