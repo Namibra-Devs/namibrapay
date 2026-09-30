@@ -76,12 +76,25 @@ export default function CheckoutPage() {
     return cleaned;
   };
 
-  // Detect card type
+  // Detect card type based on BIN (Bank Identification Number)
   const getCardType = (number: string) => {
     const cleaned = number.replace(/\s/g, "");
-    if (cleaned.startsWith("4")) return "visa";
-    if (cleaned.startsWith("5")) return "mastercard";
-    if (cleaned.startsWith("506")) return "verve";
+    
+    // Visa: starts with 4
+    if (/^4/.test(cleaned)) return "visa";
+    
+    // Mastercard: 51-55, 2221-2720
+    if (/^5[1-5]/.test(cleaned) || /^2[2-7]/.test(cleaned)) return "mastercard";
+    
+    // Verve: 506, 507, 6500, 6504
+    if (/^(506|507|6500|6504)/.test(cleaned)) return "verve";
+    
+    // American Express: 34, 37
+    if (/^3[47]/.test(cleaned)) return "amex";
+    
+    // Discover: 6011, 622126-622925, 644-649, 65
+    if (/^6011/.test(cleaned) || /^64[4-9]/.test(cleaned) || /^65/.test(cleaned)) return "discover";
+    
     return null;
   };
 
@@ -404,13 +417,20 @@ export default function CheckoutPage() {
                       />
                     </div>
 
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-                      <AlertCircle className="size-5 text-blue-600 shrink-0 mt-0.5" />
-                      <div className="text-sm text-blue-800">
-                        <p className="font-medium mb-1">Secure Bank Authentication</p>
-                        <p className="text-xs text-blue-600">
-                          You'll be redirected to your bank's secure portal to complete this payment
-                        </p>
+                    {/* Bank Flow Info */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                      <div className="flex items-start gap-3">
+                        <AlertCircle className="size-5 text-blue-600 shrink-0 mt-0.5" />
+                        <div className="text-sm">
+                          <p className="font-medium text-blue-800 mb-2">How Bank Transfer Works:</p>
+                          <ol className="text-xs text-blue-600 space-y-1 list-decimal list-inside">
+                            <li>Click "Pay" below</li>
+                            <li>You'll be redirected to your bank's secure portal</li>
+                            <li>Log in with your online banking credentials</li>
+                            <li>Approve the payment of {formatGHS(PAYMENT_INFO.amount)}</li>
+                            <li>You'll be returned here with confirmation</li>
+                          </ol>
+                        </div>
                       </div>
                     </div>
                   </motion.div>
